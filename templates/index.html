@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Storage System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .auth-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .auth-forms {
+            display: flex;
+            gap: 30px;
+        }
+
+        .auth-form {
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .auth-form h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            width: auto;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .dashboard {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .storage-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .storage-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #f0f4ff;
+            border-color: #5568d3;
+        }
+
+        .files-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .file-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .nodes-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .node-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .node-online {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .node-offline {
+            color: #dc3545;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☁️ Cloud Storage System</h1>
+            <p>Distributed File Storage Platform</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div id="authSection" class="auth-section">
+            <div class="auth-forms">
+                <div class="auth-form">
+                    <h3>Login</h3>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="loginEmail" value="demo@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" value="demo123" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+
+                <div class="auth-form">
+                    <h3>Register</h3>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="registerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="registerPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboard" class="dashboard">
+            <div class="user-info">
+                <div>
+                    <h2 id="userName">Welcome!</h2>
+                    <p id="userEmail"></p>
+                </div>
+                <button class="btn btn-danger" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="storage-info">
+                <h3>Storage Usage</h3>
+                <p><span id="usedStorage">0</span> / <span id="totalStorage">5</span> GB</p>
+                <div class="storage-bar">
+                    <div class="storage-fill" id="storageFill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="upload-section">
+                <h3>Upload File</h3>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" onchange="displayFileName()">
+                    <label class="file-input-label" for="fileInput">
+                        📁 <span id="fileLabel">Click to select a file</span>
+                    </label>
+                </div>
+                <button class="btn btn-primary" onclick="uploadFile()">Upload</button>
+            </div>
+
+            <div class="files-list">
+                <h3>Your Files</h3>
+                <div id="filesList"></div>
+            </div>
+
+            <div class="nodes-status">
+                <h3>Storage Nodes Status</h3>
+                <div id="nodesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        const API_URL = 'http://localhost:5000/api';
+
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            document.getElementById('alertContainer').appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, password})
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    currentUser = data.user;
+                    showDashboard();
+                    showAlert('Login successful!');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Login failed: ' + error.message, 'error');
+            }
+        });
+
+        // Register
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, email, password})
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    currentUser = data.user;
+                    showDashboard();
+                    showAlert('Registration successful!');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Registration failed: ' + error.message, 'error');
+            }
+        });
+
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}!`;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            updateStorageInfo();
+            loadFiles();
+            loadNodes();
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('dashboard').classList.remove('active');
+            showAlert('Logged out successfully');
+        }
+
+        // Update storage info
+        async function updateStorageInfo() {
+            try {
+                const response = await fetch(`${API_URL}/storage/info`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUser.user_id})
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const used = (data.used_storage / (1024**3)).toFixed(2);
+                    const total = (data.storage_quota / (1024**3)).toFixed(2);
+                    const percentage = (data.used_storage / data.storage_quota * 100).toFixed(1);
+
+                    document.getElementById('usedStorage').textContent = used;
+                    document.getElementById('totalStorage').textContent = total;
+                    document.getElementById('storageFill').style.width = percentage + '%';
+                }
+            } catch (error) {
+                console.error('Failed to update storage info:', error);
+            }
+        }
+
+        // Load files
+        async function loadFiles() {
+            try {
+                const response = await fetch(`${API_URL}/files/list`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: currentUser.user_id})
+                });
+
+                const data = await response.json();
+                const filesList = document.getElementById('filesList');
+
+                if (data.status === 'success' && data.files.length > 0) {
+                    filesList.innerHTML = data.files.map(file => `
+                        <div class="file-item">
+                            <div class="file-info">
+                                <div class="file-name">📄 ${file.file_name}</div>
+                                <div class="file-size">${(file.file_size / (1024**2)).toFixed(2)} MB</div>
+                            </div>
+                            <div class="file-actions">
+                                <button class="btn btn-primary" onclick="downloadFile('${file.file_id}', '${file.file_name}')">Download</button>
+                                <button class="btn btn-danger" onclick="deleteFile('${file.file_id}', ${file.file_size})">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    filesList.innerHTML = '<p style="text-align: center; color: #666;">No files yet. Upload your first file!</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load files:', error);
+            }
+        }
+
+        // Display selected filename
+        function displayFileName() {
+            const input = document.getElementById('fileInput');
+            const label = document.getElementById('fileLabel');
+            if (input.files.length > 0) {
+                label.textContent = input.files[0].name;
+            }
+        }
+
+        // Upload file
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                showAlert('Please select a file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('user_id', currentUser.user_id);
+
+            try {
+                showAlert('Uploading...', 'success');
+                const response = await fetch(`${API_URL}/files/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showAlert('File uploaded successfully!');
+                    fileInput.value = '';
+                    document.getElementById('fileLabel').textContent = 'Click to select a file';
+                    updateStorageInfo();
+                    loadFiles();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Upload failed: ' + error.message, 'error');
+            }
+        }
+
+        // Download file
+        async function downloadFile(fileId, fileName) {
+            try {
+                const response = await fetch(`${API_URL}/files/download`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({file_id: fileId, file_name: fileName})
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    showAlert('Download started!');
+                } else {
+                    showAlert('Download failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Download failed: ' + error.message, 'error');
+            }
+        }
+
+        // Delete file
+        async function deleteFile(fileId, fileSize) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/files/delete`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        file_id: fileId,
+                        user_id: currentUser.user_id,
+                        file_size: fileSize
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showAlert('File deleted successfully!');
+                    updateStorageInfo();
+                    loadFiles();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Delete failed: ' + error.message, 'error');
+            }
+        }
+
+        // Load nodes status
+        async function loadNodes() {
+            try {
+                const response = await fetch(`${API_URL}/nodes/status`);
+                const data = await response.json();
+                const nodesList = document.getElementById('nodesList');
+
+                if (data.status === 'success' && data.nodes.length > 0) {
+                    nodesList.innerHTML = data.nodes.map(node => `
+                        <div class="node-item">
+                            <div>
+                                <strong>Node ${node.node_id}</strong>
+                                <span class="${node.status === 'online' ? 'node-online' : 'node-offline'}">
+                                    ${node.status === 'online' ? '🟢 Online' : '🔴 Offline'}
+                                </span>
+                            </div>
+                            <div>${(node.used_storage / (1024**3)).toFixed(2)} / ${(node.storage_capacity / (1024**3)).toFixed(2)} GB</div>
+                        </div>
+                    `).join('');
+                } else {
+                    nodesList.innerHTML = '<p style="text-align: center; color: #666;">No storage nodes available</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load nodes:', error);
+            }
+        }
+
+        // Refresh nodes every 10 seconds
+        setInterval(() => {
+            if (currentUser) {
+                loadNodes();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

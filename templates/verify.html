@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white text-center">
+        <h4>🔍 Vérifier l'Authenticité d'un Certificat</h4>
+        <p class="mb-0">Vérifiez un certificat émis par Certichain</p>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <h5>📄 Vérifier par ID de Certificat</h5>
+            <form id="verifyByIdForm">
+              <div class="mb-3">
+                <label for="certId" class="form-label">ID du Certificat</label>
+                <input type="number" id="certId" name="cert_id" class="form-control" placeholder="ex: 123" required />
+                <small class="form-text text-muted">L'ID est fourni lors de la création du certificat</small>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success">🔍 Vérifier par ID</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <h5>⛓️ Vérifier par Hash Blockchain</h5>
+            <form id="verifyByHashForm">
+              <div class="mb-3">
+                <label for="blockchainHash" class="form-label">Hash Blockchain</label>
+                <input type="text" id="blockchainHash" name="blockchain_hash" class="form-control" placeholder="ex: 0x742d35Cc6634C053..." required />
+                <small class="form-text text-muted">Le hash complet fourni lors de l'émission</small>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success">🔍 Vérifier par Hash</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <h5>📎 Vérifier un Fichier Uploadé</h5>
+            <form id="verifyByFileForm">
+              <div class="mb-3">
+                <label for="file" class="form-label">Uploader le fichier à vérifier</label>
+                <input type="file" id="file" name="file" class="form-control" accept=".pdf" required />
+                <small class="form-text text-muted">Pour détecter les modifications du PDF</small>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success">🔍 Vérifier le Fichier</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <hr>
+        <div id="result" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Vérification par ID de certificat
+  document.getElementById("verifyByIdForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = '<div class="alert alert-info">Recherche du certificat...</div>';
+
+    const certId = document.getElementById("certId").value;
+    fetch(`/api/certificates/public/${certId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.certificate) {
+          const cert = data.certificate;
+          resultDiv.innerHTML = `
+            <div class="alert alert-success">
+              ✅ <strong>Certificat Trouvé!</strong><br>
+              <strong>Type:</strong> ${cert.certificate_type}<br>
+              <strong>Bénéficiaire:</strong> ${cert.recipient_name}<br>
+              <strong>Domaine:</strong> ${cert.domain || 'N/A'}<br>
+              <strong>Émis le:</strong> ${new Date(cert.created_at).toLocaleDateString()}<br>
+              <strong>Status Blockchain:</strong> ${cert.blockchain_hash ? '✅ Enregistré' : '❌ Non enregistré'}<br>
+              ${cert.blockchain_hash ? `<strong>Hash:</strong> ${cert.blockchain_hash.substring(0, 20)}...` : ''}
+              ${cert.ipfs_hash ? `<br><a href="https://gateway.pinata.cloud/ipfs/${cert.ipfs_hash}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir sur IPFS</a>` : ''}
+              ${cert.file_hash ? `<a href="/certificate/${cert.id}/download" target="_blank" class="btn btn-sm btn-secondary mt-2 ms-2">Télécharger PDF</a>` : ''}
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `<div class="alert alert-warning">⚠️ Certificat non trouvé avec cet ID</div>`;
+        }
+      })
+      .catch(err => {
+        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur: ${err.message}</div>`;
+      });
+  });
+
+  // Vérification par hash blockchain
+  document.getElementById("verifyByHashForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = '<div class="alert alert-info">Vérification sur la blockchain...</div>';
+
+    const blockchainHash = document.getElementById("blockchainHash").value;
+    fetch("/verify-hash", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ blockchain_hash: blockchainHash })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.verified) {
+          resultDiv.innerHTML = `
+            <div class="alert alert-success">
+              ✅ <strong>Certificat Authentique!</strong><br>
+              <strong>Bénéficiaire:</strong> ${data.recipient}<br>
+              <strong>Type:</strong> ${data.certificate_type || 'N/A'}<br>
+              <strong>Domaine:</strong> ${data.domain || 'N/A'}<br>
+              <strong>Date d'émission:</strong> ${new Date(data.issueDate * 1000).toLocaleDateString()}<br>
+              <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir le fichier sur IPFS</a>
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `<div class="alert alert-warning">⚠️ ${data.message || "Certificat non trouvé sur la blockchain"}</div>`;
+        }
+      })
+      .catch(err => {
+        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur: ${err.message}</div>`;
+      });
+  });
+
+  // Vérification par upload de fichier
+  document.getElementById("verifyByFileForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = '<div class="alert alert-info">Analyse du fichier et vérification sur la blockchain...</div>';
+
+    const formData = new FormData(this);
+    fetch("/verify", { method: "POST", body: formData })
+      .then(res => res.json())
+      .then(data => {
+        if (data.verified) {
+          resultDiv.innerHTML = `
+            <div class="alert alert-success">
+              ✅ <strong>Fichier Authentique!</strong><br>
+              <strong>Bénéficiaire:</strong> ${data.recipient}<br>
+              <strong>Date d'émission:</strong> ${new Date(data.issueDate * 1000).toLocaleDateString()}<br>
+              <strong>Status:</strong> Fichier original non modifié<br>
+              <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir sur IPFS</a>
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `<div class="alert alert-danger">❌ <strong>Fichier Modifié ou Non Authentique!</strong><br>${data.message || "Ce fichier n'est pas enregistré sur la blockchain ou a été modifié."}</div>`;
+        }
+      })
+      .catch(err => {
+        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur lors de l'analyse: ${err.message}</div>`;
+      });
+  });
+</script>
+{% endblock %}

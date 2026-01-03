@@ -1,0 +1,57 @@
+# Environnements Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environnements virtuels
+.venv/
+venv/
+ENV/
+env/
+
+# Base de données et fichiers temporaires
+*.db
+*.sqlite
+*.sqlite3
+instance/
+certs/uploads/
+certs/cert_templates/  # Contient des PDFs générés
+*.log
+.DS_Store
+
+# Variables d'environnement (contient les clés API sensibles)
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Fichiers de test et temporaires
+test_*.py
+temp_*.*
+*.tmp

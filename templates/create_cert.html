@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un Certificat - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            color: #667eea;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 2rem;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            background: #f9f9f9;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: #f0f0f0;
+            border-color: #764ba2;
+        }
+
+        .file-input-label.dragover {
+            background: #e8f0ff;
+            border-color: #764ba2;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #c33;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3c3;
+        }
+
+        .success-details {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        .success-details-item {
+            margin-bottom: 1rem;
+        }
+
+        .success-details-label {
+            color: #999;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .success-details-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">🔐 Certichain</div>
+        <div class="navbar-menu">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/create-cert">Émettre</a>
+            <a href="/certificates">Mes Certificats</a>
+            <form method="POST" action="/logout" style="margin: 0;">
+                <button type="submit" class="logout-btn">Déconnexion</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📝 Émettre un Certificat</h1>
+            <p>Créez et publiez un nouveau certificat sur la blockchain Ethereum (Sepolia)</p>
+        </div>
+
+        {% if error %}
+        <div class="error">❌ {{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+        <div class="success">
+            ✓ Certificat émis avec succès !
+            <div class="success-details">
+                <div class="success-details-item">
+                    <div class="success-details-label">Hash de la transaction</div>
+                    <div class="success-details-value">{{ tx_hash }}</div>
+                </div>
+                <div class="success-details-item">
+                    <div class="success-details-label">ID du certificat</div>
+                    <div class="success-details-value">{{ cert_id }}</div>
+                </div>
+                <div class="success-details-item">
+                    <div class="success-details-label">Hash IPFS</div>
+                    <div class="success-details-value">{{ ipfs_hash }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-container">
+            <form method="POST" enctype="multipart/form-data" id="certForm">
+                <div class="form-group">
+                    <label for="name">Nom du Certificat</label>
+                    <input type="text" id="name" name="name" required placeholder="Ex: Certificat de Participation - Master 2025">
+                </div>
+
+                <div class="form-group">
+                    <label for="file">Fichier du Certificat</label>
+                    <div class="file-input-wrapper">
+                        <label for="file" class="file-input-label" id="fileLabel">
+                            <div>
+                                <p style="margin-bottom: 0.5rem; font-size: 1.2rem;">📄</p>
+                                <p style="margin-bottom: 0.3rem; font-weight: 600;">Cliquez ou déposez votre fichier</p>
+                                <p style="font-size: 0.9rem; color: #999;">Formats acceptés: PDF, PNG, JPG (Max 10MB)</p>
+                            </div>
+                            <div class="file-name" id="fileName"></div>
+                        </label>
+                        <input type="file" id="file" name="file" required accept=".pdf,.png,.jpg,.jpeg">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">🚀 Publier sur la Blockchain</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileName = document.getElementById('fileName');
+        const certForm = document.getElementById('certForm');
+
+        // Drag and drop
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.classList.add('dragover');
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.classList.remove('dragover');
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            updateFileName();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                fileName.textContent = `✓ ${file.name} (${sizeMB}MB)`;
+            } else {
+                fileName.textContent = '';
+            }
+        }
+
+        // Form validation
+        certForm.addEventListener('submit', (e) => {
+            if (!fileInput.files.length) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un fichier');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (file.size > 10 * 1024 * 1024) {
+                e.preventDefault();
+                alert('Le fichier ne doit pas dépasser 10MB');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

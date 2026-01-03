@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modèles de Certificats - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .template-preview {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: white;
+        }
+
+        .template-content {
+            padding: 2rem;
+        }
+
+        .template-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .template-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .template-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .template-features li {
+            padding: 0.4rem 0;
+            color: #666;
+        }
+
+        .template-features li::before {
+            content: '✓ ';
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .instructions-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .instructions-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .instruction-item {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instruction-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .instruction-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .instruction-text {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+        }
+
+        .faq-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .faq-question::before {
+            content: '▶ ';
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .faq-answer {
+            color: #666;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instructions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">🔐 Certichain</div>
+        <div class="navbar-menu">
+            <a href="/">Accueil</a>
+            <a href="/login">Connexion</a>
+            <a href="/signup">S'inscrire</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📄 Modèles de Certificats Certichain</h1>
+            <p>
+                Pour créer des certificats blockchain dans Certichain, vous devez d'abord télécharger et personnaliser 
+                l'un de nos modèles approuvés. Ces modèles sont optimisés pour la vérification blockchain et le stockage IPFS.
+            </p>
+        </div>
+
+        <div class="templates-grid">
+            <!-- Diplôme Template -->
+            <div class="template-card">
+                <div class="template-preview">🎓</div>
+                <div class="template-content">
+                    <h3 class="template-title">Modèle Diplôme</h3>
+                    <p class="template-description">
+                        Pour les diplômes d'études supérieures, grades académiques et certifications d'accomplissement.
+                    </p>
+                    <ul class="template-features">
+                        <li>Format A4 Paysage</li>
+                        <li>Zones de signature numérique</li>
+                        <li>Champs personnalisables</li>
+                        <li>Hash blockchain intégré</li>
+                    </ul>
+                    <div class="template-buttons">
+                        <a href="/templates/preview/diplome" class="btn btn-secondary">👁️ Aperçu</a>
+                        <a href="/templates/download/diplome" class="btn btn-primary">📥 Télécharger</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certification Template -->
+            <div class="template-card">
+                <div class="template-preview">🏆</div>
+                <div class="template-content">
+                    <h3 class="template-title">Modèle Certification</h3>
+                    <p class="template-description">
+                        Pour les certifications professionnelles, cours de formation et compétences spécialisées.
+                    </p>
+                    <ul class="template-features">
+                        <li>Format A4 Portrait</li>
+                        <li>Liste de compétences</li>
+                        <li>Grille de compétences</li>
+                        <li>Vérification blockchain</li>
+                    </ul>
+                    <div class="template-buttons">
+                        <a href="/templates/preview/certification" class="btn btn-secondary">👁️ Aperçu</a>
+                        <a href="/templates/download/certification" class="btn btn-primary">📥 Télécharger</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badge Template -->
+            <div class="template-card">
+                <div class="template-preview">🎖️</div>
+                <div class="template-content">
+                    <h3 class="template-title">Modèle Badge</h3>
+                    <p class="template-description">
+                        Pour les micro-certifications numériques, open badges et badges de compétences.
+                    </p>
+                    <ul class="template-features">
+                        <li>Badge circulaire</li>
+                        <li>Design moderne</li>
+                        <li>OpenBadges compatible</li>
+                        <li>QR code blockchain</li>
+                    </ul>
+                    <div class="template-buttons">
+                        <a href="/templates/preview/badge" class="btn btn-secondary">👁️ Aperçu</a>
+                        <a href="/templates/download/badge" class="btn btn-primary">📥 Télécharger</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="instructions-section">
+            <h2>📖 Comment Utiliser les Modèles</h2>
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <div class="instruction-number">1</div>
+                    <div class="instruction-title">Télécharger le Modèle</div>
+                    <div class="instruction-text">
+                        Téléchargez le fichier HTML du modèle que vous souhaitez utiliser.
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">2</div>
+                    <div class="instruction-title">Personnaliser</div>
+                    <div class="instruction-text">
+                        Ouvrez le fichier dans un éditeur et remplissez les champs [ENTRE CROCHETS] avec vos informations.
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">3</div>
+                    <div class="instruction-title">Ajouter le Logo</div>
+                    <div class="instruction-text">
+                        Remplacez l'icône emoji par le logo officiel de votre institution.
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">4</div>
+                    <div class="instruction-title">Uploader dans Certichain</div>
+                    <div class="instruction-text">
+                        Connectez-vous à votre compte et uploadez le modèle personnalisé.
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">5</div>
+                    <div class="instruction-title">Créer les Certificats</div>
+                    <div class="instruction-text">
+                        Utilisez votre modèle pour générer des certificats pour vos étudiants/participants.
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">6</div>
+                    <div class="instruction-title">Publier sur Blockchain</div>
+                    <div class="instruction-text">
+                        Les certificats sont automatiquement publiés sur Ethereum et stockés sur IPFS.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section" style="margin-top: 3rem;">
+            <h2>❓ Questions Fréquemment Posées</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Puis-je utiliser mes propres modèles de certificats ?</div>
+                <div class="faq-answer">
+                    Non, vous devez utiliser les modèles approuvés par Certichain pour garantir la compatibilité blockchain. 
+                    Cependant, vous pouvez les personnaliser avec votre logo, couleurs et informations institutionnelles.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Puis-je modifier le design des modèles ?</div>
+                <div class="faq-answer">
+                    Oui, vous pouvez modifier les couleurs, polices et ajouter votre logo. Cependant, la structure HTML 
+                    et les champs de données doivent rester inchangés pour garantir la publication blockchain correcte.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Les certificats seront-ils vérifiables ?</div>
+                <div class="faq-answer">
+                    Oui, tous les certificats créés avec nos modèles sont automatiquement publiés sur la blockchain Ethereum 
+                    (Sepolia) et stockés sur IPFS. Chaque certificat reçoit un hash unique vérifiable.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Quel format dois-je utiliser pour uploader les certificats ?</div>
+                <div class="faq-answer">
+                    Les modèles sont en HTML/CSS. Quand vous créez un certificat dans Certichain, vous pouvez l'exporter 
+                    en PDF ou PNG avant de le publier sur la blockchain.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Combien de certificats puis-je créer ?</div>
+                <div class="faq-answer">
+                    Il n'y a pas de limite au nombre de certificats. Chaque institution peut créer autant de certificats 
+                    que nécessaire. Les frais blockchain s'appliquent par transaction (group).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Certichain - Authentification Décentralisée | Tous droits réservés</p>
+    </footer>
+</body>
+</html>

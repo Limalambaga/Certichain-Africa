@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modèle Badge - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .badge-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .badge {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .badge::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px dashed #667eea;
+            border-radius: 50%;
+            top: -8px;
+            left: -8px;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .badge-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .badge-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .badge-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .issued-to {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .recipient-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .badge-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            color: #999;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .blockchain-verify {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .verify-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .verify-hash {
+            font-size: 10px;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .download-btn {
+                display: none;
+            }
+            .badge::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="badge-container">
+        <div class="badge">🎖️</div>
+
+        <div class="badge-title">[NOM DE LA COMPÉTENCE]</div>
+        <div class="badge-subtitle">Micro-Certification Blockchain</div>
+
+        <div class="badge-description">
+            Cette certification valide la maîtrise démontrée de [COMPÉTENCE SPÉCIFIQUE]. 
+            Le titulaire a complété avec succès tous les critères d'évaluation requis.
+        </div>
+
+        <div class="issued-to">
+            Délivré à
+        </div>
+
+        <div class="recipient-name">
+            [PRÉNOM NOM DU TITULAIRE]
+        </div>
+
+        <div class="badge-info">
+            <div class="info-item">
+                <div class="info-label">Date</div>
+                <div class="info-value">__.__.2025</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Validité</div>
+                <div class="info-value">2 ans</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Niveau</div>
+                <div class="info-value">Intermédiaire</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Code</div>
+                <div class="info-value">BADGE-2025</div>
+            </div>
+        </div>
+
+        <div class="blockchain-verify">
+            <div class="verify-label">🔐 Vérifiable sur Blockchain</div>
+            <div class="verify-hash">
+                0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb...
+            </div>
+        </div>
+
+        <button class="download-btn">📥 Télécharger en PNG</button>
+    </div>
+</body>
+</html>

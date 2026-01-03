@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modèle de Diplôme - Certichain</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .certificate {
+            width: 100%;
+            max-width: 1100px;
+            height: 750px;
+            margin: auto;
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 60px 80px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .institution-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .institution-subtitle {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .title {
+            text-align: center;
+            margin: 40px 0 30px;
+        }
+
+        .title h1 {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .title p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .content {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .recipient {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .recipient-name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin: 20px 0;
+            min-height: 40px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .detail-item label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .detail-item input {
+            border: none;
+            border-bottom: 1px solid #ddd;
+            width: 100%;
+            padding: 5px 0;
+            background: transparent;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+        }
+
+        .signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .signature-block {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            margin: 30px 0 5px;
+            min-height: 40px;
+        }
+
+        .blockchain-hash {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 10px;
+            color: #aaa;
+            font-family: 'Courier New', monospace;
+            max-width: 200px;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .certification-mark {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 24px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .certificate {
+                box-shadow: none;
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                border-radius: 0;
+                padding: 60px 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="certification-mark">🏆</div>
+
+        <div class="header">
+            <div class="logo">🎓</div>
+            <div class="institution-name">[NOM DE VOTRE INSTITUTION]</div>
+            <div class="institution-subtitle">Certification Officielle</div>
+        </div>
+
+        <div class="title">
+            <h1>Diplôme</h1>
+            <p>Certificat d'Accomplissement</p>
+        </div>
+
+        <div class="content">
+            <div class="recipient">
+                Décerné à
+            </div>
+
+            <div class="recipient-name">
+                [PRÉNOM NOM DE L'ÉTUDIANT]
+            </div>
+
+            <div class="description">
+                Pour avoir complété avec succès le programme de formation et démontré les compétences requises en
+                <strong>[DOMAINE/SPÉCIALITÉ]</strong>
+            </div>
+
+            <div class="details">
+                <div class="detail-item">
+                    <label>Date d'accomplissement :</label>
+                    <input type="text" placeholder="JJ/MM/YYYY">
+                </div>
+                <div class="detail-item">
+                    <label>Numéro de certification :</label>
+                    <input type="text" placeholder="CERT-2025-XXXXX">
+                </div>
+                <div class="detail-item">
+                    <label>Durée du programme :</label>
+                    <input type="text" placeholder="X heures/crédits">
+                </div>
+                <div class="detail-item">
+                    <label>Niveau d'accomplissement :</label>
+                    <input type="text" placeholder="Excellent/Très Bien">
+                </div>
+            </div>
+
+            <div class="signatures">
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div>Directeur/Directrice</div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div>Sceau/Logo de l'institution</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blockchain-hash">
+            Hash Blockchain:<br>
+            0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb...
+        </div>
+    </div>
+</body>
+</html>

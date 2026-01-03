@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            color: #667eea;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"]:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .hint {
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .info-box {
+            background: #eff;
+            border: 1px solid #99dd99;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #366;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-box {
+            background: #ffe8e8;
+            border: 1px solid #ffcccc;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #c33;
+            margin-bottom: 1.5rem;
+        }
+
+        .verification-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .verification-badge.verified {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .verification-badge.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .copy-button {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-item {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .settings-item-label {
+            color: #999;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .settings-item-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">🔐 Certichain</div>
+        <div class="navbar-menu">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/create-cert">Émettre</a>
+            <a href="/certificates">Mes Certificats</a>
+            <form method="POST" action="/logout" style="margin: 0;">
+                <button type="submit" class="logout-btn">Déconnexion</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>⚙️ Paramètres du Compte</h1>
+            <p>Gérez vos informations personnelles et vos préférences de sécurité</p>
+        </div>
+
+        <!-- Section Informations du Compte -->
+        <div class="settings-section">
+            <h2 class="section-title">👤 Informations du Compte</h2>
+            
+            <div class="settings-grid">
+                <div class="settings-item">
+                    <div class="settings-item-label">Nom de l'Institution</div>
+                    <div class="settings-item-value">{{ institution.name }}</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item-label">Adresse Email</div>
+                    <div class="settings-item-value">{{ institution.email }}</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item-label">Statut de Vérification</div>
+                    <div class="settings-item-value">
+                        {% if institution.is_verified %}
+                        <span class="verification-badge verified">✓ Vérifié</span>
+                        {% else %}
+                        <span class="verification-badge pending">En attente</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item-label">Date d'Inscription</div>
+                    <div class="settings-item-value">{{ institution.created_at.strftime('%d/%m/%Y') }}</div>
+                </div>
+            </div>
+
+            <form method="POST" action="/update-profile" style="margin-top: 1.5rem;">
+                <div class="form-group">
+                    <label for="name">Nom de l'Institution</label>
+                    <input type="text" id="name" name="name" value="{{ institution.name }}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+        </div>
+
+        <!-- Section Sécurité -->
+        <div class="settings-section">
+            <h2 class="section-title">🔒 Sécurité</h2>
+            
+            <div class="info-box">
+                🔐 Votre compte est protégé par une authentification à deux facteurs (2FA) via OTP par email.
+            </div>
+
+            <form method="POST" action="/change-password">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #333;">Modifier le Mot de Passe</h3>
+                
+                <div class="form-group">
+                    <label for="current_password">Mot de passe actuel</label>
+                    <input type="password" id="current_password" name="current_password" required placeholder="Entrez votre mot de passe actuel">
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">Nouveau mot de passe</label>
+                    <input type="password" id="new_password" name="new_password" required placeholder="Minimum 8 caractères">
+                    <div class="hint">Minimum 8 caractères, avec majuscules, minuscules et chiffres</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirmer le mot de passe</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirmez le nouveau mot de passe">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Modifier le mot de passe</button>
+            </form>
+        </div>
+
+        <!-- Section Portefeuille -->
+        <div class="settings-section">
+            <h2 class="section-title">💼 Portefeuille Blockchain</h2>
+            
+            <div class="warning-box">
+                ⚠️ La configuration de votre portefeuille blockchain est utilisée pour signer vos certificats.
+            </div>
+
+            <form method="POST" action="/update-wallet">
+                <div class="form-group">
+                    <label for="wallet">Adresse du Portefeuille</label>
+                    <input type="text" id="wallet" name="wallet" value="{{ institution.wallet_address or '' }}" placeholder="0x...">
+                    <div class="hint">Votre adresse Ethereum (MetaMask, Ledger, etc.)</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+        </div>
+
+        <!-- Section Danger -->
+        <div class="settings-section">
+            <h2 class="section-title">🚨 Zone Dangereuse</h2>
+            
+            <div class="warning-box">
+                ⚠️ Ces actions sont irréversibles. Procédez avec prudence.
+            </div>
+
+            <form method="POST" action="/delete-account" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+                <div class="form-group">
+                    <label for="password">Confirmer avec votre mot de passe</label>
+                    <input type="password" id="password" name="password" required placeholder="Entrez votre mot de passe">
+                </div>
+
+                <button type="submit" class="btn btn-danger">Supprimer mon compte</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

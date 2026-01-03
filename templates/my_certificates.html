@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Certificats - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .btn-create {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .certificate-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .certificate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .cert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .cert-type {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .cert-type.diplome {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .cert-type.certification {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .cert-type.badge {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .cert-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .cert-status.created {
+            background: #e7e7ff;
+            color: #667eea;
+        }
+
+        .cert-status.issued {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .cert-status.verified {
+            background: #c3e6cb;
+            color: #0b4620;
+        }
+
+        .cert-info {
+            margin-bottom: 20px;
+        }
+
+        .cert-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .cert-info-label {
+            color: #999;
+            font-weight: 500;
+        }
+
+        .cert-info-value {
+            color: #333;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .cert-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .cert-actions button,
+        .cert-actions a {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5568d3;
+        }
+
+        .btn-download {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-download:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-delete:hover {
+            background: #f5c6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            padding: 10px 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .navbar a:hover {
+            background: #f0f5ff;
+        }
+
+        .navbar .logout {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: start;
+            }
+
+            .certificates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/my-certificates">📜 Mes Certificats</a>
+                <a href="/templates">📚 Modèles</a>
+            </div>
+            <div>
+                <a href="/logout" class="logout">🚪 Déconnexion</a>
+            </div>
+        </div>
+
+        <!-- En-tête -->
+        <div class="header">
+            <div>
+                <h1>📜 Mes Certificats</h1>
+                <p>Gérez tous vos certificats, diplômes et badges émis</p>
+            </div>
+            <a href="/create-certificate" class="btn-create">+ Créer un Certificat</a>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats" id="stats"></div>
+
+        <!-- Filtres -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Type:</label>
+                <select id="filterType">
+                    <option value="">Tous les types</option>
+                    <option value="diplome">Diplôme</option>
+                    <option value="certification">Certification</option>
+                    <option value="badge">Badge</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Statut:</label>
+                <select id="filterStatus">
+                    <option value="">Tous les statuts</option>
+                    <option value="created">Créé</option>
+                    <option value="issued">Émis</option>
+                    <option value="verified">Vérifié</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Recherche:</label>
+                <input type="text" id="searchInput" placeholder="Nom du bénéficiaire...">
+            </div>
+        </div>
+
+        <!-- Liste des certificats -->
+        <div id="certificatesList"></div>
+    </div>
+
+    <script>
+        let allCertificates = [];
+
+        // Charger les certificats
+        async function loadCertificates() {
+            try {
+                const response = await fetch('/api/certificates');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    allCertificates = data.certificates || [];
+                    updateStats();
+                    renderCertificates(allCertificates);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats() {
+            const stats = {
+                total: allCertificates.length,
+                diplomes: allCertificates.filter(c => c.certificate_type === 'diplome').length,
+                certifications: allCertificates.filter(c => c.certificate_type === 'certification').length,
+                badges: allCertificates.filter(c => c.certificate_type === 'badge').length,
+            };
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="number">${stats.total}</div>
+                    <div class="label">Total Certificats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${stats.diplomes}</div>
+                    <div class="label">Diplômes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${stats.certifications}</div>
+                    <div class="label">Certifications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${stats.badges}</div>
+                    <div class="label">Badges</div>
+                </div>
+            `;
+            document.getElementById('stats').innerHTML = statsHtml;
+        }
+
+        // Afficher les certificats
+        function renderCertificates(certs) {
+            if (certs.length === 0) {
+                document.getElementById('certificatesList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h2>Aucun certificat</h2>
+                        <p>Vous n'avez pas encore créé de certificats. Commencez dès maintenant!</p>
+                        <a href="/create-certificate" class="btn-primary">Créer mon premier certificat</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = `
+                <div class="certificates-grid">
+                    ${certs.map(cert => `
+                        <div class="certificate-card">
+                            <div class="cert-header">
+                                <span class="cert-type ${cert.certificate_type}">${cert.certificate_type}</span>
+                                <span class="cert-status ${cert.status}">${cert.status}</span>
+                            </div>
+                            <div class="cert-info">
+                                <div class="cert-info-row">
+                                    <span class="cert-info-label">Bénéficiaire:</span>
+                                    <span class="cert-info-value">${cert.recipient_name}</span>
+                                </div>
+                                <div class="cert-info-row">
+                                    <span class="cert-info-label">Email:</span>
+                                    <span class="cert-info-value">${cert.recipient_email || '-'}</span>
+                                </div>
+                                <div class="cert-info-row">
+                                    <span class="cert-info-label">Domaine:</span>
+                                    <span class="cert-info-value">${cert.domain}</span>
+                                </div>
+                                ${cert.mention ? `
+                                    <div class="cert-info-row">
+                                        <span class="cert-info-label">Mention:</span>
+                                        <span class="cert-info-value">${cert.mention}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="cert-info-row">
+                                    <span class="cert-info-label">Créé:</span>
+                                    <span class="cert-info-value">${new Date(cert.created_at).toLocaleDateString('fr-FR')}</span>
+                                </div>
+                            </div>
+                            <div class="cert-actions">
+                                <button class="btn-view" onclick="viewCertificate(${cert.id})">👁️ Voir</button>
+                                <button class="btn-download" onclick="downloadCertificate(${cert.id})">⬇️ PDF</button>
+                                <button class="btn-delete" onclick="deleteCertificate(${cert.id})">🗑️ Supprimer</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('certificatesList').innerHTML = html;
+        }
+
+        // Filtrer les certificats
+        function filterCertificates() {
+            const type = document.getElementById('filterType').value;
+            const status = document.getElementById('filterStatus').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = allCertificates.filter(cert => {
+                const typeMatch = !type || cert.certificate_type === type;
+                const statusMatch = !status || cert.status === status;
+                const searchMatch = !search || cert.recipient_name.toLowerCase().includes(search);
+                return typeMatch && statusMatch && searchMatch;
+            });
+
+            renderCertificates(filtered);
+        }
+
+        // Actions
+        function viewCertificate(id) {
+            window.location.href = `/certificate/${id}`;
+        }
+
+        function downloadCertificate(id) {
+            window.location.href = `/certificate/${id}/download`;
+        }
+
+        async function deleteCertificate(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce certificat?')) return;
+            
+            try {
+                const response = await fetch(`/api/certificates/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadCertificates();
+                    alert('Certificat supprimé avec succès');
+                }
+            } catch (error) {
+                alert('Erreur lors de la suppression');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('filterType').addEventListener('change', filterCertificates);
+        document.getElementById('filterStatus').addEventListener('change', filterCertificates);
+        document.getElementById('searchInput').addEventListener('input', filterCertificates);
+
+        // Charger au démarrage
+        loadCertificates();
+    </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Certichain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu a:hover {
+            color: #667eea;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .welcome h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome p {
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .card-content {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card-content strong {
+            color: #667eea;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .table thead {
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .profile-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            color: #999;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-menu {
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">🔐 Certichain</div>
+        <div class="navbar-menu">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/create-certificate">Émettre un Certificat</a>
+            <a href="/my-certificates">Mes Certificats</a>
+            <a href="/verify">Vérifier un Certificat</a>
+            <form method="POST" action="/logout" style="margin: 0;">
+                <button type="submit" class="logout-btn">Déconnexion</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>👋 Bienvenue, {{ institution.name }} !</h1>
+            <p>Tableau de bord d'administration des certificats décentralisés</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Certificats émis</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Vérifications</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ institution.created_at.strftime('%d/%m/%Y') }}</div>
+                <div class="stat-label">Date d'inscription</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">📝</div>
+                <h2>Émettre un Certificat</h2>
+                <p>Créez et publiez de nouveaux certificats sur la blockchain.</p>
+                <div class="card-content">
+                    Signez numériquement vos certificats et stockez-les de manière sécurisée sur IPFS.
+                </div>
+                <a href="/create-certificate" class="btn btn-primary">Créer un certificat</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h2>Mes Certificats</h2>
+                <p>Consultez l'historique de tous vos certificats émis.</p>
+                <div class="card-content">
+                    Retrouvez les ID, statuts et détails de vos certificats.
+                </div>
+                <a href="/my-certificates" class="btn btn-primary">Voir mes certificats</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">✓</div>
+                <h2>Vérifier un Certificat</h2>
+                <p>Vérifiez l'authenticité des certificats.</p>
+                <div class="card-content">
+                    Validez les certificats émis par votre institution ou autres.
+                </div>
+                <a href="/verify" class="btn btn-primary">Vérifier maintenant</a>
+            </div>
+        </div>
+
+        <div class="section-title">📈 Activité Récente</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Type d'action</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Inscription</td>
+                    <td>Création du compte institution</td>
+                    <td>{{ institution.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><span class="status success">Complété</span></td>
+                </tr>
+                <tr>
+                    <td>Vérification 2FA</td>
+                    <td>Authentification à deux facteurs activée</td>
+                    <td>{{ institution.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><span class="status success">Complété</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="profile-section">
+            <div class="section-title">📋 Informations du Compte</div>
+            <div class="profile-item">
+                <div class="profile-label">Nom de l'Institution</div>
+                <div class="profile-value">{{ institution.name }}</div>
+            </div>
+            <div class="profile-item">
+                <div class="profile-label">Adresse Email</div>
+                <div class="profile-value">{{ institution.email }}</div>
+            </div>
+            <div class="profile-item">
+                <div class="profile-label">Statut de Vérification</div>
+                <div class="profile-value">
+                    {% if institution.is_verified %}
+                    <span class="status success">✓ Vérifié</span>
+                    {% else %}
+                    <span class="status pending">En attente</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="profile-item">
+                <div class="profile-label">Adresse Portefeuille</div>
+                <div class="profile-value">{{ institution.wallet_address or 'Non configurée' }}</div>
+            </div>
+            <div class="profile-item">
+                <div class="profile-label">Date d'Inscription</div>
+                <div class="profile-value">{{ institution.created_at.strftime('%d/%m/%Y à %H:%M') }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

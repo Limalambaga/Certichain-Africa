@@ -1,485 +1,592 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modèles de Certificats - Certichain</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% block title %}Modèles de certificats{% endblock %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-        }
+{% block head %}
+<style>
+  /* ── Template preview thumbnails ── */
+  .tpl-preview {
+    width: 100%;
+    height: 192px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+  }
+  .tpl-preview--diplome  { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+  .tpl-preview--cert     { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
+  .tpl-preview--badge    { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
 
-        .navbar {
-            background: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  .tpl-mini {
+    transform: scale(0.78);
+    transform-origin: center;
+    pointer-events: none;
+  }
 
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #667eea;
-        }
+  /* Diplôme mini certificate */
+  .tpl-mini--diplome {
+    width: 310px;
+    height: 220px;
+    background: white;
+    border-radius: 6px;
+    border: 2px solid #2563EB;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.14);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tpl-mini--diplome .m-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #BFDBFE;
+  }
+  .tpl-mini--diplome .m-logo {
+    width: 26px; height: 26px;
+    background: var(--navy-800);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tpl-mini--diplome .m-badge {
+    font-size: 0.6rem; font-weight: 700; color: #1D4ED8;
+    background: #EFF6FF; padding: 2px 6px; border-radius: 20px;
+    border: 1px solid #BFDBFE;
+  }
+  .tpl-mini--diplome .m-title {
+    font-size: 0.95rem; font-weight: 800; color: #1E3A5F;
+    text-align: center; text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .tpl-mini--diplome .m-sub {
+    font-size: 0.55rem; color: #94A3B8; text-align: center;
+  }
+  .tpl-mini--diplome .m-name {
+    font-size: 1rem; font-weight: 700; color: var(--navy-800);
+    text-align: center; border-bottom: 1.5px solid #BFDBFE; padding-bottom: 6px;
+  }
+  .tpl-mini--diplome .m-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .tpl-mini--diplome .m-field {
+    font-size: 0.52rem; color: #64748B;
+    background: #F8FAFC; border-radius: 3px; padding: 3px 5px;
+  }
+  .tpl-mini--diplome .m-hash {
+    font-size: 0.48rem; color: #2563EB; font-family: monospace;
+    text-align: center; margin-top: 2px;
+  }
 
-        .navbar-menu {
-            display: flex;
-            gap: 2rem;
-        }
+  /* Certification mini */
+  .tpl-mini--cert {
+    width: 200px;
+    height: 270px;
+    background: white;
+    border-radius: 6px;
+    border: 2px solid #059669;
+    box-shadow: 0 4px 20px rgba(5,150,105,0.14);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tpl-mini--cert .m-header {
+    background: #064E3B; padding: 12px 14px;
+  }
+  .tpl-mini--cert .m-header-title {
+    font-size: 0.6rem; font-weight: 800; color: white;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .tpl-mini--cert .m-body {
+    padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px;
+  }
+  .tpl-mini--cert .m-label {
+    font-size: 0.5rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .tpl-mini--cert .m-value {
+    font-size: 0.7rem; font-weight: 700; color: #1F2937;
+  }
+  .tpl-mini--cert .m-skills {
+    display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px;
+  }
+  .tpl-mini--cert .m-skill-tag {
+    font-size: 0.48rem; background: #ECFDF5; color: #065F46;
+    border: 1px solid #A7F3D0; border-radius: 3px; padding: 1px 4px;
+  }
+  .tpl-mini--cert .m-footer {
+    padding: 8px 14px; border-top: 1px solid #E5E7EB;
+    font-size: 0.48rem; color: #6B7280; font-family: monospace;
+  }
 
-        .navbar-menu a {
-            text-decoration: none;
-            color: #666;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+  /* Badge mini */
+  .tpl-mini--badge {
+    width: 170px;
+    height: 200px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(217,119,6,0.15);
+    border: 2px solid #F59E0B;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 14px;
+    gap: 6px;
+  }
+  .tpl-mini--badge .m-circle {
+    width: 58px; height: 58px;
+    background: radial-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 3px solid white; box-shadow: 0 0 0 2px #F59E0B;
+  }
+  .tpl-mini--badge .m-badge-title {
+    font-size: 0.7rem; font-weight: 800; color: #92400E; text-align: center;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .tpl-mini--badge .m-badge-sub {
+    font-size: 0.52rem; color: #B45309; text-align: center;
+  }
+  .tpl-mini--badge .m-badge-level {
+    font-size: 0.55rem; background: #FEF3C7; color: #92400E;
+    border: 1px solid #FDE68A; border-radius: 20px; padding: 2px 8px;
+  }
+  .tpl-mini--badge .m-badge-hash {
+    font-size: 0.45rem; color: #F59E0B; font-family: monospace; text-align: center;
+  }
 
-        .navbar-menu a:hover {
-            color: #667eea;
-        }
+  /* Template card */
+  .tpl-card {
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .tpl-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+  .tpl-card__body {
+    padding: 1.5rem;
+  }
+  .tpl-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+  .tpl-card__desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+  .tpl-card__features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 1.5rem;
+  }
+  .tpl-card__features li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+  }
+  .tpl-card__features li svg {
+    flex-shrink: 0;
+    color: var(--success);
+  }
+  .tpl-card__actions {
+    display: flex;
+    gap: 0.75rem;
+  }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
+  /* How-to steps */
+  .howto-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .howto-step {
+    background: var(--surface-2);
+    border-radius: var(--r-lg);
+    padding: 1.25rem;
+    border-left: 3px solid var(--navy-800);
+  }
+  .howto-step__num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--navy-800);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .howto-step__title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+  }
+  .howto-step__text {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
+  /* FAQ accordion */
+  .faq-item {
+    border-bottom: 1px solid var(--border-xs);
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    gap: 1rem;
+  }
+  .faq-q svg { flex-shrink: 0; color: var(--text-muted); transition: transform 0.2s; }
+  .faq-item.open .faq-q svg { transform: rotate(180deg); }
+  .faq-a {
+    display: none;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    padding-bottom: 1.1rem;
+  }
+  .faq-item.open .faq-a { display: block; }
 
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
+  @media (max-width: 900px) {
+    .tpl-grid { grid-template-columns: 1fr !important; }
+    .howto-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 600px) {
+    .howto-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+{% endblock %}
 
-        .page-header p {
-            font-size: 1.1rem;
-            color: #666;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.8;
-        }
+{% block content %}
 
-        .templates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
+<div class="page-header">
+  <div class="page-header__top">
+    <div>
+      <h1>Modèles de certificats</h1>
+      <p>Téléchargez et prévisualisez nos modèles professionnels optimisés pour la blockchain</p>
+    </div>
+  </div>
+</div>
 
-        .template-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
 
-        .template-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
+<!-- ─── Template Cards ────────────────────────────────── -->
+<div class="tpl-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1.5rem; margin-bottom:3rem;">
 
-        .template-preview {
-            width: 100%;
-            height: 250px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            color: white;
-        }
-
-        .template-content {
-            padding: 2rem;
-        }
-
-        .template-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .template-description {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .template-features {
-            list-style: none;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .template-features li {
-            padding: 0.4rem 0;
-            color: #666;
-        }
-
-        .template-features li::before {
-            content: '✓ ';
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-
-        .template-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease;
-            display: inline-block;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .instructions-section {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
-        }
-
-        .instructions-section h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-
-        .instructions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .instruction-item {
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .instruction-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .instruction-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .instruction-text {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .faq-section {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-        }
-
-        .faq-section h2 {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            color: #333;
-        }
-
-        .faq-item {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
-        }
-
-        .faq-question {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .faq-question::before {
-            content: '▶ ';
-            color: #667eea;
-            margin-right: 0.5rem;
-        }
-
-        .faq-answer {
-            color: #666;
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        .footer {
-            background: #333;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            margin-top: 4rem;
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-
-            .templates-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .instructions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-brand">🔐 Certichain</div>
-        <div class="navbar-menu">
-            <a href="/">Accueil</a>
-            <a href="/login">Connexion</a>
-            <a href="/signup">S'inscrire</a>
+  <!-- Diplôme -->
+  <div class="tpl-card">
+    <div class="tpl-preview tpl-preview--diplome">
+      <div class="tpl-mini tpl-mini--diplome">
+        <div class="m-top">
+          <div class="m-logo">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          </div>
+          <div class="m-badge">Certichain</div>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="page-header">
-            <h1>📄 Modèles de Certificats Certichain</h1>
-            <p>
-                Pour créer des certificats blockchain dans Certichain, vous devez d'abord télécharger et personnaliser 
-                l'un de nos modèles approuvés. Ces modèles sont optimisés pour la vérification blockchain et le stockage IPFS.
-            </p>
+        <div class="m-title">Diplôme</div>
+        <div class="m-sub">Décerné à</div>
+        <div class="m-name">Prénom Nom Étudiant</div>
+        <div class="m-grid">
+          <div class="m-field">Domaine / Spécialité</div>
+          <div class="m-field">Mention : Très Bien</div>
+          <div class="m-field">Date : 15/06/2024</div>
+          <div class="m-field">Durée : 3 ans</div>
         </div>
+        <div class="m-hash">0x7f4e3a8b2c91d5f6e4a0…</div>
+      </div>
+    </div>
+    <div class="tpl-card__body">
+      <h3 class="tpl-card__title">Diplôme académique</h3>
+      <p class="tpl-card__desc">Pour les diplômes d'études supérieures, grades académiques et attestations de formation longue.</p>
+      <ul class="tpl-card__features">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Format paysage A4
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Zones de signature numérique
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Champs mention &amp; durée
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Hash blockchain imprimé
+        </li>
+      </ul>
+      <div class="tpl-card__actions">
+        <a href="/templates/preview/diplome" target="_blank" class="btn btn-outline" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Aperçu
+        </a>
+        <a href="/templates/download/diplome" class="btn btn-primary" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
 
-        <div class="templates-grid">
-            <!-- Diplôme Template -->
-            <div class="template-card">
-                <div class="template-preview">🎓</div>
-                <div class="template-content">
-                    <h3 class="template-title">Modèle Diplôme</h3>
-                    <p class="template-description">
-                        Pour les diplômes d'études supérieures, grades académiques et certifications d'accomplissement.
-                    </p>
-                    <ul class="template-features">
-                        <li>Format A4 Paysage</li>
-                        <li>Zones de signature numérique</li>
-                        <li>Champs personnalisables</li>
-                        <li>Hash blockchain intégré</li>
-                    </ul>
-                    <div class="template-buttons">
-                        <a href="/templates/preview/diplome" class="btn btn-secondary">👁️ Aperçu</a>
-                        <a href="/templates/download/diplome" class="btn btn-primary">📥 Télécharger</a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Certification Template -->
-            <div class="template-card">
-                <div class="template-preview">🏆</div>
-                <div class="template-content">
-                    <h3 class="template-title">Modèle Certification</h3>
-                    <p class="template-description">
-                        Pour les certifications professionnelles, cours de formation et compétences spécialisées.
-                    </p>
-                    <ul class="template-features">
-                        <li>Format A4 Portrait</li>
-                        <li>Liste de compétences</li>
-                        <li>Grille de compétences</li>
-                        <li>Vérification blockchain</li>
-                    </ul>
-                    <div class="template-buttons">
-                        <a href="/templates/preview/certification" class="btn btn-secondary">👁️ Aperçu</a>
-                        <a href="/templates/download/certification" class="btn btn-primary">📥 Télécharger</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Badge Template -->
-            <div class="template-card">
-                <div class="template-preview">🎖️</div>
-                <div class="template-content">
-                    <h3 class="template-title">Modèle Badge</h3>
-                    <p class="template-description">
-                        Pour les micro-certifications numériques, open badges et badges de compétences.
-                    </p>
-                    <ul class="template-features">
-                        <li>Badge circulaire</li>
-                        <li>Design moderne</li>
-                        <li>OpenBadges compatible</li>
-                        <li>QR code blockchain</li>
-                    </ul>
-                    <div class="template-buttons">
-                        <a href="/templates/preview/badge" class="btn btn-secondary">👁️ Aperçu</a>
-                        <a href="/templates/download/badge" class="btn btn-primary">📥 Télécharger</a>
-                    </div>
-                </div>
-            </div>
+  <!-- Certification -->
+  <div class="tpl-card">
+    <div class="tpl-preview tpl-preview--cert">
+      <div class="tpl-mini tpl-mini--cert">
+        <div class="m-header">
+          <div class="m-header-title">Certification Professionnelle</div>
         </div>
-
-        <!-- Instructions Section -->
-        <div class="instructions-section">
-            <h2>📖 Comment Utiliser les Modèles</h2>
-            <div class="instructions-grid">
-                <div class="instruction-item">
-                    <div class="instruction-number">1</div>
-                    <div class="instruction-title">Télécharger le Modèle</div>
-                    <div class="instruction-text">
-                        Téléchargez le fichier HTML du modèle que vous souhaitez utiliser.
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-number">2</div>
-                    <div class="instruction-title">Personnaliser</div>
-                    <div class="instruction-text">
-                        Ouvrez le fichier dans un éditeur et remplissez les champs [ENTRE CROCHETS] avec vos informations.
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-number">3</div>
-                    <div class="instruction-title">Ajouter le Logo</div>
-                    <div class="instruction-text">
-                        Remplacez l'icône emoji par le logo officiel de votre institution.
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-number">4</div>
-                    <div class="instruction-title">Uploader dans Certichain</div>
-                    <div class="instruction-text">
-                        Connectez-vous à votre compte et uploadez le modèle personnalisé.
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-number">5</div>
-                    <div class="instruction-title">Créer les Certificats</div>
-                    <div class="instruction-text">
-                        Utilisez votre modèle pour générer des certificats pour vos étudiants/participants.
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-number">6</div>
-                    <div class="instruction-title">Publier sur Blockchain</div>
-                    <div class="instruction-text">
-                        Les certificats sont automatiquement publiés sur Ethereum et stockés sur IPFS.
-                    </div>
-                </div>
+        <div class="m-body">
+          <div>
+            <div class="m-label">Décerné à</div>
+            <div class="m-value">Prénom Nom Candidat</div>
+          </div>
+          <div>
+            <div class="m-label">Domaine de compétence</div>
+            <div class="m-value">Management &amp; Leadership</div>
+          </div>
+          <div>
+            <div class="m-label">Compétences</div>
+            <div class="m-skills">
+              <span class="m-skill-tag">Leadership</span>
+              <span class="m-skill-tag">Communication</span>
+              <span class="m-skill-tag">Gestion projet</span>
+              <span class="m-skill-tag">Stratégie</span>
             </div>
+          </div>
         </div>
+        <div class="m-footer">0x9a2f… · Ethereum Sepolia</div>
+      </div>
+    </div>
+    <div class="tpl-card__body">
+      <h3 class="tpl-card__title">Certification professionnelle</h3>
+      <p class="tpl-card__desc">Pour les certifications de compétences, formations professionnelles et parcours de montée en compétence.</p>
+      <ul class="tpl-card__features">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Format portrait A4
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Grille de compétences
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Durée de formation
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Vérification blockchain
+        </li>
+      </ul>
+      <div class="tpl-card__actions">
+        <a href="/templates/preview/certification" target="_blank" class="btn btn-outline" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Aperçu
+        </a>
+        <a href="/templates/download/certification" class="btn btn-primary" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
 
-        <!-- FAQ Section -->
-        <div class="faq-section" style="margin-top: 3rem;">
-            <h2>❓ Questions Fréquemment Posées</h2>
-            
-            <div class="faq-item">
-                <div class="faq-question">Puis-je utiliser mes propres modèles de certificats ?</div>
-                <div class="faq-answer">
-                    Non, vous devez utiliser les modèles approuvés par Certichain pour garantir la compatibilité blockchain. 
-                    Cependant, vous pouvez les personnaliser avec votre logo, couleurs et informations institutionnelles.
-                </div>
-            </div>
 
-            <div class="faq-item">
-                <div class="faq-question">Puis-je modifier le design des modèles ?</div>
-                <div class="faq-answer">
-                    Oui, vous pouvez modifier les couleurs, polices et ajouter votre logo. Cependant, la structure HTML 
-                    et les champs de données doivent rester inchangés pour garantir la publication blockchain correcte.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Les certificats seront-ils vérifiables ?</div>
-                <div class="faq-answer">
-                    Oui, tous les certificats créés avec nos modèles sont automatiquement publiés sur la blockchain Ethereum 
-                    (Sepolia) et stockés sur IPFS. Chaque certificat reçoit un hash unique vérifiable.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Quel format dois-je utiliser pour uploader les certificats ?</div>
-                <div class="faq-answer">
-                    Les modèles sont en HTML/CSS. Quand vous créez un certificat dans Certichain, vous pouvez l'exporter 
-                    en PDF ou PNG avant de le publier sur la blockchain.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Combien de certificats puis-je créer ?</div>
-                <div class="faq-answer">
-                    Il n'y a pas de limite au nombre de certificats. Chaque institution peut créer autant de certificats 
-                    que nécessaire. Les frais blockchain s'appliquent par transaction (group).
-                </div>
-            </div>
+  <!-- Badge -->
+  <div class="tpl-card">
+    <div class="tpl-preview tpl-preview--badge">
+      <div class="tpl-mini tpl-mini--badge">
+        <div class="m-circle">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+          </svg>
         </div>
+        <div class="m-badge-title">Badge Numérique</div>
+        <div class="m-badge-sub">Compétence Spécifique</div>
+        <div class="m-badge-level">Niveau Intermédiaire</div>
+        <div class="m-badge-sub" style="font-size:0.5rem;">Délivré par Votre Institution</div>
+        <div class="m-badge-hash">0x3c7d… · IPFS · Ethereum</div>
+      </div>
+    </div>
+    <div class="tpl-card__body">
+      <h3 class="tpl-card__title">Badge numérique</h3>
+      <p class="tpl-card__desc">Pour les micro-certifications, open badges et badges de reconnaissance de compétences spécifiques.</p>
+      <ul class="tpl-card__features">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Design badge circulaire
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Compatible OpenBadges
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Niveau &amp; durée de validité
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          QR code blockchain
+        </li>
+      </ul>
+      <div class="tpl-card__actions">
+        <a href="/templates/preview/badge" target="_blank" class="btn btn-outline" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Aperçu
+        </a>
+        <a href="/templates/download/badge" class="btn btn-primary" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ─── How to use ───────────────────────────────────── -->
+<div style="margin-bottom:3rem;">
+  <div class="section-header">
+    <h2>Comment utiliser les modèles</h2>
+    <p>Processus en 6 étapes, de la personnalisation à la publication blockchain</p>
+  </div>
+
+  <div class="howto-grid">
+
+    <div class="howto-step">
+      <div class="howto-step__num">1</div>
+      <div class="howto-step__title">Télécharger le modèle</div>
+      <div class="howto-step__text">Cliquez sur « Télécharger » pour obtenir le modèle PDF du type souhaité.</div>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2025 Certichain - Authentification Décentralisée | Tous droits réservés</p>
-    </footer>
-</body>
-</html>
+    <div class="howto-step">
+      <div class="howto-step__num">2</div>
+      <div class="howto-step__title">Créer le certificat</div>
+      <div class="howto-step__text">Rendez-vous dans « Émettre un certificat » et remplissez les informations du bénéficiaire.</div>
+    </div>
+
+    <div class="howto-step">
+      <div class="howto-step__num">3</div>
+      <div class="howto-step__title">Ajouter votre logo</div>
+      <div class="howto-step__text">Le logo et le nom de votre institution sont automatiquement intégrés au document PDF généré.</div>
+    </div>
+
+    <div class="howto-step">
+      <div class="howto-step__num">4</div>
+      <div class="howto-step__title">Génération automatique</div>
+      <div class="howto-step__text">Certichain génère le PDF final avec tous les champs remplis et votre identité institutionnelle.</div>
+    </div>
+
+    <div class="howto-step">
+      <div class="howto-step__num">5</div>
+      <div class="howto-step__title">Ancrage IPFS &amp; blockchain</div>
+      <div class="howto-step__text">Le document est automatiquement stocké sur IPFS et son empreinte est ancrée sur Ethereum.</div>
+    </div>
+
+    <div class="howto-step">
+      <div class="howto-step__num">6</div>
+      <div class="howto-step__title">Partage &amp; vérification</div>
+      <div class="howto-step__text">Le bénéficiaire peut partager son certificat. Tout tiers peut vérifier son authenticité en quelques secondes.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ─── FAQ ──────────────────────────────────────────── -->
+<div>
+  <div class="section-header">
+    <h2>Questions fréquentes</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-body-lg">
+
+      <div class="faq-item open">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Puis-je utiliser mes propres modèles de certificats ?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">
+          Non, vous devez utiliser les modèles approuvés par Certichain pour garantir la compatibilité blockchain.
+          Cependant, vous pouvez les personnaliser avec votre logo, vos couleurs et vos informations institutionnelles.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Puis-je modifier le design des modèles ?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">
+          Oui, les couleurs, polices et logos peuvent être adaptés. Les champs de données, eux, doivent rester
+          inchangés pour garantir le bon fonctionnement de la vérification blockchain.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Les certificats générés sont-ils vérifiables publiquement ?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">
+          Oui. Tous les certificats sont publiés sur la blockchain Ethereum (réseau Sepolia) et stockés sur IPFS.
+          Chaque certificat reçoit un hash unique, vérifiable à vie sur la page <a href="/verify" style="color:var(--blue-500); font-weight:600;">Vérification</a>.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Quel format de fichier est généré ?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">
+          Les certificats sont générés au format PDF (A4 paysage pour les diplômes, portrait pour les certifications
+          et badges). Le PDF est signé avec l'empreinte blockchain et téléchargeable directement depuis votre tableau de bord.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Y a-t-il une limite au nombre de certificats émis ?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-a">
+          Non. Il n'y a pas de limite au nombre de certificats. Des frais de transaction blockchain (gas fees)
+          s'appliquent par opération d'ancrage sur Ethereum — le reste est gratuit et illimité.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      item.classList.toggle('open');
+    });
+  });
+</script>
+{% endblock %}

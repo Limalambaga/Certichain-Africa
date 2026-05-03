@@ -15,6 +15,8 @@ class Institution(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     wallet_address = db.Column(db.String(255))
+    reset_token        = db.Column(db.String(128), nullable=True, index=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
     
     # Relation avec les certificats
     certificates = db.relationship('Certificate', back_populates='institution', cascade='all, delete-orphan')

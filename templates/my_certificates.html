@@ -1,571 +1,210 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Certificats - Certichain</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% block title %}Mes certificats{% endblock %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-            padding: 20px;
-        }
+{% block content %}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+<div class="page-header">
+  <div class="page-header__top">
+    <div>
+      <h1>Mes certificats</h1>
+      <p>Gérez l'ensemble des certificats émis par votre institution</p>
+    </div>
+    <a href="/create-certificate" class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Émettre un certificat
+    </a>
+  </div>
+</div>
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
 
-        .header h1 {
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
+<!-- ─── Stats ────────────────────────────────────────── -->
+<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1.25rem; margin-bottom:2rem;" id="statsRow">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--navy">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+    </div>
+    <div class="stat-value" id="s-total">—</div>
+    <div class="stat-label">Total</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--navy">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+    </div>
+    <div class="stat-value" id="s-diplomes">—</div>
+    <div class="stat-label">Diplômes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--blue">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    </div>
+    <div class="stat-value" id="s-certs">—</div>
+    <div class="stat-label">Certifications</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--success">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+    </div>
+    <div class="stat-value" id="s-badges">—</div>
+    <div class="stat-label">Badges</div>
+  </div>
+</div>
 
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
 
-        .btn-create {
-            background: white;
-            color: #667eea;
-            padding: 12px 30px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
+<!-- ─── Filters ──────────────────────────────────────── -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-body-sm" style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
 
-        .btn-create:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .filter-group select,
-        .filter-group input {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-card .label {
-            font-size: 14px;
-            color: #999;
-        }
-
-        .certificates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .certificate-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border-left: 4px solid #667eea;
-        }
-
-        .certificate-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .cert-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-
-        .cert-type {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .cert-type.diplome {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .cert-type.certification {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .cert-type.badge {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .cert-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .cert-status.created {
-            background: #e7e7ff;
-            color: #667eea;
-        }
-
-        .cert-status.issued {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .cert-status.verified {
-            background: #c3e6cb;
-            color: #0b4620;
-        }
-
-        .cert-info {
-            margin-bottom: 20px;
-        }
-
-        .cert-info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .cert-info-label {
-            color: #999;
-            font-weight: 500;
-        }
-
-        .cert-info-value {
-            color: #333;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .cert-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .cert-actions button,
-        .cert-actions a {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-view {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #5568d3;
-        }
-
-        .btn-download {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-download:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-delete {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .btn-delete:hover {
-            background: #f5c6cb;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #999;
-            margin-bottom: 30px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 40px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .navbar {
-            background: white;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar a {
-            padding: 10px 20px;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border-radius: 6px;
-        }
-
-        .navbar a:hover {
-            background: #f0f5ff;
-        }
-
-        .navbar .logout {
-            color: #e74c3c;
-        }
-
-        @media (max-width: 600px) {
-            .header {
-                flex-direction: column;
-                align-items: start;
-            }
-
-            .certificates-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .filter-group {
-                flex-direction: column;
-                align-items: start;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Navbar -->
-        <div class="navbar">
-            <div>
-                <a href="/dashboard">📊 Dashboard</a>
-                <a href="/my-certificates">📜 Mes Certificats</a>
-                <a href="/templates">📚 Modèles</a>
-            </div>
-            <div>
-                <a href="/logout" class="logout">🚪 Déconnexion</a>
-            </div>
-        </div>
-
-        <!-- En-tête -->
-        <div class="header">
-            <div>
-                <h1>📜 Mes Certificats</h1>
-                <p>Gérez tous vos certificats, diplômes et badges émis</p>
-            </div>
-            <a href="/create-certificate" class="btn-create">+ Créer un Certificat</a>
-        </div>
-
-        <!-- Statistiques -->
-        <div class="stats" id="stats"></div>
-
-        <!-- Filtres -->
-        <div class="filters">
-            <div class="filter-group">
-                <label>Type:</label>
-                <select id="filterType">
-                    <option value="">Tous les types</option>
-                    <option value="diplome">Diplôme</option>
-                    <option value="certification">Certification</option>
-                    <option value="badge">Badge</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Statut:</label>
-                <select id="filterStatus">
-                    <option value="">Tous les statuts</option>
-                    <option value="created">Créé</option>
-                    <option value="issued">Émis</option>
-                    <option value="verified">Vérifié</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Recherche:</label>
-                <input type="text" id="searchInput" placeholder="Nom du bénéficiaire...">
-            </div>
-        </div>
-
-        <!-- Liste des certificats -->
-        <div id="certificatesList"></div>
+    <div style="display:flex; align-items:center; gap:0.5rem; flex:1; min-width:200px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="form-input" type="text" id="searchInput" placeholder="Rechercher un bénéficiaire…" style="border:none; background:none; padding:0; font-size:0.875rem; box-shadow:none;">
     </div>
 
-    <script>
-        let allCertificates = [];
+    <div style="width:1px; height:24px; background:var(--border); flex-shrink:0;"></div>
 
-        // Charger les certificats
-        async function loadCertificates() {
-            try {
-                const response = await fetch('/api/certificates');
-                const data = await response.json();
-                
-                if (response.ok) {
-                    allCertificates = data.certificates || [];
-                    updateStats();
-                    renderCertificates(allCertificates);
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
-        }
+    <select class="form-select" id="filterType" style="width:auto; min-width:160px;">
+      <option value="">Tous les types</option>
+      <option value="diplome">Diplôme</option>
+      <option value="certification">Certification</option>
+      <option value="badge">Badge</option>
+    </select>
 
-        // Mettre à jour les statistiques
-        function updateStats() {
-            const stats = {
-                total: allCertificates.length,
-                diplomes: allCertificates.filter(c => c.certificate_type === 'diplome').length,
-                certifications: allCertificates.filter(c => c.certificate_type === 'certification').length,
-                badges: allCertificates.filter(c => c.certificate_type === 'badge').length,
-            };
+    <select class="form-select" id="filterStatus" style="width:auto; min-width:160px;">
+      <option value="">Tous les statuts</option>
+      <option value="created">Créé</option>
+      <option value="issued">Émis sur blockchain</option>
+    </select>
 
-            const statsHtml = `
-                <div class="stat-card">
-                    <div class="number">${stats.total}</div>
-                    <div class="label">Total Certificats</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number">${stats.diplomes}</div>
-                    <div class="label">Diplômes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number">${stats.certifications}</div>
-                    <div class="label">Certifications</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number">${stats.badges}</div>
-                    <div class="label">Badges</div>
-                </div>
-            `;
-            document.getElementById('stats').innerHTML = statsHtml;
-        }
+  </div>
+</div>
 
-        // Afficher les certificats
-        function renderCertificates(certs) {
-            if (certs.length === 0) {
-                document.getElementById('certificatesList').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <h2>Aucun certificat</h2>
-                        <p>Vous n'avez pas encore créé de certificats. Commencez dès maintenant!</p>
-                        <a href="/create-certificate" class="btn-primary">Créer mon premier certificat</a>
-                    </div>
-                `;
-                return;
-            }
 
-            const html = `
-                <div class="certificates-grid">
-                    ${certs.map(cert => `
-                        <div class="certificate-card">
-                            <div class="cert-header">
-                                <span class="cert-type ${cert.certificate_type}">${cert.certificate_type}</span>
-                                <span class="cert-status ${cert.status}">${cert.status}</span>
-                            </div>
-                            <div class="cert-info">
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Bénéficiaire:</span>
-                                    <span class="cert-info-value">${cert.recipient_name}</span>
-                                </div>
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Email:</span>
-                                    <span class="cert-info-value">${cert.recipient_email || '-'}</span>
-                                </div>
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Domaine:</span>
-                                    <span class="cert-info-value">${cert.domain}</span>
-                                </div>
-                                ${cert.mention ? `
-                                    <div class="cert-info-row">
-                                        <span class="cert-info-label">Mention:</span>
-                                        <span class="cert-info-value">${cert.mention}</span>
-                                    </div>
-                                ` : ''}
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Créé:</span>
-                                    <span class="cert-info-value">${new Date(cert.created_at).toLocaleDateString('fr-FR')}</span>
-                                </div>
-                            </div>
-                            <div class="cert-actions">
-                                <button class="btn-view" onclick="viewCertificate(${cert.id})">👁️ Voir</button>
-                                <button class="btn-download" onclick="downloadCertificate(${cert.id})">⬇️ PDF</button>
-                                <button class="btn-delete" onclick="deleteCertificate(${cert.id})">🗑️ Supprimer</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            document.getElementById('certificatesList').innerHTML = html;
-        }
+<!-- ─── Certificates List ────────────────────────────── -->
+<div id="certsList"></div>
 
-        // Filtrer les certificats
-        function filterCertificates() {
-            const type = document.getElementById('filterType').value;
-            const status = document.getElementById('filterStatus').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
+{% endblock %}
 
-            const filtered = allCertificates.filter(cert => {
-                const typeMatch = !type || cert.certificate_type === type;
-                const statusMatch = !status || cert.status === status;
-                const searchMatch = !search || cert.recipient_name.toLowerCase().includes(search);
-                return typeMatch && statusMatch && searchMatch;
-            });
+{% block scripts %}
+<script>
+  let allCerts = [];
 
-            renderCertificates(filtered);
-        }
+  const typeColors  = { diplome:'badge-navy', certification:'badge-info', badge:'badge-warning' };
+  const typeLabels  = { diplome:'Diplôme', certification:'Certification', badge:'Badge' };
+  const statusColors = { created:'badge-info', issued:'badge-teal' };
+  const statusLabels = { created:'Créé', issued:'Blockchain' };
 
-        // Actions
-        function viewCertificate(id) {
-            window.location.href = `/certificate/${id}`;
-        }
+  async function load() {
+    try {
+      const res  = await fetch('/api/certificates');
+      const data = await res.json();
+      allCerts   = data.certificates || [];
+      updateStats();
+      render(allCerts);
+    } catch (e) {
+      document.getElementById('certsList').innerHTML = `<div class="alert alert-error">Impossible de charger les certificats.</div>`;
+    }
+  }
 
-        function downloadCertificate(id) {
-            window.location.href = `/certificate/${id}/download`;
-        }
+  function updateStats() {
+    document.getElementById('s-total').textContent   = allCerts.length;
+    document.getElementById('s-diplomes').textContent = allCerts.filter(c => c.certificate_type === 'diplome').length;
+    document.getElementById('s-certs').textContent    = allCerts.filter(c => c.certificate_type === 'certification').length;
+    document.getElementById('s-badges').textContent   = allCerts.filter(c => c.certificate_type === 'badge').length;
+  }
 
-        async function deleteCertificate(id) {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer ce certificat?')) return;
-            
-            try {
-                const response = await fetch(`/api/certificates/${id}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    loadCertificates();
-                    alert('Certificat supprimé avec succès');
-                }
-            } catch (error) {
-                alert('Erreur lors de la suppression');
-            }
-        }
+  function render(list) {
+    const el = document.getElementById('certsList');
+    if (list.length === 0) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <h2>Aucun certificat trouvé</h2>
+          <p>Commencez par émettre votre premier certificat numérique.</p>
+          <a href="/create-certificate" class="btn btn-primary">Émettre un certificat</a>
+        </div>`;
+      return;
+    }
 
-        // Event listeners
-        document.getElementById('filterType').addEventListener('change', filterCertificates);
-        document.getElementById('filterStatus').addEventListener('change', filterCertificates);
-        document.getElementById('searchInput').addEventListener('input', filterCertificates);
+    el.innerHTML = `<div class="certs-grid">${list.map(c => `
+      <div class="cert-card" style="border-left-color: ${c.certificate_type === 'diplome' ? 'var(--navy-800)' : c.certificate_type === 'certification' ? 'var(--blue-500)' : 'var(--warning)'};">
+        <div class="cert-card__header">
+          <span class="badge ${typeColors[c.certificate_type] || 'badge-navy'}">${typeLabels[c.certificate_type] || c.certificate_type}</span>
+          <span class="badge ${c.blockchain_hash ? 'badge-teal' : 'badge-info'}">
+            ${c.blockchain_hash
+              ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Blockchain'
+              : 'Local'}
+          </span>
+        </div>
+        <div class="cert-card__body">
+          <div style="font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:0.875rem;">${c.recipient_name}</div>
+          <div class="cert-card__row">
+            <span class="cert-card__row-label">Domaine</span>
+            <span class="cert-card__row-value">${c.domain || '—'}</span>
+          </div>
+          ${c.mention ? `<div class="cert-card__row"><span class="cert-card__row-label">Mention</span><span class="cert-card__row-value">${c.mention}</span></div>` : ''}
+          <div class="cert-card__row">
+            <span class="cert-card__row-label">Émis le</span>
+            <span class="cert-card__row-value">${new Date(c.created_at).toLocaleDateString('fr-FR')}</span>
+          </div>
+          ${c.blockchain_hash ? `
+          <div class="cert-card__row" style="border-bottom:none;">
+            <span class="cert-card__row-label">Hash TX</span>
+            <span style="font-family:monospace; font-size:0.72rem; color:var(--text-muted);">${c.blockchain_hash.substring(0,18)}…</span>
+          </div>` : ''}
+        </div>
+        <div class="cert-card__actions">
+          <a href="/certificate/${c.id}/download" class="btn btn-outline btn-sm" style="flex:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PDF
+          </a>
+          ${c.ipfs_hash ? `
+          <a href="https://gateway.pinata.cloud/ipfs/${c.ipfs_hash}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            IPFS
+          </a>` : ''}
+          <button onclick="deleteCert(${c.id})" class="btn btn-ghost btn-sm" style="color:var(--error);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('')}</div>`;
+  }
 
-        // Charger au démarrage
-        loadCertificates();
-    </script>
-</body>
-</html>
+  function filter() {
+    const type   = document.getElementById('filterType').value;
+    const status = document.getElementById('filterStatus').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    render(allCerts.filter(c =>
+      (!type   || c.certificate_type === type) &&
+      (!status || (status === 'issued' ? !!c.blockchain_hash : !c.blockchain_hash)) &&
+      (!search || c.recipient_name.toLowerCase().includes(search))
+    ));
+  }
+
+  async function deleteCert(id) {
+    if (!confirm('Supprimer ce certificat ? Cette action est irréversible.')) return;
+    try {
+      const res = await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
+      if (res.ok) { await load(); }
+    } catch (e) { alert('Erreur lors de la suppression.'); }
+  }
+
+  document.getElementById('filterType').addEventListener('change', filter);
+  document.getElementById('filterStatus').addEventListener('change', filter);
+  document.getElementById('searchInput').addEventListener('input', filter);
+
+  document.addEventListener('DOMContentLoaded', load);
+</script>
+
+<style>
+@media (max-width: 900px) {
+  #statsRow { grid-template-columns: repeat(2,1fr) !important; }
+}
+@media (max-width: 500px) {
+  #statsRow { grid-template-columns: 1fr !important; }
+}
+</style>
+{% endblock %}

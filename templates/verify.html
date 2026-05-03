@@ -1,158 +1,268 @@
 {% extends "base.html" %}
+{% block title %}Vérification de certificat{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card shadow-sm">
-      <div class="card-header bg-success text-white text-center">
-        <h4>🔍 Vérifier l'Authenticité d'un Certificat</h4>
-        <p class="mb-0">Vérifiez un certificat émis par Certichain</p>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4">
-            <h5>📄 Vérifier par ID de Certificat</h5>
-            <form id="verifyByIdForm">
-              <div class="mb-3">
-                <label for="certId" class="form-label">ID du Certificat</label>
-                <input type="number" id="certId" name="cert_id" class="form-control" placeholder="ex: 123" required />
-                <small class="form-text text-muted">L'ID est fourni lors de la création du certificat</small>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-success">🔍 Vérifier par ID</button>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-4">
-            <h5>⛓️ Vérifier par Hash Blockchain</h5>
-            <form id="verifyByHashForm">
-              <div class="mb-3">
-                <label for="blockchainHash" class="form-label">Hash Blockchain</label>
-                <input type="text" id="blockchainHash" name="blockchain_hash" class="form-control" placeholder="ex: 0x742d35Cc6634C053..." required />
-                <small class="form-text text-muted">Le hash complet fourni lors de l'émission</small>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-success">🔍 Vérifier par Hash</button>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-4">
-            <h5>📎 Vérifier un Fichier Uploadé</h5>
-            <form id="verifyByFileForm">
-              <div class="mb-3">
-                <label for="file" class="form-label">Uploader le fichier à vérifier</label>
-                <input type="file" id="file" name="file" class="form-control" accept=".pdf" required />
-                <small class="form-text text-muted">Pour détecter les modifications du PDF</small>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-success">🔍 Vérifier le Fichier</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <hr>
-        <div id="result" class="mt-3"></div>
-      </div>
+
+<div class="page-header">
+  <div class="page-header__top">
+    <div>
+      <h1>Vérification de certificat</h1>
+      <p>Authentifiez instantanément un certificat Certichain via 3 méthodes disponibles</p>
     </div>
   </div>
 </div>
 
+
+<!-- ─── Method Tabs ──────────────────────────────────── -->
+<div class="verify-methods" role="tablist">
+
+  <button class="verify-tab is-active" data-tab="by-id" role="tab" onclick="switchTab('by-id', this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+      <line x1="7" y1="7" x2="7.01" y2="7"/>
+    </svg>
+    <h3>Par ID</h3>
+    <p>Numéro de certificat</p>
+  </button>
+
+  <button class="verify-tab" data-tab="by-hash" role="tab" onclick="switchTab('by-hash', this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+    </svg>
+    <h3>Par hash blockchain</h3>
+    <p>Transaction Ethereum</p>
+  </button>
+
+  <button class="verify-tab" data-tab="by-file" role="tab" onclick="switchTab('by-file', this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+    </svg>
+    <h3>Par fichier PDF</h3>
+    <p>Vérification d'empreinte</p>
+  </button>
+
+</div>
+
+
+<div style="max-width: 680px;">
+
+  <!-- ─── Panel: By ID ──────────────────────────────── -->
+  <div class="verify-panel is-active" id="panel-by-id">
+    <div class="card">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>Vérification par numéro de certificat</h2>
+          <p>L'identifiant numérique est fourni lors de la création du certificat</p>
+        </div>
+        <form id="form-by-id" onsubmit="verifyById(event)">
+          <div class="form-group">
+            <label class="form-label" for="certId">Numéro de certificat</label>
+            <input class="form-input" type="number" id="certId" placeholder="Ex : 142" min="1" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Vérifier
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Panel: By Hash ───────────────────────────── -->
+  <div class="verify-panel" id="panel-by-hash">
+    <div class="card">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>Vérification par hash blockchain</h2>
+          <p>Le hash de transaction Ethereum est fourni lors de l'émission</p>
+        </div>
+        <form id="form-by-hash" onsubmit="verifyByHash(event)">
+          <div class="form-group">
+            <label class="form-label" for="blockchainHash">Hash de transaction</label>
+            <input class="form-input" id="blockchainHash" type="text" placeholder="0x742d35Cc6634C0532925a3b8D4C9…" required style="font-family:monospace;">
+            <span class="form-hint">Le hash complet de la transaction Ethereum</span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Vérifier
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Panel: By File ───────────────────────────── -->
+  <div class="verify-panel" id="panel-by-file">
+    <div class="card">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>Vérification par fichier PDF</h2>
+          <p>Déposez le fichier PDF du certificat pour vérifier son intégrité cryptographique</p>
+        </div>
+        <form id="form-by-file" onsubmit="verifyByFile(event)">
+          <div class="form-group">
+            <div class="file-upload" id="fileDropzone">
+              <input type="file" id="fileInput" name="file" accept=".pdf" required>
+              <div id="fileLabel">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 0.875rem; display:block;">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <div style="font-size:0.9rem; font-weight:600; color:var(--text-primary); margin-bottom:0.35rem;">Déposez votre PDF ici</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">ou cliquez pour sélectionner</div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Vérifier l'intégrité
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Result Zone ───────────────────────────────── -->
+  <div id="resultZone" class="verify-result"></div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
 <script>
-  // Vérification par ID de certificat
-  document.getElementById("verifyByIdForm").addEventListener("submit", function(e) {
+  function switchTab(tabId, el) {
+    document.querySelectorAll('.verify-tab').forEach(t  => t.classList.remove('is-active'));
+    document.querySelectorAll('.verify-panel').forEach(p => p.classList.remove('is-active'));
+    el.classList.add('is-active');
+    document.getElementById('panel-' + tabId).classList.add('is-active');
+    document.getElementById('resultZone').innerHTML = '';
+  }
+
+  function showLoading() {
+    document.getElementById('resultZone').innerHTML = `
+      <div class="card">
+        <div class="card-body" style="display:flex; align-items:center; gap:0.875rem;">
+          <div class="spinner" style="border-color:rgba(10,30,82,0.2); border-top-color:var(--navy-800);"></div>
+          <span style="font-size:0.9rem; color:var(--text-secondary);">Vérification en cours sur la blockchain…</span>
+        </div>
+      </div>`;
+  }
+
+  function renderValid(data) {
+    const date = data.issueDate ? new Date(data.issueDate * 1000).toLocaleDateString('fr-FR') : '—';
+    document.getElementById('resultZone').innerHTML = `
+      <div class="verify-valid animate-fadeUp">
+        <div class="verify-valid__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Certificat authentique</h2>
+        <p style="color:var(--success); font-size:0.9rem; margin-bottom:1.5rem;">${data.message || 'Ce certificat est valide et non modifié.'}</p>
+        <div class="verify-data">
+          <div class="verify-data-item"><label>Bénéficiaire</label><span>${data.recipient || '—'}</span></div>
+          <div class="verify-data-item"><label>Type</label><span>${data.certificate_type || '—'}</span></div>
+          <div class="verify-data-item"><label>Domaine</label><span>${data.domain || '—'}</span></div>
+          <div class="verify-data-item"><label>Date d'émission</label><span>${date}</span></div>
+        </div>
+        ${data.ipfs ? `
+        <div style="margin-top:1rem;">
+          <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" rel="noopener" class="btn btn-teal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            Voir sur IPFS
+          </a>
+        </div>` : ''}
+      </div>`;
+  }
+
+  function renderInvalid(message) {
+    document.getElementById('resultZone').innerHTML = `
+      <div class="verify-invalid animate-fadeUp">
+        <div class="verify-invalid__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <h2>Certificat non reconnu</h2>
+        <p style="color:var(--error); font-size:0.9rem;">${message || 'Ce certificat n\'est pas enregistré dans notre système ou a été modifié.'}</p>
+      </div>`;
+  }
+
+  function renderError(msg) {
+    document.getElementById('resultZone').innerHTML = `<div class="alert alert-error" style="margin-top:1rem;">${msg}</div>`;
+  }
+
+  async function verifyById(e) {
     e.preventDefault();
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = '<div class="alert alert-info">Recherche du certificat...</div>';
+    showLoading();
+    const id = document.getElementById('certId').value;
+    try {
+      const res  = await fetch(`/api/certificates/public/${id}`);
+      const data = await res.json();
+      if (data.certificate) {
+        const c = data.certificate;
+        renderValid({
+          recipient: c.recipient_name,
+          certificate_type: c.certificate_type,
+          domain: c.domain,
+          issueDate: c.created_at ? Math.floor(new Date(c.created_at).getTime()/1000) : null,
+          ipfs: c.ipfs_hash,
+          message: 'Certificat authentique trouvé dans la base Certichain.'
+        });
+      } else {
+        renderInvalid('Aucun certificat trouvé avec cet identifiant.');
+      }
+    } catch (err) {
+      renderError('Erreur réseau : ' + err.message);
+    }
+  }
 
-    const certId = document.getElementById("certId").value;
-    fetch(`/api/certificates/public/${certId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.certificate) {
-          const cert = data.certificate;
-          resultDiv.innerHTML = `
-            <div class="alert alert-success">
-              ✅ <strong>Certificat Trouvé!</strong><br>
-              <strong>Type:</strong> ${cert.certificate_type}<br>
-              <strong>Bénéficiaire:</strong> ${cert.recipient_name}<br>
-              <strong>Domaine:</strong> ${cert.domain || 'N/A'}<br>
-              <strong>Émis le:</strong> ${new Date(cert.created_at).toLocaleDateString()}<br>
-              <strong>Status Blockchain:</strong> ${cert.blockchain_hash ? '✅ Enregistré' : '❌ Non enregistré'}<br>
-              ${cert.blockchain_hash ? `<strong>Hash:</strong> ${cert.blockchain_hash.substring(0, 20)}...` : ''}
-              ${cert.ipfs_hash ? `<br><a href="https://gateway.pinata.cloud/ipfs/${cert.ipfs_hash}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir sur IPFS</a>` : ''}
-              ${cert.file_hash ? `<a href="/certificate/${cert.id}/download" target="_blank" class="btn btn-sm btn-secondary mt-2 ms-2">Télécharger PDF</a>` : ''}
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `<div class="alert alert-warning">⚠️ Certificat non trouvé avec cet ID</div>`;
-        }
-      })
-      .catch(err => {
-        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur: ${err.message}</div>`;
-      });
-  });
-
-  // Vérification par hash blockchain
-  document.getElementById("verifyByHashForm").addEventListener("submit", function(e) {
+  async function verifyByHash(e) {
     e.preventDefault();
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = '<div class="alert alert-info">Vérification sur la blockchain...</div>';
-
-    const blockchainHash = document.getElementById("blockchainHash").value;
-    fetch("/verify-hash", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ blockchain_hash: blockchainHash })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.verified) {
-          resultDiv.innerHTML = `
-            <div class="alert alert-success">
-              ✅ <strong>Certificat Authentique!</strong><br>
-              <strong>Bénéficiaire:</strong> ${data.recipient}<br>
-              <strong>Type:</strong> ${data.certificate_type || 'N/A'}<br>
-              <strong>Domaine:</strong> ${data.domain || 'N/A'}<br>
-              <strong>Date d'émission:</strong> ${new Date(data.issueDate * 1000).toLocaleDateString()}<br>
-              <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir le fichier sur IPFS</a>
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `<div class="alert alert-warning">⚠️ ${data.message || "Certificat non trouvé sur la blockchain"}</div>`;
-        }
-      })
-      .catch(err => {
-        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur: ${err.message}</div>`;
+    showLoading();
+    const hash = document.getElementById('blockchainHash').value.trim();
+    try {
+      const res  = await fetch('/verify-hash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blockchain_hash: hash })
       });
-  });
+      const data = await res.json();
+      if (data.verified) renderValid(data);
+      else renderInvalid(data.message);
+    } catch (err) {
+      renderError('Erreur réseau : ' + err.message);
+    }
+  }
 
-  // Vérification par upload de fichier
-  document.getElementById("verifyByFileForm").addEventListener("submit", function(e) {
+  async function verifyByFile(e) {
     e.preventDefault();
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = '<div class="alert alert-info">Analyse du fichier et vérification sur la blockchain...</div>';
+    showLoading();
+    const fd = new FormData(document.getElementById('form-by-file'));
+    try {
+      const res  = await fetch('/verify', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.verified) renderValid(data);
+      else renderInvalid(data.message || 'Fichier modifié ou non enregistré sur la blockchain.');
+    } catch (err) {
+      renderError('Erreur réseau : ' + err.message);
+    }
+  }
 
-    const formData = new FormData(this);
-    fetch("/verify", { method: "POST", body: formData })
-      .then(res => res.json())
-      .then(data => {
-        if (data.verified) {
-          resultDiv.innerHTML = `
-            <div class="alert alert-success">
-              ✅ <strong>Fichier Authentique!</strong><br>
-              <strong>Bénéficiaire:</strong> ${data.recipient}<br>
-              <strong>Date d'émission:</strong> ${new Date(data.issueDate * 1000).toLocaleDateString()}<br>
-              <strong>Status:</strong> Fichier original non modifié<br>
-              <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" class="btn btn-sm btn-primary mt-2">Voir sur IPFS</a>
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `<div class="alert alert-danger">❌ <strong>Fichier Modifié ou Non Authentique!</strong><br>${data.message || "Ce fichier n'est pas enregistré sur la blockchain ou a été modifié."}</div>`;
-        }
-      })
-      .catch(err => {
-        resultDiv.innerHTML = `<div class="alert alert-danger">Erreur lors de l'analyse: ${err.message}</div>`;
-      });
+  // File drag-and-drop feedback
+  const input   = document.getElementById('fileInput');
+  const label   = document.getElementById('fileLabel');
+  input.addEventListener('change', () => {
+    if (input.files[0]) {
+      label.innerHTML = `
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue-500)" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 0.6rem; display:block;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div style="font-size:0.875rem; font-weight:700; color:var(--blue-600);">${input.files[0].name}</div>
+        <div style="font-size:0.78rem; color:var(--text-muted);">${(input.files[0].size/1024).toFixed(1)} Ko</div>`;
+    }
   });
 </script>
+
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.animate-fadeUp { animation: fadeUp 0.4s ease forwards; }
+</style>
 {% endblock %}

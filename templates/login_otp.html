@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vérification OTP — Certichain Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .otp-inputs {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    .otp-digit {
+      width: 52px;
+      height: 60px;
+      border: 2px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy-800);
+      text-align: center;
+      background: var(--surface-2);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      caret-color: var(--blue-500);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .otp-digit:focus {
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+      background: var(--white);
+    }
+    .otp-digit.filled { border-color: var(--navy-800); background: var(--white); }
+
+    .otp-timer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .otp-timer span { font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+    .otp-email-hint {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .otp-email-hint strong { color: var(--text-primary); font-weight: 600; }
+  </style>
+</head>
+<body style="background: var(--white);">
+
+<div class="auth-layout">
+
+  <!-- ─── Visual Panel ─────────────────────────────── -->
+  <div class="auth-panel">
+    <div class="auth-panel__bg"></div>
+    <div class="auth-panel__grid"></div>
+    <div class="auth-panel__dots">
+      <div class="auth-panel__dot"></div>
+      <div class="auth-panel__dot"></div>
+      <div class="auth-panel__dot"></div>
+    </div>
+
+    <div style="position:relative; z-index:2; margin-bottom:auto; padding-bottom:3rem;">
+      <a href="/" style="display:inline-flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:800; color:white; letter-spacing:-0.02em; text-decoration:none;">
+        <div style="width:34px; height:34px; background:rgba(255,255,255,0.12); border-radius:6px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.15);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        </div>
+        Certichain Africa
+      </a>
+    </div>
+
+    <div class="auth-panel__content">
+      <!-- Security illustration -->
+      <div style="width:72px; height:72px; background:rgba(255,255,255,0.08); border-radius:var(--r-xl); display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem; border:1px solid rgba(255,255,255,0.12);">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+          <circle cx="12" cy="16" r="1" fill="rgba(255,255,255,0.7)" stroke="none"/>
+        </svg>
+      </div>
+      <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">Authentification à deux facteurs</div>
+      <div style="font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.65; max-width:280px;">
+        Un code unique à usage unique vous a été envoyé par email pour sécuriser l'accès à votre espace institution.
+      </div>
+
+      <div class="auth-panel__tagline" style="margin-top:2rem;">
+        <span class="auth-panel__tagline-dot"></span>
+        Connexion protégée par OTP
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Form Section ─────────────────────────────── -->
+  <div class="auth-form-section">
+    <div class="auth-form-card">
+
+      <!-- Logo -->
+      <a href="/" class="auth-logo">
+        <div class="auth-logo__icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        </div>
+        Certichain
+      </a>
+
+      <h1 class="auth-heading">Vérification</h1>
+      <p class="auth-sub">Code envoyé à votre adresse Gmail</p>
+
+      <!-- Email hint -->
+      <div class="otp-email-hint">
+        <strong>{{ email }}</strong>
+      </div>
+
+      <!-- Alerts -->
+      {% if error %}
+      <div class="alert alert-error" style="margin-top:1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      {% if info %}
+      <div class="alert alert-success" style="margin-top:1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {{ info }}
+      </div>
+      {% endif %}
+
+      <!-- OTP Form -->
+      <form method="POST" action="/login/verify-otp" id="otpForm">
+        <input type="hidden" name="otp" id="otpHidden">
+
+        <div class="otp-inputs" id="otpInputs">
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" autofocus>
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        </div>
+
+        <!-- Countdown timer -->
+        <div class="otp-timer">Code valide pendant <span id="countdown">10:00</span></div>
+
+        {% if attempts_left is defined and attempts_left < 5 %}
+        <div style="text-align:center; font-size:0.8rem; color:var(--error); margin-bottom:1rem;">
+          {{ attempts_left }} tentative{{ 's' if attempts_left > 1 else '' }} restante{{ 's' if attempts_left > 1 else '' }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="verifyBtn" disabled>
+          <svg class="btn-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg class="btn-icon-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none; animation:spin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+          <span id="verifyLabel">Confirmer le code</span>
+        </button>
+      </form>
+
+      <div class="auth-divider">ou</div>
+
+      <!-- Resend -->
+      <form method="POST" action="/login/resend-otp" style="text-align:center;" id="resendForm">
+        <button type="submit" class="btn btn-ghost btn-full" id="resendBtn" {% if resend_wait and resend_wait > 0 %}disabled{% endif %}>
+          <span id="resendLabel">
+            {% if resend_wait and resend_wait > 0 %}
+              Renvoyer dans <span id="resendCountdown">{{ resend_wait }}</span>s
+            {% else %}
+              Renvoyer un nouveau code
+            {% endif %}
+          </span>
+        </button>
+      </form>
+
+      <div style="text-align:center; margin-top:1.25rem;">
+        <a href="/login" style="font-size:0.83rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:0.35rem;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Retour à la connexion
+        </a>
+      </div>
+
+      <!-- Security note -->
+      <div style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border-xs); display:flex; align-items:center; justify-content:center; gap:0.5rem; font-size:0.775rem; color:var(--text-muted);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Code à usage unique — valide 10 minutes
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<script>
+  const digits    = Array.from(document.querySelectorAll('.otp-digit'));
+  const hidden    = document.getElementById('otpHidden');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const iconCheck = verifyBtn.querySelector('.btn-icon-check');
+  const iconSpin  = verifyBtn.querySelector('.btn-icon-spin');
+  const verifyLbl = document.getElementById('verifyLabel');
+
+  function updateHidden() {
+    const val = digits.map(d => d.value).join('');
+    hidden.value = val;
+    verifyBtn.disabled = val.length < 6;
+    digits.forEach(d => d.classList.toggle('filled', d.value !== ''));
+  }
+
+  function setLoading(on) {
+    verifyBtn.disabled = on;
+    iconCheck.style.display = on ? 'none' : '';
+    iconSpin.style.display  = on ? '' : 'none';
+    verifyLbl.textContent   = on ? 'Vérification…' : 'Confirmer le code';
+  }
+
+  document.getElementById('otpForm').addEventListener('submit', () => setLoading(true));
+
+  digits.forEach((input, i) => {
+    input.addEventListener('input', (e) => {
+      const v = e.target.value.replace(/\D/g, '');
+      e.target.value = v ? v[v.length - 1] : '';
+      if (v && i < 5) digits[i + 1].focus();
+      updateHidden();
+      if (digits.map(d => d.value).join('').length === 6) {
+        setTimeout(() => { setLoading(true); document.getElementById('otpForm').submit(); }, 80);
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && i > 0) {
+        digits[i - 1].focus();
+        digits[i - 1].value = '';
+        updateHidden();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((ch, j) => { if (digits[j]) digits[j].value = ch; });
+      updateHidden();
+      digits[Math.min(pasted.length, 5)].focus();
+      e.preventDefault();
+    });
+  });
+
+  // OTP expiry countdown — 10 min
+  let remaining = 10 * 60;
+  const el = document.getElementById('countdown');
+  const tick = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(tick);
+      el.textContent = 'Expiré';
+      el.style.color = 'var(--error)';
+      verifyBtn.disabled = true;
+      return;
+    }
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const s = String(remaining % 60).padStart(2, '0');
+    el.textContent = m + ':' + s;
+    if (remaining <= 60) el.style.color = 'var(--error)';
+  }, 1000);
+
+  // Resend cooldown
+  const resendBtn = document.getElementById('resendBtn');
+  const resendLbl = document.getElementById('resendCountdown');
+  let resendSec   = {{ resend_wait | default(0) }};
+  if (resendSec > 0) {
+    const resendTick = setInterval(() => {
+      resendSec--;
+      if (resendSec <= 0) {
+        clearInterval(resendTick);
+        resendBtn.disabled = false;
+        document.getElementById('resendLabel').textContent = 'Renvoyer un nouveau code';
+      } else if (resendLbl) {
+        resendLbl.textContent = resendSec;
+      }
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>

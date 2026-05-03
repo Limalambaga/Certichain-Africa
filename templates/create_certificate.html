@@ -1,443 +1,273 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un Certificat - Certichain</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% block title %}Émettre un certificat{% endblock %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+{% block content %}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
+<div class="page-header">
+  <div class="page-header__top">
+    <div>
+      <h1>Émettre un certificat</h1>
+      <p>Créez un diplôme, une certification ou un badge pour votre bénéficiaire</p>
+    </div>
+    <a href="/my-certificates" class="btn btn-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Voir mes certificats
+    </a>
+  </div>
+</div>
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+<div style="max-width: 760px;">
 
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+  <!-- Notification zone -->
+  <div id="notifZone"></div>
 
-        .form-container {
-            padding: 40px;
-        }
+  <form id="certForm">
 
-        .form-section {
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .certificate-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .cert-option {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .cert-option input[type="radio"] {
-            display: none;
-        }
-
-        .cert-option label {
-            display: block;
-            padding: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .cert-option input[type="radio"]:checked + label {
-            border-color: #667eea;
-            background-color: #f0f5ff;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
-        }
-
-        .cert-option label .icon {
-            font-size: 30px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .cert-option label .name {
-            font-weight: 600;
-            color: #333;
-            font-size: 16px;
-        }
-
-        .cert-option label .desc {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .dynamic-fields {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .dynamic-fields.active {
-            display: block;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 40px;
-        }
-
-        button {
-            padding: 12px 40px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error-message {
-            display: none;
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
-        }
-
-        .field-requirement {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 600px) {
-            .form-container {
-                padding: 20px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .certificate-types {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎓 Créer un Certificat</h1>
-            <p>Émettez un diplôme, une certification ou un badge pour vos bénéficiaires</p>
+    <!-- ─── Step 1: Type ──────────────────────────── -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; background:var(--navy-800); color:white; border-radius:50%; font-size:0.72rem; font-weight:700; margin-right:0.5rem;">1</span>
+            Type de certificat
+          </h2>
+          <p>Sélectionnez la nature du document à émettre</p>
         </div>
 
-        <div class="form-container">
-            <div class="success-message" id="successMsg"></div>
-            <div class="error-message" id="errorMsg"></div>
+        <div class="cert-type-grid">
 
-            <form id="certificateForm">
-                <!-- Sélection du type de certificat -->
-                <div class="form-section">
-                    <div class="section-title">Type de Certificat</div>
-                    <div class="certificate-types">
-                        <div class="cert-option">
-                            <input type="radio" id="type_diplome" name="certificate_type" value="diplome" checked>
-                            <label for="type_diplome">
-                                <span class="icon">🎓</span>
-                                <span class="name">Diplôme</span>
-                                <span class="desc">Formation complète</span>
-                            </label>
-                        </div>
-                        <div class="cert-option">
-                            <input type="radio" id="type_certification" name="certificate_type" value="certification">
-                            <label for="type_certification">
-                                <span class="icon">✓</span>
-                                <span class="name">Certification</span>
-                                <span class="desc">Compétences acquises</span>
-                            </label>
-                        </div>
-                        <div class="cert-option">
-                            <input type="radio" id="type_badge" name="certificate_type" value="badge">
-                            <label for="type_badge">
-                                <span class="icon">⭐</span>
-                                <span class="name">Badge</span>
-                                <span class="desc">Accomplissement</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+          <div class="cert-type-option">
+            <input type="radio" id="type_diplome" name="certificate_type" value="diplome" checked>
+            <label class="cert-type-label" for="type_diplome">
+              <div class="cert-type-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--navy-800)" stroke-width="2" stroke-linecap="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+              </div>
+              <span class="cert-type-name">Diplôme</span>
+              <span class="cert-type-desc">Formation complète</span>
+            </label>
+          </div>
 
-                <!-- Informations du bénéficiaire -->
-                <div class="form-section">
-                    <div class="section-title">Informations du Bénéficiaire</div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="recipientName">Nom Complet *</label>
-                            <input type="text" id="recipientName" name="recipient_name" required>
-                            <div class="field-requirement">Nom et prénom du bénéficiaire</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="recipientEmail">Email *</label>
-                            <input type="email" id="recipientEmail" name="recipient_email" required>
-                            <div class="field-requirement">Email du bénéficiaire</div>
-                        </div>
-                    </div>
-                </div>
+          <div class="cert-type-option">
+            <input type="radio" id="type_certification" name="certificate_type" value="certification">
+            <label class="cert-type-label" for="type_certification">
+              <div class="cert-type-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round">
+                  <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+              </div>
+              <span class="cert-type-name">Certification</span>
+              <span class="cert-type-desc">Compétences acquises</span>
+            </label>
+          </div>
 
-                <!-- Détails du certificat -->
-                <div class="form-section">
-                    <div class="section-title">Détails du Certificat</div>
-                    
-                    <div class="form-group">
-                        <label for="domain">Domaine/Spécialité *</label>
-                        <input type="text" id="domain" name="domain" placeholder="ex: Informatique, Management, Langues" required>
-                    </div>
+          <div class="cert-type-option">
+            <input type="radio" id="type_badge" name="certificate_type" value="badge">
+            <label class="cert-type-label" for="type_badge">
+              <div class="cert-type-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                </svg>
+              </div>
+              <span class="cert-type-name">Badge</span>
+              <span class="cert-type-desc">Accomplissement</span>
+            </label>
+          </div>
 
-                    <div id="diploma-fields" class="dynamic-fields active">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="mention">Mention</label>
-                                <select id="mention" name="mention">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="TRÈS BIEN">Très Bien</option>
-                                    <option value="BIEN">Bien</option>
-                                    <option value="ASSEZ BIEN">Assez Bien</option>
-                                    <option value="PASSABLE">Passable</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="graduation_date">Date de Remise</label>
-                                <input type="date" id="graduation_date" name="graduation_date">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="certification-fields" class="dynamic-fields">
-                        <div class="form-group">
-                            <label for="competencies">Compétences (séparées par des virgules)</label>
-                            <textarea id="competencies" name="competencies" rows="4" placeholder="ex: Leadership, Communication, Gestion de projet"></textarea>
-                        </div>
-                    </div>
-
-                    <div id="badge-fields" class="dynamic-fields">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="level">Niveau</label>
-                                <select id="level" name="level">
-                                    <option value="Débutant">Débutant</option>
-                                    <option value="Intermédiaire" selected>Intermédiaire</option>
-                                    <option value="Avancé">Avancé</option>
-                                    <option value="Expert">Expert</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="validity">Validité (mois)</label>
-                                <input type="number" id="validity" name="validity" placeholder="24" min="1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informations supplémentaires -->
-                <div class="form-section">
-                    <div class="section-title">Informations Supplémentaires</div>
-                    <div class="form-group">
-                        <label for="description">Description/Remarques</label>
-                        <textarea id="description" name="description" rows="4" placeholder="Ajoutez des détails supplémentaires..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Boutons -->
-                <div class="button-group">
-                    <button type="reset" class="btn-secondary">Réinitialiser</button>
-                    <button type="submit" class="btn-primary">Créer le Certificat</button>
-                </div>
-            </form>
         </div>
+      </div>
     </div>
 
-    <script>
-        const form = document.getElementById('certificateForm');
-        const typeRadios = document.querySelectorAll('input[name="certificate_type"]');
-        
-        // Affiche/cache les champs dynamiques selon le type
-        typeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.querySelectorAll('.dynamic-fields').forEach(field => {
-                    field.classList.remove('active');
-                });
-                
-                if (this.value === 'diplome') {
-                    document.getElementById('diploma-fields').classList.add('active');
-                } else if (this.value === 'certification') {
-                    document.getElementById('certification-fields').classList.add('active');
-                } else if (this.value === 'badge') {
-                    document.getElementById('badge-fields').classList.add('active');
-                }
-            });
-        });
 
-        // Soumission du formulaire
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            try {
-                const response = await fetch('/api/certificates/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    showSuccess('✅ Certificat créé avec succès! ID: ' + result.certificate_id);
-                    form.reset();
-                    setTimeout(() => {
-                        window.location.href = '/certificates';
-                    }, 2000);
-                } else {
-                    showError('❌ ' + (result.message || 'Erreur lors de la création'));
-                }
-            } catch (error) {
-                showError('❌ Erreur: ' + error.message);
-            }
-        });
+    <!-- ─── Step 2: Beneficiary ───────────────────── -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; background:var(--navy-800); color:white; border-radius:50%; font-size:0.72rem; font-weight:700; margin-right:0.5rem;">2</span>
+            Informations du bénéficiaire
+          </h2>
+        </div>
 
-        function showSuccess(msg) {
-            const el = document.getElementById('successMsg');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="recipientName">Nom complet <sup>*</sup></label>
+            <input class="form-input" type="text" id="recipientName" name="recipient_name" required placeholder="Prénom Nom">
+            <span class="form-hint">Tel qu'il apparaîtra sur le certificat</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="recipientEmail">Adresse email <sup>*</sup></label>
+            <input class="form-input" type="email" id="recipientEmail" name="recipient_email" required placeholder="prenom.nom@email.com">
+          </div>
+        </div>
+      </div>
+    </div>
 
-        function showError(msg) {
-            const el = document.getElementById('errorMsg');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
-    </script>
-</body>
-</html>
+
+    <!-- ─── Step 3: Certificate Details ──────────── -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-body-lg">
+        <div class="section-header">
+          <h2>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; background:var(--navy-800); color:white; border-radius:50%; font-size:0.72rem; font-weight:700; margin-right:0.5rem;">3</span>
+            Détails du certificat
+          </h2>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="domain">Domaine / Spécialité <sup>*</sup></label>
+          <input class="form-input" type="text" id="domain" name="domain" required placeholder="Ex : Informatique, Management, Langues…">
+        </div>
+
+        <!-- Dynamic fields — Diplôme -->
+        <div id="fields-diplome" class="dynamic-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="mention">Mention</label>
+              <select class="form-select" id="mention" name="mention">
+                <option value="">Sélectionner…</option>
+                <option value="TRÈS BIEN">Très Bien</option>
+                <option value="BIEN">Bien</option>
+                <option value="ASSEZ BIEN">Assez Bien</option>
+                <option value="PASSABLE">Passable</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="graduation_date">Date de remise</label>
+              <input class="form-input" type="date" id="graduation_date" name="graduation_date">
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic fields — Certification -->
+        <div id="fields-certification" class="dynamic-fields hidden">
+          <div class="form-group">
+            <label class="form-label" for="competencies">Compétences acquises</label>
+            <textarea class="form-input" id="competencies" name="competencies" rows="3" placeholder="Ex : Leadership, Communication, Gestion de projet…" style="resize:vertical;"></textarea>
+            <span class="form-hint">Séparez les compétences par des virgules</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="duration">Durée de la formation</label>
+              <input class="form-input" type="text" id="duration" name="duration" placeholder="Ex : 6 mois, 120 heures">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cert_date">Date d'obtention</label>
+              <input class="form-input" type="date" id="cert_date" name="graduation_date">
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic fields — Badge -->
+        <div id="fields-badge" class="dynamic-fields hidden">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="level">Niveau</label>
+              <select class="form-select" id="level" name="level">
+                <option value="Débutant">Débutant</option>
+                <option value="Intermédiaire" selected>Intermédiaire</option>
+                <option value="Avancé">Avancé</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="validity">Validité (mois)</label>
+              <input class="form-input" type="number" id="validity" name="validity" placeholder="24" min="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Description (always shown) -->
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" for="description">Remarques / Description</label>
+          <textarea class="form-input" id="description" name="description" rows="3" placeholder="Informations complémentaires optionnelles…" style="resize:vertical;"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ─── Actions ───────────────────────────────── -->
+    <div style="display:flex; align-items:center; gap:1rem; justify-content:flex-end;">
+      <button type="reset" class="btn btn-outline" onclick="resetForm()">Réinitialiser</button>
+      <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Émettre le certificat
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const typeRadios = document.querySelectorAll('input[name="certificate_type"]');
+  const allFields  = document.querySelectorAll('.dynamic-fields');
+  const form       = document.getElementById('certForm');
+  const btn        = document.getElementById('submitBtn');
+  const notif      = document.getElementById('notifZone');
+
+  typeRadios.forEach(r => r.addEventListener('change', function() {
+    allFields.forEach(f => f.classList.add('hidden'));
+    const target = document.getElementById('fields-' + this.value);
+    if (target) target.classList.remove('hidden');
+  }));
+
+  function showNotif(type, msg) {
+    notif.innerHTML = `<div class="alert alert-${type}" style="margin-bottom:1.5rem;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        ${type === 'success'
+          ? '<polyline points="20 6 9 17 4 12"/>'
+          : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
+      </svg>
+      ${msg}
+    </div>`;
+    notif.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function resetForm() {
+    notif.innerHTML = '';
+    allFields.forEach(f => f.classList.add('hidden'));
+    document.getElementById('fields-diplome').classList.remove('hidden');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Émission en cours…';
+    notif.innerHTML = '';
+
+    const fd   = new FormData(form);
+    const data = Object.fromEntries(fd);
+
+    try {
+      const res    = await fetch('/api/certificates/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        showNotif('success', `Certificat émis avec succès — ID #${result.certificate_id}. Redirection vers votre liste…`);
+        form.reset();
+        resetForm();
+        setTimeout(() => window.location.href = '/my-certificates', 2200);
+      } else {
+        showNotif('error', result.message || 'Une erreur est survenue lors de l'émission.');
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>Émettre le certificat`;
+      }
+    } catch (err) {
+      showNotif('error', 'Erreur réseau : ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Émettre le certificat';
+    }
+  });
+</script>
+{% endblock %}

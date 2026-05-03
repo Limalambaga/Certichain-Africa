@@ -11,6 +11,14 @@ INFURA_PROJECT_ID = os.getenv("INFURA_PROJECT_ID")
 ISSUER_ADDRESS = os.getenv("ISSUER_ADDRESS")
 ISSUER_PRIVATE_KEY = os.getenv("ISSUER_PRIVATE_KEY")
 
+# Mail configuration (Gmail / SMTP)
+MAIL_SERVER   = os.getenv("MAIL_SERVER",   "smtp.gmail.com")
+MAIL_PORT     = int(os.getenv("MAIL_PORT", "587"))
+MAIL_USE_TLS  = os.getenv("MAIL_USE_TLS",  "True").lower() == "true"
+MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER") or MAIL_USERNAME
+
 # Fixed Configuration
 CONTRACT_ADDRESS = "0x6DAfb87Edc9F4D218B9489D4741555fd80678a33"
 

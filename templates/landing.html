@@ -1,668 +1,493 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certichain - Authentification de Certificats Décentralisée</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-        }
-
-        /* Navbar */
-        .navbar {
-            background: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .navbar-menu {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .navbar-menu a {
-            text-decoration: none;
-            color: #666;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-menu a:hover {
-            color: #667eea;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6rem 2rem;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 3rem;
-            opacity: 0.95;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.9rem 2.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #667eea;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        /* Partners Section */
-        .partners-section {
-            background: white;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .partners-section h2 {
-            font-size: 2rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .partners-carousel {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4rem;
-            overflow: hidden;
-            padding: 2rem 0;
-            position: relative;
-            max-width: 100%;
-        }
-
-        .carousel-wrapper {
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .carousel-content {
-            display: flex;
-            gap: 4rem;
-            animation: scroll 40s linear infinite;
-            padding: 0 2rem;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .carousel-content:hover {
-            animation-play-state: paused;
-        }
-
-        .partner-logo {
-            min-width: 180px;
-            height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .partner-logo:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .partner-logo img {
-            max-width: 90%;
-            max-height: 85%;
-            object-fit: contain;
-        }
-
-        .partner-logo svg {
-            width: 80%;
-            height: 80%;
-        }
-
-        /* Templates Section */
-        .templates-section {
-            background: white;
-            padding: 4rem 2rem;
-        }
-
-        .templates-section h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .templates-section > p {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 3rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .templates-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .template-card {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .template-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-            transform: translateY(-5px);
-        }
-
-        .template-preview {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .template-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .template-card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .template-button {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .template-button:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Features Section */
-        .features-section {
-            background: #f8f9fa;
-            padding: 4rem 2rem;
-        }
-
-        .features-section h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .features-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .feature-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .cta-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta-section p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-        }
-
-        /* Footer */
-        .footer {
-            background: #333;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-            }
-
-            .carousel-content {
-                gap: 2rem;
-            }
-
-            .partner-logo {
-                min-width: 140px;
-                height: 70px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .templates-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .templates-section h2 {
-                font-size: 1.5rem;
-            }
-
-            .templates-section > p {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certichain Africa — Certification numérique blockchain de confiance</title>
+  <meta name="description" content="Émettez, gérez et vérifiez vos certificats numériques avec la blockchain. La plateforme de référence pour les institutions africaines."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-brand">🔐 Certichain</div>
-        <div class="navbar-menu">
-            <a href="#features">Fonctionnalités</a>
-            <a href="/templates">Modèles</a>
-            <a href="/login">Connexion</a>
-            <a href="/signup">S'inscrire</a>
+<body class="landing-body">
+
+<!-- ═══════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════ -->
+<header class="c-navbar">
+  <div class="c-navbar__inner">
+
+    <a href="/" class="c-navbar__brand">
+      <div class="c-navbar__brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+        </svg>
+      </div>
+      Certichain
+    </a>
+
+    <nav class="c-navbar__nav"></nav>
+
+    <div class="c-navbar__actions">
+      <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
+      <a href="/signup" class="btn btn-primary btn-sm">Commencer gratuitement</a>
+    </div>
+
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════ -->
+<section class="hero" style="padding-top: calc(64px + 5rem);">
+  <div class="hero__bg"></div>
+  <div class="hero__grid"></div>
+
+  <div class="hero__inner">
+
+    <!-- Text -->
+    <div class="hero__text">
+      <h1 class="hero__title">
+        La certification numérique<br>
+        de <em>confiance</em> pour<br>
+        l'Afrique
+      </h1>
+
+      <p class="hero__desc">
+        Émettez, partagez et vérifiez des certificats inviolables
+        grâce à la technologie blockchain. Une solution institutionnelle
+        pensée pour les universités, écoles et organismes de formation.
+      </p>
+
+      <div class="hero__actions">
+        <a href="/signup" class="btn btn-primary btn-lg">
+          Démarrer maintenant
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="hero__trust">
+        <div class="hero__trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Sécurisé par blockchain
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>🔐 Authentification de Certificats Décentralisée</h1>
-        <p>Plateforme sécurisée pour gérer et vérifier les certificats avec la blockchain et IPFS</p>
-        <div class="hero-buttons">
-            <a href="/signup" class="btn btn-primary">Créer un Compte</a>
-            <a href="/login" class="btn btn-secondary">Se Connecter</a>
+        <div class="hero__trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Stockage IPFS décentralisé
         </div>
-    </section>
-
-    <!-- Partners Carousel -->
-    <section class="partners-section">
-        <h2>Plus de 250 institutions font confiance à Certichain</h2>
-        <div class="carousel-wrapper">
-            <div class="carousel-content">
-                <!-- First set of logos -->
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="50" cy="40" r="25" fill="#667eea"/>
-                        <text x="100" y="45" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#333">
-                            Université
-                        </text>
-                        <text x="100" y="60" dominant-baseline="middle" font-size="10" fill="#999">
-                            Paris
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <polygon points="100,20 120,60 80,60" fill="#764ba2"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            Polytechnique
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <rect x="30" y="25" width="40" height="30" fill="#e74c3c" rx="3"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            Sciences Po
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="40" cy="40" r="18" fill="#f39c12"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            HEC Paris
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <rect x="25" y="20" width="50" height="40" fill="#3498db" rx="4"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            ESSEC
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <path d="M 30 60 Q 40 30, 50 60 Q 60 30, 70 60 Q 80 30, 90 60" stroke="#27ae60" stroke-width="3" fill="none"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            EDHEC
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="40" cy="40" r="12" fill="#9b59b6"/>
-                        <circle cx="55" cy="40" r="12" fill="#667eea"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">
-                            IMT
-                        </text>
-                        <text x="100" y="60" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="#999">
-                            Atlantique
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <path d="M 30 30 L 50 60 L 70 30 L 30 30" fill="#e67e22"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">
-                            CentraleSupélec
-                        </text>
-                    </svg>
-                </div>
-
-                <!-- Duplicate for infinite scroll effect -->
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="50" cy="40" r="25" fill="#667eea"/>
-                        <text x="100" y="45" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#333">
-                            Université
-                        </text>
-                        <text x="100" y="60" dominant-baseline="middle" font-size="10" fill="#999">
-                            Paris
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <polygon points="100,20 120,60 80,60" fill="#764ba2"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            Polytechnique
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <rect x="30" y="25" width="40" height="30" fill="#e74c3c" rx="3"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            Sciences Po
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="40" cy="40" r="18" fill="#f39c12"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            HEC Paris
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <rect x="25" y="20" width="50" height="40" fill="#3498db" rx="4"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            ESSEC
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <path d="M 30 60 Q 40 30, 50 60 Q 60 30, 70 60 Q 80 30, 90 60" stroke="#27ae60" stroke-width="3" fill="none"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">
-                            EDHEC
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <circle cx="40" cy="40" r="12" fill="#9b59b6"/>
-                        <circle cx="55" cy="40" r="12" fill="#667eea"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">
-                            IMT
-                        </text>
-                        <text x="100" y="60" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="#999">
-                            Atlantique
-                        </text>
-                    </svg>
-                </div>
-                <div class="partner-logo">
-                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="200" height="80" fill="#f0f0f0" rx="8"/>
-                        <path d="M 30 30 L 50 60 L 70 30 L 30 30" fill="#e67e22"/>
-                        <text x="100" y="45" dominant-baseline="middle" text-anchor="middle" font-size="10" font-weight="bold" fill="#333">
-                            CentraleSupélec
-                        </text>
-                    </svg>
-                </div>
-            </div>
+        <div class="hero__trust-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Vérification instantanée
         </div>
-    </section>
+      </div>
+    </div>
 
-    <!-- Templates Section -->
-    <section class="templates-section">
-        <h2>📄 Modèles de Certificats</h2>
-        <p>Les institutions partenaires doivent d'abord télécharger les modèles de certificats approuvés avant de créer leurs propres diplômes. Chaque modèle est optimisé pour la blockchain et peut être personnalisé avec votre logo.</p>
-        <div class="templates-grid">
-            <div class="template-card">
-                <div class="template-preview">🎓</div>
-                <h3>Modèle Diplôme</h3>
-                <p>Modèle standard pour les diplômes et certificats d'études. Format A4 avec zones de signature numérique.</p>
-                <a href="#" class="template-button">📥 Télécharger</a>
-            </div>
-            <div class="template-card">
-                <div class="template-preview">🏆</div>
-                <h3>Modèle Certification</h3>
-                <p>Pour les certifications professionnelles et cours de formation. Inclut domaines de compétences.</p>
-                <a href="#" class="template-button">📥 Télécharger</a>
-            </div>
-            <div class="template-card">
-                <div class="template-preview">🎖️</div>
-                <h3>Modèle Badge</h3>
-                <p>Badges de compétences numériques. Parfait pour les micro-certifications et OpenBadges.</p>
-                <a href="#" class="template-button">📥 Télécharger</a>
-            </div>
+    <!-- Certificate Mockup -->
+    <div class="hero__visual">
+      <div class="mockup-wrapper">
+        <div class="float-badge float-badge--1">
+          <span class="badge-dot"></span>
+          Vérifié en temps réel
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="features">
-        <h2>Nos Fonctionnalités</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🔐</div>
-                <h3>Sécurité</h3>
-                <p>Authentification sécurisée avec hash SHA256 et mots de passe forts</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⛓️</div>
-                <h3>Blockchain</h3>
-                <p>Publication sur Ethereum (Sepolia) pour l'immuabilité des données</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3>Stockage IPFS</h3>
-                <p>Stockage décentralisé et immuable avec Pinata</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">✓</div>
-                <h3>Vérification</h3>
-                <p>Vérifiez l'authenticité des certificats en quelques secondes</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Dashboard</h3>
-                <p>Tableau de bord complet pour gérer vos certificats</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Rapide</h3>
-                <p>Publication et vérification instantanées des certificats</p>
-            </div>
+        <div class="float-badge float-badge--2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0F9589" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Ancré sur blockchain
         </div>
-    </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <h2>Prêt à Commencer ?</h2>
-        <p>Créez un compte gratuitement et commencez à émettre des certificats sécurisés</p>
-        <a href="/signup" class="btn btn-primary">S'inscrire Maintenant</a>
-    </section>
+        <div class="cert-mockup">
+          <!-- Header -->
+          <div class="cert-mockup__top">
+            <div class="cert-mockup__brand">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+              CERTICHAIN AFRICA
+            </div>
+            <div class="cert-mockup__verified">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Authentique
+            </div>
+          </div>
+          <!-- Body -->
+          <div class="cert-mockup__body">
+            <div class="cert-mockup__school">Université de Yaoundé I</div>
+            <div class="cert-mockup__title">Master en Informatique</div>
+            <div class="cert-mockup__name-label">Décerné à</div>
+            <div class="cert-mockup__name">Marie Nkoulou Eto'o</div>
+            <div class="cert-mockup__meta">
+              <div class="cert-mockup__meta-item">
+                <label>Domaine</label>
+                <span>Sciences &amp; Technologies</span>
+              </div>
+              <div class="cert-mockup__meta-item">
+                <label>Mention</label>
+                <span>Très Bien</span>
+              </div>
+              <div class="cert-mockup__meta-item">
+                <label>Date</label>
+                <span>15 juin 2024</span>
+              </div>
+              <div class="cert-mockup__meta-item">
+                <label>Statut</label>
+                <span style="color:var(--teal-500); font-weight:700;">Vérifié</span>
+              </div>
+            </div>
+            <div class="cert-mockup__hash">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              <span>0x7f4e3a8b2c91d5f6e4a0b3c2d1e9f847a6b5c4d3...</span>
+            </div>
+          </div>
+          <!-- Footer -->
+          <div class="cert-mockup__footer">
+            <span style="font-size:0.73rem; font-weight:600; color:var(--text-muted);">Réseau Sepolia · IPFS</span>
+            <span class="badge badge-teal" style="font-size:0.7rem;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Ancré
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 Certichain - Authentification Décentralisée</p>
-    </footer>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     TRUST BAR
+════════════════════════════════════════════════════ -->
+<section class="trust-bar">
+  <div class="trust-bar__label">Fait confiance par des institutions à travers l'Afrique</div>
+  <div class="logos-track-wrapper">
+    <div class="logos-track">
+      <!-- Set 1 -->
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div>
+        <span class="logo-item__name">Univ. Cheikh Anta Diop</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div>
+        <span class="logo-item__name">Univ. de Yaoundé I</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div>
+        <span class="logo-item__name">Cairo University</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div>
+        <span class="logo-item__name">Lagos Business School</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div>
+        <span class="logo-item__name">INES Ruhengeri</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div>
+        <span class="logo-item__name">Stellenbosch University</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div>
+        <span class="logo-item__name">Université de Lomé</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div>
+        <span class="logo-item__name">ESMT Abidjan</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div>
+        <span class="logo-item__name">Univ. Gaston Berger</span>
+      </div>
+      <!-- Set 2 (duplicate for infinite loop) -->
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div>
+        <span class="logo-item__name">Univ. Cheikh Anta Diop</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div>
+        <span class="logo-item__name">Univ. de Yaoundé I</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div>
+        <span class="logo-item__name">Cairo University</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div>
+        <span class="logo-item__name">Lagos Business School</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div>
+        <span class="logo-item__name">INES Ruhengeri</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div>
+        <span class="logo-item__name">Stellenbosch University</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div>
+        <span class="logo-item__name">Université de Lomé</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div>
+        <span class="logo-item__name">ESMT Abidjan</span>
+      </div>
+      <div class="logo-item">
+        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div>
+        <span class="logo-item__name">Univ. Gaston Berger</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════════════ -->
+<section class="landing-section landing-section--alt" id="features">
+  <div class="container">
+
+    <div class="section-head text-center">
+      <div class="section-eyebrow">Fonctionnalités</div>
+      <h2 class="section-title">Tout ce dont une institution a besoin</h2>
+      <p class="section-desc" style="margin: 0 auto;">
+        De l'émission à la vérification, Certichain couvre l'intégralité
+        du cycle de vie du certificat numérique.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--navy">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h3>Sécurité blockchain</h3>
+        <p>Chaque certificat est ancré de manière immuable sur la blockchain Ethereum. Impossible à falsifier, impossible à perdre.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--teal">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <h3>Vérification instantanée</h3>
+        <p>N'importe qui peut vérifier l'authenticité d'un certificat en quelques secondes, depuis n'importe où dans le monde.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <h3>Stockage IPFS</h3>
+        <p>Les fichiers PDF sont stockés sur le réseau IPFS décentralisé — pérennité garantie et accès mondial sans dépendance à un serveur central.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--success">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <h3>Modèles professionnels</h3>
+        <p>Bibliothèque de modèles PDF prêts à l'emploi : diplômes, certifications, badges. Personnalisables avec le logo de votre institution.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--navy">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h3>Tableau de bord temps réel</h3>
+        <p>Suivez en temps réel tous vos certificats émis, leur statut blockchain et l'historique complet de vos actions.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <h3>Multi-institutionnel</h3>
+        <p>Chaque institution dispose de son espace sécurisé, de ses propres modèles et de son portefeuille blockchain dédié.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════════ -->
+<section class="landing-section" id="how">
+  <div class="container">
+
+    <div class="section-head text-center">
+      <div class="section-eyebrow">Processus</div>
+      <h2 class="section-title">Simple en 3 étapes</h2>
+      <p class="section-desc" style="margin: 0 auto;">
+        De l'inscription à l'émission de votre premier certificat blockchain,
+        le processus est conçu pour être rapide et intuitif.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Inscription institution</h3>
+        <p>Créez le compte de votre institution en quelques minutes. Vos informations sont vérifiées et sécurisées.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Remplissez le certificat</h3>
+        <p>Choisissez un modèle, saisissez les informations du bénéficiaire. Le PDF est généré automatiquement.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Ancrage blockchain</h3>
+        <p>En un clic, le certificat est ancré sur la blockchain et stocké sur IPFS. La preuve est immuable et vérifiable à vie.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SOLUTIONS
+════════════════════════════════════════════════════ -->
+<section class="landing-section landing-section--alt">
+  <div class="container">
+
+    <div class="section-head text-center">
+      <div class="section-eyebrow">Solutions</div>
+      <h2 class="section-title">Pour chaque type d'institution</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+
+      <div class="card card--hover" style="border-top: 3px solid var(--navy-800);">
+        <div class="card-body-lg">
+          <div class="feature-icon feature-icon--navy" style="margin-bottom:1.25rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Universités &amp; Grandes écoles</h3>
+          <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Diplômes de licence et master
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Relevés de notes certifiés
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Attestations de réussite
+            </li>
+          </ul>
+          <a href="/signup" class="btn btn-primary btn-full">Démarrer</a>
+        </div>
+      </div>
+
+      <div class="card card--hover" style="border-top: 3px solid var(--blue-500);">
+        <div class="card-body-lg">
+          <div class="feature-icon feature-icon--blue" style="margin-bottom:1.25rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Organismes de formation</h3>
+          <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Certifications professionnelles
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Badges de compétences
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Micro-certifications
+            </li>
+          </ul>
+          <a href="/signup" class="btn btn-blue btn-full">Démarrer</a>
+        </div>
+      </div>
+
+      <div class="card card--hover" style="border-top: 3px solid var(--teal-500);">
+        <div class="card-body-lg">
+          <div class="feature-icon feature-icon--teal" style="margin-bottom:1.25rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">RH &amp; Recruteurs</h3>
+          <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Vérification instantanée
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Zéro fraude documentaire
+            </li>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              API d'intégration disponible
+            </li>
+          </ul>
+          <a href="/verify" class="btn btn-teal btn-full">Vérifier maintenant</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════ -->
+<footer class="landing-footer">
+  <div class="landing-footer__inner">
+    <div class="landing-footer__brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      Certichain Africa
+    </div>
+    <div class="landing-footer__links"></div>
+    <div class="landing-footer__copy">&copy; 2025 Certichain Africa. Tous droits réservés.</div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+
 </body>
 </html>

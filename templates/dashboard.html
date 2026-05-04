@@ -9,10 +9,6 @@
       <h1>Tableau de bord</h1>
       <p>Bienvenue, <strong>{{ institution.name }}</strong> — voici un aperçu de votre activité</p>
     </div>
-    <a href="/create-certificate" class="btn btn-primary">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Émettre un certificat
-    </a>
   </div>
 </div>
 
@@ -71,17 +67,7 @@
     <div class="section-header">
       <h2>Actions rapides</h2>
     </div>
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1.25rem;">
-
-      <a href="/create-certificate" class="card card--hover" style="text-decoration:none; display:block;">
-        <div class="card-body">
-          <div style="width:44px; height:44px; background:var(--surface-2); border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; color:var(--navy-800);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          </div>
-          <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.35rem;">Émettre</h3>
-          <p style="font-size:0.8rem; color:var(--text-muted);">Créer un nouveau certificat numérique</p>
-        </div>
-      </a>
+    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1.25rem;">
 
       <a href="/my-certificates" class="card card--hover" style="text-decoration:none; display:block;">
         <div class="card-body">

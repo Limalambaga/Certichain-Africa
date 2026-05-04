@@ -8,3 +8,7 @@ requests==2.31.0
 Werkzeug==2.3.7
 python-dotenv==1.0.0
 reportlab==4.2.5
+# Database drivers — install the one matching your DB choice:
+# pip install PyMySQL==1.1.1        (for MySQL)
+# pip install psycopg2-binary       (for PostgreSQL)
+PyMySQL==1.1.1

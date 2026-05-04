@@ -34,7 +34,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///certichain.db'
+_db_url = os.getenv('DATABASE_URL') or 'sqlite:///certichain.db'
+# Fix Heroku/Railway-style postgres:// URIs
+if _db_url.startswith('postgres://'):
+    _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
 
@@ -142,6 +146,8 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'institution_id' not in session:
+            if request.path.startswith('/api/'):
+                return jsonify({'message': 'Session expirée. Veuillez vous reconnecter.'}), 401
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function

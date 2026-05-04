@@ -155,7 +155,7 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="cert_date">Date d'obtention</label>
-              <input class="form-input" type="date" id="cert_date" name="graduation_date">
+              <input class="form-input" type="date" id="cert_date" name="cert_date">
             </div>
           </div>
         </div>
@@ -236,14 +236,35 @@
     document.getElementById('fields-diplome').classList.remove('hidden');
   }
 
+  const SUBMIT_HTML = btn.innerHTML;
+
+  function resetBtn() {
+    btn.disabled = false;
+    btn.innerHTML = SUBMIT_HTML;
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Émission en cours…';
     notif.innerHTML = '';
 
+    // Collect only fields that are NOT inside a hidden dynamic-fields block
+    const certType = document.querySelector('input[name="certificate_type"]:checked')?.value;
     const fd   = new FormData(form);
-    const data = Object.fromEntries(fd);
+    const data = {};
+    for (const [k, v] of fd.entries()) {
+      // Skip fields from hidden sections
+      const el = form.elements[k];
+      const parent = el instanceof RadioNodeList ? null : el?.closest('.dynamic-fields');
+      if (parent && parent.classList.contains('hidden')) continue;
+      data[k] = v;
+    }
+    // Use cert_date as graduation_date for certifications
+    if (certType === 'certification' && data.cert_date) {
+      data.graduation_date = data.cert_date;
+    }
+    delete data.cert_date;
 
     try {
       const res    = await fetch('/api/certificates/create', {
@@ -251,6 +272,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
+
+      if (res.status === 401) {
+        showNotif('error', 'Session expirée. <a href="/login" style="color:var(--blue-500);font-weight:600;">Se reconnecter</a>');
+        resetBtn();
+        return;
+      }
+
       const result = await res.json();
 
       if (res.ok) {
@@ -259,14 +287,12 @@
         resetForm();
         setTimeout(() => window.location.href = '/my-certificates', 2200);
       } else {
-        showNotif('error', result.message || 'Une erreur est survenue lors de l'émission.');
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>Émettre le certificat`;
+        showNotif('error', result.message || 'Une erreur est survenue lors de l\'émission.');
+        resetBtn();
       }
     } catch (err) {
-      showNotif('error', 'Erreur réseau : ' + err.message);
-      btn.disabled = false;
-      btn.textContent = 'Émettre le certificat';
+      showNotif('error', 'Erreur réseau\u00a0: ' + err.message);
+      resetBtn();
     }
   });
 </script>

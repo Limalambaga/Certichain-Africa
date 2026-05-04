@@ -926,15 +926,40 @@ def download_certificate_file(cert_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/me')
+@login_required
+def api_me():
+    institution = Institution.query.get(session['institution_id'])
+    if not institution:
+        return jsonify({'message': 'Institution introuvable'}), 404
+    return jsonify({'id': institution.id, 'name': institution.name, 'email': institution.email}), 200
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout_get():
+    session.clear()
+    return redirect(url_for('login'))
+
 # ==================== Error Handlers ====================
 
 @app.errorhandler(404)
 def not_found(error):
+    if request.path.startswith('/api/'):
+        return jsonify({'message': 'Route introuvable.'}), 404
     return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def server_error(error):
+    if request.path.startswith('/api/'):
+        return jsonify({'message': f'Erreur serveur : {str(error)}'}), 500
     return render_template('500.html'), 500
+
+@app.errorhandler(Exception)
+def handle_exception(error):
+    if request.path.startswith('/api/'):
+        import traceback
+        traceback.print_exc()
+        return jsonify({'message': f'Erreur : {str(error)}'}), 500
+    raise error
 
 # ==================== Initialization ====================
 

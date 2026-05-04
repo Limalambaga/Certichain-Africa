@@ -206,6 +206,13 @@
 
 {% block scripts %}
 <script>
+  // ── Page-load session guard ──────────────────────────────
+  fetch('/api/me').then(function(r) {
+    if (r.status === 401) {
+      window.location.href = '/login';
+    }
+  }).catch(function() {});
+
   const typeRadios = document.querySelectorAll('input[name="certificate_type"]');
   const allFields  = document.querySelectorAll('.dynamic-fields');
   const form       = document.getElementById('certForm');

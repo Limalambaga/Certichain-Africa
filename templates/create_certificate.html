@@ -237,61 +237,80 @@
   }
 
   const SUBMIT_HTML = btn.innerHTML;
+  function resetBtn() { btn.disabled = false; btn.innerHTML = SUBMIT_HTML; }
 
-  function resetBtn() {
-    btn.disabled = false;
-    btn.innerHTML = SUBMIT_HTML;
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
   }
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
+
+    var certType = val('type_diplome') && document.getElementById('type_diplome').checked ? 'diplome'
+                 : document.getElementById('type_certification').checked               ? 'certification'
+                 : document.getElementById('type_badge').checked                       ? 'badge'
+                 : '';
+
+    if (!certType) { showNotif('error', 'Veuillez sélectionner un type de certificat.'); return; }
+
+    var recipientName = val('recipientName');
+    var recipientEmail = val('recipientEmail');
+    var domain = val('domain');
+    if (!recipientName) { showNotif('error', 'Le nom du bénéficiaire est requis.'); return; }
+    if (!recipientEmail) { showNotif('error', "L'adresse email du bénéficiaire est requise."); return; }
+    if (!domain) { showNotif('error', 'Le domaine / spécialité est requis.'); return; }
+
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Émission en cours…';
     notif.innerHTML = '';
 
-    // Collect only fields that are NOT inside a hidden dynamic-fields block
-    const certType = document.querySelector('input[name="certificate_type"]:checked')?.value;
-    const fd   = new FormData(form);
-    const data = {};
-    for (const [k, v] of fd.entries()) {
-      // Skip fields from hidden sections
-      const el = form.elements[k];
-      const parent = el instanceof RadioNodeList ? null : el?.closest('.dynamic-fields');
-      if (parent && parent.classList.contains('hidden')) continue;
-      data[k] = v;
+    var data = {
+      certificate_type: certType,
+      recipient_name:   recipientName,
+      recipient_email:  recipientEmail,
+      domain:           domain,
+      description:      val('description')
+    };
+
+    if (certType === 'diplome') {
+      data.mention         = val('mention');
+      data.graduation_date = val('graduation_date');
+    } else if (certType === 'certification') {
+      data.competencies    = val('competencies');
+      data.duration        = val('duration');
+      data.graduation_date = val('cert_date');
+    } else if (certType === 'badge') {
+      data.level   = val('level');
+      data.validity = val('validity');
     }
-    // Use cert_date as graduation_date for certifications
-    if (certType === 'certification' && data.cert_date) {
-      data.graduation_date = data.cert_date;
-    }
-    delete data.cert_date;
 
     try {
-      const res    = await fetch('/api/certificates/create', {
+      var res = await fetch('/api/certificates/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
       if (res.status === 401) {
-        showNotif('error', 'Session expirée. <a href="/login" style="color:var(--blue-500);font-weight:600;">Se reconnecter</a>');
+        showNotif('error', 'Session expirée — <a href="/login" style="color:var(--blue-500);font-weight:600;">Se reconnecter</a>');
         resetBtn();
         return;
       }
 
-      const result = await res.json();
+      var result = await res.json();
 
       if (res.ok) {
-        showNotif('success', `Certificat émis avec succès — ID #${result.certificate_id}. Redirection vers votre liste…`);
+        showNotif('success', 'Certificat créé avec succès — ID #' + result.certificate_id + '. Redirection…');
         form.reset();
         resetForm();
-        setTimeout(() => window.location.href = '/my-certificates', 2200);
+        setTimeout(function() { window.location.href = '/my-certificates'; }, 2000);
       } else {
-        showNotif('error', result.message || 'Une erreur est survenue lors de l\'émission.');
+        showNotif('error', result.message || "Une erreur s'est produite.");
         resetBtn();
       }
     } catch (err) {
-      showNotif('error', 'Erreur réseau\u00a0: ' + err.message);
+      showNotif('error', 'Erreur réseau : ' + err.message);
       resetBtn();
     }
   });

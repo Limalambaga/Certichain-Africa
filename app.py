@@ -77,10 +77,22 @@ def get_safe_address(addr):
 CHECKED_CONTRACT = get_safe_address(CONTRACT_ADDRESS)
 CHECKED_ISSUER = get_safe_address(ISSUER_ADDRESS)
 
-if CHECKED_CONTRACT and CHECKED_ISSUER:
+BLOCKCHAIN_CONFIGURED = bool(
+    INFURA_PROJECT_ID and ISSUER_ADDRESS and ISSUER_PRIVATE_KEY
+    and CHECKED_CONTRACT and CHECKED_ISSUER
+)
+
+if BLOCKCHAIN_CONFIGURED:
     contract = w3.eth.contract(address=CHECKED_CONTRACT, abi=CONTRACT_ABI)
 else:
     contract = None
+    missing = []
+    if not INFURA_PROJECT_ID:  missing.append('INFURA_PROJECT_ID')
+    if not ISSUER_ADDRESS:     missing.append('ISSUER_ADDRESS')
+    if not ISSUER_PRIVATE_KEY: missing.append('ISSUER_PRIVATE_KEY')
+    if missing:
+        print(f"[BLOCKCHAIN] Désactivé — variables manquantes dans .env : {', '.join(missing)}")
+        print("[BLOCKCHAIN] Les certificats seront signés par hash SHA-256 local.")
 
 os.makedirs("certs/uploads", exist_ok=True)
 
@@ -793,34 +805,46 @@ def create_certificate():
             cert.ipfs_hash = None
             print(f"IPFS upload failed: {e}")
 
-        # Enregistrer sur la blockchain si possible
+        # ── Blockchain ou hash local ──────────────────────────────────────
         blockchain_hash = None
-        if contract and CHECKED_ISSUER and ISSUER_PRIVATE_KEY:
+
+        if BLOCKCHAIN_CONFIGURED:
+            # Enregistrement réel sur Ethereum Sepolia
             try:
-                cert_id = w3.solidity_keccak(['string'], [file_hash])
+                cert_id_bytes = w3.solidity_keccak(['string'], [file_hash])
                 nonce = w3.eth.get_transaction_count(CHECKED_ISSUER)
-                tx = contract.functions.issueCertificate(cert_id, cert.ipfs_hash or '', cert.recipient_name).build_transaction({
+                tx = contract.functions.issueCertificate(
+                    cert_id_bytes, cert.ipfs_hash or '', cert.recipient_name
+                ).build_transaction({
                     'chainId': 11155111,
                     'gas': 500000,
                     'gasPrice': w3.eth.gas_price,
                     'nonce': nonce,
                 })
-                signed = w3.eth.account.sign_transaction(tx, private_key=ISSUER_PRIVATE_KEY)
+                signed  = w3.eth.account.sign_transaction(tx, private_key=ISSUER_PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
                 w3.eth.wait_for_transaction_receipt(tx_hash)
-                blockchain_hash = w3.to_hex(tx_hash)
+                blockchain_hash     = w3.to_hex(tx_hash)
                 cert.blockchain_hash = blockchain_hash
-                cert.status = 'issued'
+                cert.status          = 'issued'
+                print(f"[BLOCKCHAIN] Certificat {cert.id} enregistré → {blockchain_hash}")
             except Exception as e:
-                print(f"Blockchain issue failed: {e}")
+                print(f"[BLOCKCHAIN] Échec transaction : {e}")
+                # Retomber sur le hash local si la transaction échoue
+                blockchain_hash = None
 
-        # Régénérer le PDF avec le vrai hash blockchain si disponible
-        if blockchain_hash:
-            pdf_payload['blockchain_hash'] = blockchain_hash[:20] + '...'  # Tronquer pour l'affichage
-            pdf_buffer_final = pdf_func(pdf_payload)
-            pdf_buffer_final.seek(0)
-            with open(file_path, 'wb') as f:
-                f.write(pdf_buffer_final.read())
+        if not blockchain_hash:
+            # Fingerprint SHA-256 du PDF — vérifiable localement, sans frais de gas
+            blockchain_hash      = 'sha256:' + file_hash
+            cert.blockchain_hash = blockchain_hash
+            cert.status          = 'issued'
+
+        # Régénérer le PDF avec le hash final inscrit dessus
+        pdf_payload['blockchain_hash'] = blockchain_hash[:40] + ('…' if len(blockchain_hash) > 40 else '')
+        pdf_buffer_final = pdf_func(pdf_payload)
+        pdf_buffer_final.seek(0)
+        with open(file_path, 'wb') as f:
+            f.write(pdf_buffer_final.read())
 
         db.session.commit()
 

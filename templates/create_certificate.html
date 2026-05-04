@@ -292,13 +292,21 @@
         body: JSON.stringify(data)
       });
 
-      if (res.status === 401) {
-        showNotif('error', 'Session expirée — <a href="/login" style="color:var(--blue-500);font-weight:600;">Se reconnecter</a>');
+      // Read body as text first — avoids crash if server returns HTML
+      var rawText = await res.text();
+      var result = null;
+      try { result = JSON.parse(rawText); } catch (_) {}
+
+      // HTML response = session expired or server error
+      if (!result) {
+        if (res.status === 401 || res.status === 302 || rawText.trim().startsWith('<')) {
+          showNotif('error', 'Session expirée — <a href="/login" style="color:var(--blue-500);font-weight:600;">Cliquez ici pour vous reconnecter</a>');
+        } else {
+          showNotif('error', 'Erreur serveur (' + res.status + '). Rechargez la page et réessayez.');
+        }
         resetBtn();
         return;
       }
-
-      var result = await res.json();
 
       if (res.ok) {
         showNotif('success', 'Certificat créé avec succès — ID #' + result.certificate_id + '. Redirection…');

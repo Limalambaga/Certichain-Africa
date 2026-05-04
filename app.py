@@ -729,7 +729,7 @@ def create_certificate():
     from models import Certificate, Institution
     from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
 
-    data = request.json or {}
+    data = request.get_json(force=True, silent=True) or {}
     institution_id = session.get('institution_id')
 
     if not institution_id:

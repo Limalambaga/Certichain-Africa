@@ -57,9 +57,9 @@ mail = Mail(app)
 # OTP is only enforced when SMTP credentials are configured
 MAIL_CONFIGURED = bool(MAIL_USERNAME and MAIL_PASSWORD)
 
-# Web3 Setup
-infura_url = f"https://sepolia.infura.io/v3/{INFURA_PROJECT_ID}"
-w3 = Web3(Web3.HTTPProvider(infura_url))
+# Web3 Setup — Polygon Amoy testnet (free gas via faucet.polygon.technology)
+POLYGON_RPC = os.getenv('POLYGON_RPC', 'https://polygon-rpc.com')
+w3 = Web3(Web3.HTTPProvider(POLYGON_RPC))
 
 try:
     from web3.middleware import ExtraDataToPOAMiddleware
@@ -78,7 +78,7 @@ CHECKED_CONTRACT = get_safe_address(CONTRACT_ADDRESS)
 CHECKED_ISSUER = get_safe_address(ISSUER_ADDRESS)
 
 BLOCKCHAIN_CONFIGURED = bool(
-    INFURA_PROJECT_ID and ISSUER_ADDRESS and ISSUER_PRIVATE_KEY
+    ISSUER_ADDRESS and ISSUER_PRIVATE_KEY
     and CHECKED_CONTRACT and CHECKED_ISSUER
 )
 
@@ -793,9 +793,8 @@ def create_certificate():
         with open(file_path, 'wb') as f:
             f.write(pdf_buffer.read())
 
-        # Calculer le hash du fichier
+        # Calculer le hash du fichier initial (utilisé pour l'ID on-chain)
         file_hash = generate_file_hash(file_path)
-        cert.file_hash = file_hash
 
         # Uploader sur IPFS
         try:
@@ -809,14 +808,13 @@ def create_certificate():
         blockchain_hash = None
 
         if BLOCKCHAIN_CONFIGURED:
-            # Enregistrement réel sur Ethereum Sepolia
             try:
                 cert_id_bytes = w3.solidity_keccak(['string'], [file_hash])
                 nonce = w3.eth.get_transaction_count(CHECKED_ISSUER)
                 tx = contract.functions.issueCertificate(
                     cert_id_bytes, cert.ipfs_hash or '', cert.recipient_name
                 ).build_transaction({
-                    'chainId': 11155111,
+                    'chainId': 137,  # Polygon mainnet
                     'gas': 500000,
                     'gasPrice': w3.eth.gas_price,
                     'nonce': nonce,
@@ -845,6 +843,10 @@ def create_certificate():
         pdf_buffer_final.seek(0)
         with open(file_path, 'wb') as f:
             f.write(pdf_buffer_final.read())
+
+        # Recompute hash from the FINAL PDF (the one the user will download)
+        # so file-based verification works correctly
+        cert.file_hash = generate_file_hash(file_path)
 
         db.session.commit()
 

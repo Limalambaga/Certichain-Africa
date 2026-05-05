@@ -770,7 +770,8 @@ def create_certificate():
         pdf_payload['graduation_date'] = data.get('graduation_date', datetime.now().strftime('%d/%m/%Y'))
         pdf_payload['cert_number'] = f'CERT-{datetime.now().year}-{cert.id:05d}'
         pdf_payload['duration'] = data.get('duration', 'N/A')
-        pdf_payload['blockchain_hash'] = 'En cours...'  # Placeholder temporaire
+        pdf_payload['blockchain_hash'] = 'En cours...'
+        pdf_payload['verify_url'] = request.host_url.rstrip('/') + f'/verify/{cert.id}'
 
         pdf_map = {
             'diplome': create_diploma_pdf,
@@ -910,47 +911,70 @@ def view_certificate(cert_id):
 @app.route('/certificate/<int:cert_id>/download')
 @login_required
 def download_certificate_file(cert_id):
-    """Télécharger un certificat comme PDF"""
+    """Serve the saved PDF — never regenerate, so file_hash stays consistent."""
     from models import Certificate, Institution
-    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
     from flask import send_file
 
     institution_id = session.get('institution_id')
     cert = Certificate.query.filter_by(id=cert_id, institution_id=institution_id).first()
-
     if not cert:
         return render_template('404.html'), 404
 
+    saved_path = os.path.join('certs', 'uploads', f'cert_{cert.id}.pdf')
+
+    if os.path.exists(saved_path):
+        return send_file(
+            saved_path,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'{cert.certificate_type}_{cert.recipient_name}_{cert.id}.pdf'
+        )
+
+    # File missing (old cert) — regenerate, save, and update stored hash
+    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
     institution = Institution.query.get(institution_id)
     data = cert.data or {}
     pdf_payload = dict(data)
-    pdf_payload['institution_name'] = institution.name if institution else pdf_payload.get('institution_name', 'Institution')
-    pdf_payload['recipient_name'] = cert.recipient_name
-    pdf_payload['graduation_date'] = data.get('graduation_date', datetime.now().strftime('%d/%m/%Y'))
-    pdf_payload['cert_number'] = f'CERT-{datetime.now().year}-{cert.id:05d}'
-    pdf_payload['duration'] = data.get('duration', 'N/A')
-    pdf_payload['blockchain_hash'] = (cert.blockchain_hash[:20] + '...' if cert.blockchain_hash else 'Non disponible')
+    pdf_payload['institution_name'] = institution.name if institution else 'Institution'
+    pdf_payload['recipient_name']   = cert.recipient_name
+    pdf_payload['graduation_date']  = data.get('graduation_date', datetime.now().strftime('%d/%m/%Y'))
+    pdf_payload['cert_number']      = f'CERT-{datetime.now().year}-{cert.id:05d}'
+    pdf_payload['duration']         = data.get('duration', 'N/A')
+    pdf_payload['blockchain_hash']  = cert.blockchain_hash or 'N/A'
+    pdf_payload['verify_url']       = request.host_url.rstrip('/') + f'/verify/{cert.id}'
 
-    pdf_map = {
-        'diplome': create_diploma_pdf,
-        'certification': create_certification_pdf,
-        'badge': create_badge_pdf
-    }
+    pdf_map = {'diplome': create_diploma_pdf, 'certification': create_certification_pdf, 'badge': create_badge_pdf}
+    pdf_func = pdf_map.get(cert.certificate_type)
+    if not pdf_func:
+        return jsonify({'error': 'Type de certificat inconnu'}), 400
 
     try:
-        pdf_func = pdf_map.get(cert.certificate_type)
-        if pdf_func:
-            pdf_buffer = pdf_func(pdf_payload)
-            return send_file(
-                pdf_buffer,
-                mimetype='application/pdf',
-                as_attachment=True,
-                download_name=f'{cert.certificate_type}_{cert.recipient_name}_{cert.id}.pdf'
-            )
-        else:
-            return jsonify({'error': 'Type de certificat inconnu'}), 400
+        os.makedirs(os.path.join('certs', 'uploads'), exist_ok=True)
+        buf = pdf_func(pdf_payload)
+        buf.seek(0)
+        with open(saved_path, 'wb') as f:
+            f.write(buf.read())
+        cert.file_hash = generate_file_hash(saved_path)
+        db.session.commit()
+        return send_file(
+            saved_path,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'{cert.certificate_type}_{cert.recipient_name}_{cert.id}.pdf'
+        )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/verify/<int:cert_id>')
+def verify_by_id_public(cert_id):
+    """Public verification page — accessible without login via QR code."""
+    from models import Certificate, Institution
+    cert = Certificate.query.get(cert_id)
+    if not cert:
+        return render_template('verify.html', prefill_id=cert_id, not_found=True)
+    institution = Institution.query.get(cert.institution_id)
+    return render_template('verify_public.html', cert=cert, institution=institution)
 
 @app.route('/api/me')
 @login_required

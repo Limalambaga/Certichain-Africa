@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Vérification — Certificat #{{ cert.id }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header__top">
+    <div>
+      <h1>Vérification de certificat</h1>
+      <p>Résultat d'authenticité pour le certificat #{{ cert.id }}</p>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:620px;">
+
+  {% if cert %}
+  <div class="verify-valid" style="margin-bottom:1.5rem;">
+    <div class="verify-valid__icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Certificat authentique</h2>
+    <p style="color:var(--success); font-size:0.9rem; margin-bottom:1.5rem;">
+      Ce certificat est enregistré et valide dans le système Certichain.
+    </p>
+    <div class="verify-data">
+      <div class="verify-data-item"><label>Bénéficiaire</label><span>{{ cert.recipient_name }}</span></div>
+      <div class="verify-data-item"><label>Type</label><span>{{ cert.certificate_type | capitalize }}</span></div>
+      <div class="verify-data-item"><label>Domaine</label><span>{{ cert.domain or '—' }}</span></div>
+      <div class="verify-data-item"><label>Institution</label><span>{{ institution.name if institution else '—' }}</span></div>
+      <div class="verify-data-item"><label>Date d'émission</label><span>{{ cert.created_at.strftime('%d %B %Y') }}</span></div>
+      <div class="verify-data-item"><label>Statut</label>
+        <span class="badge badge-teal">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Émis
+        </span>
+      </div>
+    </div>
+
+    {% if cert.blockchain_hash %}
+    <div style="margin-top:1.25rem; padding:1rem; background:var(--bg-secondary); border-radius:var(--r-md); border:1px solid var(--border-xs);">
+      <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.4rem;">Empreinte blockchain</div>
+      <div class="hash-display" style="font-size:0.72rem; word-break:break-all;">{{ cert.blockchain_hash }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% else %}
+  <div class="verify-invalid">
+    <div class="verify-invalid__icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <h2>Certificat introuvable</h2>
+    <p style="color:var(--error); font-size:0.9rem;">Aucun certificat trouvé avec cet identifiant.</p>
+  </div>
+  {% endif %}
+
+  <div style="text-align:center; margin-top:1rem;">
+    <a href="/verify" class="btn btn-outline">Vérifier un autre certificat</a>
+  </div>
+
+</div>
+{% endblock %}

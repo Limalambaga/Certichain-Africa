@@ -19,8 +19,8 @@ MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER") or MAIL_USERNAME
 
-# Fixed Configuration
-CONTRACT_ADDRESS = "0x6DAfb87Edc9F4D218B9489D4741555fd80678a33"
+# Contract deployed on Polygon Amoy — set after deployment via Remix
+CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS", "")
 
 try:
     with open('contract_abi.json', 'r') as f:

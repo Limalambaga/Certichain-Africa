@@ -176,63 +176,63 @@ def create_diploma_pdf(data=None):
     c.setFillColor(NAVY)
     c.setFont("Helvetica-Bold", 20)
     inst_upper = institution_name.upper()
-    c.drawCentredString(W/2, H - 2*cm, inst_upper)
+    c.drawCentredString(W/2, H - 2.2*cm, inst_upper)
 
     c.setStrokeColor(TEAL)
     c.setLineWidth(2.5)
     inst_w = min(len(inst_upper) * 11, W * 0.5)
-    c.line(W/2 - inst_w/2, H - 2.3*cm, W/2 + inst_w/2, H - 2.3*cm)
+    c.line(W/2 - inst_w/2, H - 2.6*cm, W/2 + inst_w/2, H - 2.6*cm)
 
     c.setFillColor(TEXT_MID)
     c.setFont("Helvetica", 9)
-    c.drawCentredString(W/2, H - 2.75*cm,
+    c.drawCentredString(W/2, H - 3.1*cm,
         f"L'École Supérieure et le Département Executive Education décernent le présent certificat à :")
 
     # ── Divider ───────────────────────────────────────────────────────────────
-    _gold_line(c, 3*cm, H - 3.15*cm, W - 6*cm, thick=0.7)
+    _gold_line(c, 3*cm, H - 3.55*cm, W - 6*cm, thick=0.7)
 
     # ── Recipient ─────────────────────────────────────────────────────────────
     c.setFillColor(NAVY)
     c.setFont("Helvetica-Bold", 32)
-    c.drawCentredString(W/2, H - 4.4*cm, recipient)
+    c.drawCentredString(W/2, H - 5.0*cm, recipient)
 
     # Underline recipient
     c.setStrokeColor(NAVY)
     c.setLineWidth(1.2)
     name_w = min(len(recipient) * 16, W * 0.55)
-    c.line(W/2 - name_w/2, H - 4.75*cm, W/2 + name_w/2, H - 4.75*cm)
+    c.line(W/2 - name_w/2, H - 5.45*cm, W/2 + name_w/2, H - 5.45*cm)
 
     c.setFillColor(TEXT_MID)
     c.setFont("Helvetica", 10)
-    c.drawCentredString(W/2, H - 5.3*cm, "pour sa participation au programme")
+    c.drawCentredString(W/2, H - 6.05*cm, "pour sa participation au programme")
 
     # ── Domain / programme ────────────────────────────────────────────────────
     c.setFillColor(GOLD)
     c.setFont("Helvetica-Bold", 16)
     domain_text = f'"{domain}"'
-    c.drawCentredString(W/2, H - 6.1*cm, domain_text)
+    c.drawCentredString(W/2, H - 7.0*cm, domain_text)
 
-    # Duration line
+    # Duration / mention
     if duration and duration != 'N/A':
         c.setFillColor(TEXT_MID)
         c.setFont("Helvetica", 10)
-        c.drawCentredString(W/2, H - 6.7*cm,
+        c.drawCentredString(W/2, H - 7.7*cm,
             f"ayant validé avec succès une formation de {duration}.")
     elif mention:
         c.setFillColor(TEXT_MID)
         c.setFont("Helvetica", 10)
-        c.drawCentredString(W/2, H - 6.7*cm,
+        c.drawCentredString(W/2, H - 7.7*cm,
             f"avec la mention  {mention}")
 
     if description:
         c.setFillColor(TEXT_MID)
         c.setFont("Helvetica", 9)
-        c.drawCentredString(W/2, H - 7.2*cm, description[:90])
+        c.drawCentredString(W/2, H - 8.3*cm, description[:90])
 
     # ── Date ──────────────────────────────────────────────────────────────────
     c.setFillColor(TEXT_DARK)
     c.setFont("Helvetica-Bold", 10)
-    c.drawCentredString(W/2, H - 7.8*cm, f"Délivré le {grad_date}")
+    c.drawCentredString(W/2, H - 9.0*cm, f"Délivré le {grad_date}")
 
     # ── Signatures ────────────────────────────────────────────────────────────
     sig_y = 3.6*cm
@@ -326,47 +326,49 @@ def create_certification_pdf(data=None):
     # ── CERTIFICATE header ────────────────────────────────────────────────────
     c.setFillColor(white)
     c.setFont("Helvetica-Bold", 34)
-    c.drawCentredString(W/2, H - 2.3*cm, "CERTIFICATE")
+    c.drawCentredString(W/2, H - 2.5*cm, "CERTIFICATE")
 
     c.setFillColor(HexColor('#B0BEC5'))
     c.setFont("Helvetica", 13)
     c._charSpace = 4
-    c.drawCentredString(W/2, H - 3.0*cm, "OF ACHIEVEMENT")
+    c.drawCentredString(W/2, H - 3.3*cm, "OF ACHIEVEMENT")
 
     # Gold divider
     c.setStrokeColor(GOLD)
     c.setLineWidth(1.2)
-    c.line(W/2 - 4*cm, H - 3.4*cm, W/2 + 4*cm, H - 3.4*cm)
+    c.line(W/2 - 4*cm, H - 3.8*cm, W/2 + 4*cm, H - 3.8*cm)
 
     # ── Awarded text ──────────────────────────────────────────────────────────
     c.setFillColor(HexColor('#B0BEC5'))
     c.setFont("Helvetica", 9)
     c._charSpace = 2
-    c.drawCentredString(W/2, H - 4.2*cm, "THIS CERTIFICATE IS AWARDED TO")
+    c.drawCentredString(W/2, H - 4.6*cm, "THIS CERTIFICATE IS AWARDED TO")
+
+    # ── Institution name ──────────────────────────────────────────────────────
+    c.setFillColor(HexColor('#7F9EC5'))
+    c.setFont("Helvetica-Bold", 9)
+    c.drawCentredString(W/2, H - 5.1*cm, institution_name.upper())
 
     # ── Recipient name ────────────────────────────────────────────────────────
     c.setFillColor(white)
     c.setFont("Helvetica-Bold", 28)
-    c.drawCentredString(W/2, H - 5.2*cm, recipient)
+    c.drawCentredString(W/2, H - 6.1*cm, recipient)
 
     # Gold underline
     name_w = min(len(recipient) * 14, W * 0.7)
     c.setStrokeColor(GOLD)
     c.setLineWidth(1.5)
-    c.line(W/2 - name_w/2, H - 5.55*cm, W/2 + name_w/2, H - 5.55*cm)
+    c.line(W/2 - name_w/2, H - 6.5*cm, W/2 + name_w/2, H - 6.5*cm)
 
     # ── Description paragraph ─────────────────────────────────────────────────
     base_desc = (description or
-        f"Le Directeur de {institution_name} est heureux de décerner cette certification "
-        f"numérique, vérifiable sur la blockchain, pour avoir démontré une maîtrise "
-        f"exceptionnelle dans le domaine ci-dessous.")
+        f"Pour avoir démontré une maîtrise exceptionnelle "
+        f"et complété avec succès le programme certifiant en :")
 
     c.setFillColor(HexColor('#B0C4DE'))
     c.setFont("Helvetica", 8.5)
-    # Word-wrap simple
     words = base_desc.split()
-    lines_out = []
-    line = ""
+    lines_out, line = [], ""
     for w in words:
         test = (line + " " + w).strip()
         if c.stringWidth(test, "Helvetica", 8.5) < W - 5*cm:
@@ -376,16 +378,16 @@ def create_certification_pdf(data=None):
             line = w
     if line:
         lines_out.append(line)
-    ty = H - 6.3*cm
-    for ln in lines_out[:4]:
+    ty = H - 7.2*cm
+    for ln in lines_out[:3]:
         c.drawCentredString(W/2, ty, ln)
-        ty -= 0.42*cm
+        ty -= 0.48*cm
 
     # ── Domain / programme ────────────────────────────────────────────────────
     c.setFillColor(GOLD)
-    c.setFont("Helvetica-Bold", 13)
-    c.drawCentredString(W/2, ty - 0.3*cm, f'"{domain}"')
-    ty -= 1.1*cm
+    c.setFont("Helvetica-Bold", 14)
+    c.drawCentredString(W/2, ty - 0.5*cm, f'"{domain}"')
+    ty -= 1.3*cm
 
     # ── Competencies pills ────────────────────────────────────────────────────
     if competencies:
@@ -548,7 +550,7 @@ def create_badge_pdf(data=None):
     c.drawCentredString(med_cx, med_cy - 0.28*cm, level.upper())
 
     # ── Body content ──────────────────────────────────────────────────────────
-    body_top = med_cy - 2.8*cm
+    body_top = med_cy - 3.2*cm
 
     c.setFillColor(TEXT_DARK)
     c.setFont("Helvetica", 10)
@@ -556,21 +558,21 @@ def create_badge_pdf(data=None):
 
     c.setFillColor(NAVY)
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(W/2, body_top - 0.9*cm, recipient)
+    c.drawCentredString(W/2, body_top - 1.1*cm, recipient)
 
     # Underline
     name_w = min(len(recipient) * 12, W * 0.7)
     c.setStrokeColor(GOLD)
     c.setLineWidth(1.5)
-    c.line(W/2 - name_w/2, body_top - 1.25*cm, W/2 + name_w/2, body_top - 1.25*cm)
+    c.line(W/2 - name_w/2, body_top - 1.55*cm, W/2 + name_w/2, body_top - 1.55*cm)
 
     c.setFillColor(TEXT_MID)
     c.setFont("Helvetica", 10)
-    c.drawCentredString(W/2, body_top - 1.8*cm, "pour excellence démontrée dans")
+    c.drawCentredString(W/2, body_top - 2.2*cm, "pour excellence démontrée dans")
 
     c.setFillColor(GOLD)
     c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(W/2, body_top - 2.45*cm, competence)
+    c.drawCentredString(W/2, body_top - 3.0*cm, competence)
 
     # ── Info grid ─────────────────────────────────────────────────────────────
     grid_y = body_top - 3.5*cm

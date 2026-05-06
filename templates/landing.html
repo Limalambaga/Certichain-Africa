@@ -9,43 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    /* ── Pricing extras (ROI, table, FAQ, CTA) ── */
-    .lp-pricing-wrap { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
-    .lp-roi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 2.5rem 0 3.5rem; }
-    .lp-roi-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
-    .lp-roi-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
-    .lp-roi-card h3 { font-size: .95rem; font-weight: 700; color: #1a202c; margin-bottom: .4rem; }
-    .lp-roi-card p  { font-size: .8rem; color: #64748b; line-height: 1.6; }
-    .lp-compare { width: 100%; border-collapse: collapse; font-size: .83rem; }
-    .lp-compare th { background: #0A1E52; color: white; padding: .75rem 1rem; text-align: left; font-weight: 600; }
-    .lp-compare th:first-child { border-radius: 10px 0 0 0; }
-    .lp-compare th:last-child  { border-radius: 0 10px 0 0; }
-    .lp-compare td { padding: .7rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
-    .lp-compare tr:hover td { background: #f8fafc; }
-    .lp-compare .lp-check { color: #2DD4BF; font-weight: 700; }
-    .lp-compare .lp-cross  { color: #cbd5e0; }
-    .lp-compare .lp-feat { font-weight: 600; color: #0A1E52; }
-    .lp-faq { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0 3rem; }
-    .lp-faq details { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
-    .lp-faq summary { padding: 1rem 1.25rem; font-weight: 600; font-size: .875rem; cursor: pointer; color: #1a202c; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-    .lp-faq summary::after { content: '+'; font-size: 1.2rem; color: #94a3b8; }
-    .lp-faq details[open] summary::after { content: '−'; }
-    .lp-faq details p { padding: 0 1.25rem 1rem; font-size: .83rem; color: #64748b; line-height: 1.65; }
-    .lp-cta-box { background: linear-gradient(135deg, #0A1E52, #1A3A7A); border-radius: 20px; padding: 3rem 2.5rem; text-align: center; margin: 0 0 4rem; }
-    .lp-cta-box h2 { font-size: 1.75rem; font-weight: 800; color: white; margin-bottom: .75rem; }
-    .lp-cta-box p { color: rgba(255,255,255,.65); font-size: .95rem; margin-bottom: 2rem; }
-    .lp-cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .lp-sub-title { font-size: 1.4rem; font-weight: 800; color: #0A1E52; margin-bottom: .35rem; }
-    .lp-sub-desc  { color: #64748b; font-size: .88rem; margin-bottom: 1.75rem; }
-    @media (max-width: 900px) {
-      .lp-roi-grid { grid-template-columns: 1fr; }
-      .lp-cta-box { padding: 2rem 1.25rem; }
-    }
-    @media (max-width: 600px) {
-      .lp-cta-btns { flex-direction: column; }
-    }
-  </style>
 </head>
 <body class="landing-body">
 
@@ -66,12 +29,13 @@
 
     <nav class="c-navbar__nav">
       <a href="#features" style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; transition:color .2s;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Fonctionnalités</a>
-      <a href="#pricing"  style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; transition:color .2s; margin-left:1.5rem;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Tarifs</a>
+      <a href="#how" style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; margin-left:1.5rem; transition:color .2s;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Comment ça marche</a>
     </nav>
 
     <div class="c-navbar__actions">
-      <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
-      <a href="/signup" class="btn btn-primary btn-sm">Commencer gratuitement</a>
+      <a href="/pricing" class="btn btn-ghost btn-sm">Tarifs</a>
+      <a href="/login"   class="btn btn-ghost btn-sm">Connexion</a>
+      <a href="/signup"  class="btn btn-primary btn-sm">Commencer gratuitement</a>
     </div>
 
   </div>
@@ -107,6 +71,9 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
           </svg>
+        </a>
+        <a href="/pricing" class="btn btn-outline btn-lg" style="margin-left:.75rem;">
+          Voir les tarifs
         </a>
       </div>
 
@@ -187,7 +154,7 @@
           </div>
           <!-- Footer -->
           <div class="cert-mockup__footer">
-            <span style="font-size:0.73rem; font-weight:600; color:var(--text-muted);">Réseau Sepolia · IPFS</span>
+            <span style="font-size:0.73rem; font-weight:600; color:var(--text-muted);">Polygon Mainnet · IPFS</span>
             <span class="badge badge-teal" style="font-size:0.7rem;">
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Ancré
@@ -312,7 +279,7 @@
           </svg>
         </div>
         <h3>Sécurité blockchain</h3>
-        <p>Chaque certificat est ancré de manière immuable sur la blockchain Ethereum. Impossible à falsifier, impossible à perdre.</p>
+        <p>Chaque certificat est ancré de manière immuable sur la blockchain Polygon. Impossible à falsifier, impossible à perdre.</p>
       </div>
 
       <div class="feature-card">
@@ -514,320 +481,6 @@
 
 
 <!-- ═══════════════════════════════════════════════════
-     PRICING
-════════════════════════════════════════════════════ -->
-<section class="landing-section" id="pricing">
-  <div class="container">
-
-    <div class="section-head text-center">
-      <div class="section-eyebrow">Tarifs</div>
-      <h2 class="section-title">Simple, transparent, accessible</h2>
-      <p class="section-desc" style="margin:0 auto 2rem;">
-        Commencez gratuitement avec la blockchain incluse. Évoluez quand vous en avez besoin.
-      </p>
-      <!-- Billing toggle -->
-      <div style="display:inline-flex; background:#f1f5f9; border-radius:100px; padding:4px; gap:2px; margin-bottom:2.5rem;">
-        <button id="land-monthly-btn" onclick="landSetBilling('monthly')"
-          style="border:none; cursor:pointer; padding:.45rem 1.25rem; border-radius:100px; font-size:.85rem; font-weight:600; transition:all .2s; background:white; color:#0A1E52; box-shadow:0 1px 4px rgba(0,0,0,.08);">
-          Mensuel
-        </button>
-        <button id="land-annual-btn" onclick="landSetBilling('annual')"
-          style="border:none; cursor:pointer; padding:.45rem 1.25rem; border-radius:100px; font-size:.85rem; font-weight:600; transition:all .2s; background:transparent; color:#64748b;">
-          Annuel <span style="background:#C9A84C; color:#0A1E52; font-size:.62rem; font-weight:800; padding:.1rem .4rem; border-radius:100px; margin-left:.3rem; vertical-align:middle;">-20%</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Cards -->
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; align-items:start;">
-
-      <!-- FREE -->
-      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #e2e8f0; display:flex; flex-direction:column;">
-        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Découverte</div>
-        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Idéal pour tester ou les petites associations.</div>
-        <div style="margin-bottom:1.5rem;">
-          <span style="font-size:2.1rem; font-weight:800; color:#2DD4BF;">Gratuit</span>
-          <span style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">pour toujours</span>
-        </div>
-        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
-        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>5 certificats</strong>/mois</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Blockchain Polygon incluse</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>QR code &amp; PDF</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Vérification publique</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#cbd5e0;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            <span>Logo institution</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#cbd5e0;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            <span>Support prioritaire</span>
-          </li>
-        </ul>
-        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; border:1.5px solid #e2e8f0; color:#0A1E52; background:white; transition:all .2s;"
-          onmouseover="this.style.borderColor='#0A1E52';this.style.background='#f0f4ff';"
-          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='white';">
-          Commencer gratuitement
-        </a>
-      </div>
-
-      <!-- STARTER (featured) -->
-      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #0A1E52; display:flex; flex-direction:column; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(10,30,82,.1);">
-        <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,#0A1E52,#2DD4BF);"></div>
-        <span style="display:inline-block; background:#2DD4BF; color:#0A1E52; font-size:.67rem; font-weight:700; letter-spacing:.04em; padding:.22rem .7rem; border-radius:100px; margin-bottom:.85rem;">⭐ Populaire</span>
-        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Starter</div>
-        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Pour les lycées, centres de formation et ONG.</div>
-        <div style="margin-bottom:1.5rem;">
-          <span style="font-size:.95rem; font-weight:700; color:#0A1E52; vertical-align:super;">XAF</span>
-          <span id="land-starter-price" style="font-size:2.1rem; font-weight:800; color:#0A1E52;">19 900</span>
-          <span id="land-starter-period" style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">/ mois · ~33 USD</span>
-        </div>
-        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
-        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>50 certificats</strong>/mois</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Blockchain Polygon ✓</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>3 types : Diplôme, Certif, Badge</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>PDF branded haute qualité</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Support email 48h</span>
-          </li>
-        </ul>
-        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#0A1E52; color:white; transition:all .2s;"
-          onmouseover="this.style.background='#0d2560';" onmouseout="this.style.background='#0A1E52';">
-          Essai 14 jours gratuit
-        </a>
-      </div>
-
-      <!-- ACADEMIQUE -->
-      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #e2e8f0; display:flex; flex-direction:column;">
-        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Académique</div>
-        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Pour les universités, grandes écoles et instituts.</div>
-        <div style="margin-bottom:1.5rem;">
-          <span style="font-size:.95rem; font-weight:700; color:#0A1E52; vertical-align:super;">XAF</span>
-          <span id="land-pro-price" style="font-size:2.1rem; font-weight:800; color:#0A1E52;">49 900</span>
-          <span id="land-pro-period" style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">/ mois · ~83 USD</span>
-        </div>
-        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
-        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>300 certificats</strong>/mois</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Tout Starter +</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Envoi email au bénéficiaire</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Logo &amp; couleurs institution</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Stockage IPFS permanent</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Support prioritaire 24h</span>
-          </li>
-        </ul>
-        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#2DD4BF; color:#0A1E52; transition:all .2s;"
-          onmouseover="this.style.background='#22c5b0';" onmouseout="this.style.background='#2DD4BF';">
-          Essai 14 jours gratuit
-        </a>
-      </div>
-
-      <!-- ENTERPRISE -->
-      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #0A1E52; background:#0A1E52; display:flex; flex-direction:column;">
-        <div style="font-size:1rem; font-weight:700; color:white; margin-bottom:.3rem;">Entreprise</div>
-        <div style="font-size:.78rem; color:rgba(255,255,255,.5); line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Ministères, réseaux d'écoles et groupes multi-campus.</div>
-        <div style="margin-bottom:1.5rem;">
-          <span style="font-size:1.7rem; font-weight:800; color:#C9A84C;">Sur devis</span>
-          <span style="display:block; font-size:.76rem; color:rgba(255,255,255,.35); margin-top:.2rem;">volume négocié</span>
-        </div>
-        <hr style="border:none; border-top:1px solid rgba(255,255,255,.1); margin:0 0 1.25rem;">
-        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>Certificats illimités</strong></span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Multi-établissements</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>API REST + webhooks</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>SSO / intégration LMS</span>
-          </li>
-          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>SLA 99.9% + Account manager</span>
-          </li>
-        </ul>
-        <a href="mailto:contact@certichain.africa?subject=Demande Enterprise"
-          style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#C9A84C; color:#0A1E52; transition:all .2s;"
-          onmouseover="this.style.background='#b8973f';" onmouseout="this.style.background='#C9A84C';">
-          Nous contacter
-        </a>
-      </div>
-
-    </div><!-- /grid -->
-
-  </div><!-- /container -->
-
-  <!-- ── ROI ── -->
-  <div class="lp-pricing-wrap" style="margin-top:4rem;">
-    <div class="lp-sub-title">Pourquoi investir dans Certichain ?</div>
-    <div class="lp-sub-desc">Ce que votre institution gagne concrètement.</div>
-    <div class="lp-roi-grid">
-      <div class="lp-roi-card">
-        <div class="lp-roi-card__icon" style="background:#EFF6FF;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1E52" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <h3>Diplômes infalsifiables</h3>
-        <p>Chaque certificat est ancré sur la blockchain Polygon. Toute modification est détectable instantanément. Votre réputation est protégée.</p>
-      </div>
-      <div class="lp-roi-card">
-        <div class="lp-roi-card__icon" style="background:#F0FFF4;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <h3>Vérification en 3 secondes</h3>
-        <p>Employeurs et recruteurs vérifient l'authenticité d'un diplôme en scannant simplement le QR code. Zéro délai, zéro intermédiaire.</p>
-      </div>
-      <div class="lp-roi-card">
-        <div class="lp-roi-card__icon" style="background:#FFF7ED;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        </div>
-        <h3>Réduction des coûts</h3>
-        <p>Finies les impressions coûteuses et les vérifications manuelles. Économisez jusqu'à 70% sur la gestion documentaire.</p>
-      </div>
-    </div>
-
-    <!-- Compare table -->
-    <div class="lp-sub-title">Comparatif détaillé</div>
-    <div class="lp-sub-desc">Toutes les fonctionnalités, plan par plan.</div>
-    <div style="overflow-x:auto; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:3.5rem;">
-      <table class="lp-compare">
-        <thead>
-          <tr>
-            <th style="width:35%;">Fonctionnalité</th>
-            <th>Découverte</th>
-            <th>Starter</th>
-            <th>Académique</th>
-            <th>Entreprise</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="lp-feat">Certificats/mois</td><td>5</td><td>50</td><td>300</td><td>Illimité</td></tr>
-          <tr><td class="lp-feat">Types de certificats</td><td>3</td><td>3</td><td>3</td><td>3 + custom</td></tr>
-          <tr><td class="lp-feat">PDF haute qualité</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">QR code de vérification</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Blockchain Polygon</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Empreinte SHA-256</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Stockage IPFS</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Email au bénéficiaire</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Logo institution</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Multi-établissements</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">API REST</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td></tr>
-          <tr><td class="lp-feat">Support</td><td>Communauté</td><td>Email 48h</td><td>Prioritaire 24h</td><td>Dédié</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- FAQ -->
-    <div class="lp-sub-title">Questions fréquentes</div>
-    <div class="lp-sub-desc">Tout ce que vous devez savoir avant de vous lancer.</div>
-    <div class="lp-faq">
-      <details>
-        <summary>Puis-je changer de plan à tout moment ?</summary>
-        <p>Oui, vous pouvez upgrader ou downgrader votre abonnement à n'importe quel moment depuis votre tableau de bord. Les changements prennent effet immédiatement, avec prorata calculé automatiquement.</p>
-      </details>
-      <details>
-        <summary>Que se passe-t-il si je dépasse mon quota mensuel ?</summary>
-        <p>Nous vous avertissons par email à 80% et 100% de votre quota. Passé le quota, vous pouvez acheter des certificats supplémentaires à l'unité (500 XAF/certificat) ou passer au plan supérieur.</p>
-      </details>
-      <details>
-        <summary>Les certificats émis sont-ils permanents sur la blockchain ?</summary>
-        <p>Oui. Une fois ancré sur la blockchain Polygon, le hash du certificat est permanent et immuable. Même si vous résiliez votre abonnement, les certificats déjà émis restent vérifiables indéfiniment.</p>
-      </details>
-      <details>
-        <summary>Acceptez-vous les paiements Mobile Money (MTN, Orange) ?</summary>
-        <p>Oui — nous acceptons MTN Mobile Money, Orange Money, Wave, ainsi que les cartes Visa/Mastercard et les virements bancaires BEAC/BCEAO. Idéal pour les institutions africaines.</p>
-      </details>
-      <details>
-        <summary>Y a-t-il un engagement de durée ?</summary>
-        <p>Non. Tous les plans sont sans engagement, résiliables à tout moment. Le plan annuel offre 2 mois offerts mais reste résiliable avec remboursement au prorata.</p>
-      </details>
-      <details>
-        <summary>Proposez-vous des tarifs spéciaux pour les ONG et institutions publiques ?</summary>
-        <p>Oui. Les ONG, ministères et établissements publics africains bénéficient de 30% de réduction sur tous les plans. Contactez-nous avec une preuve de statut.</p>
-      </details>
-    </div>
-
-    <!-- CTA -->
-    <div class="lp-cta-box">
-      <h2>Prêt à sécuriser vos diplômes ?</h2>
-      <p>Rejoignez les institutions africaines qui font confiance à Certichain. Commencez gratuitement, sans carte bancaire.</p>
-      <div class="lp-cta-btns">
-        <a href="/signup" style="background:#2DD4BF; color:#0A1E52; font-weight:700; padding:.8rem 2rem; border-radius:10px; text-decoration:none; font-size:.95rem;">Commencer gratuitement</a>
-        <a href="mailto:contact@certichain.africa" style="background:rgba(255,255,255,.1); color:white; font-weight:600; padding:.8rem 2rem; border-radius:10px; text-decoration:none; font-size:.95rem; border:1.5px solid rgba(255,255,255,.25);">Parler à l'équipe</a>
-      </div>
-    </div>
-
-  </div><!-- /lp-pricing-wrap -->
-
-</section>
-
-<script>
-function landSetBilling(mode) {
-  const monthly = mode === 'monthly';
-  document.getElementById('land-monthly-btn').style.cssText = monthly
-    ? 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:white;color:#0A1E52;box-shadow:0 1px 4px rgba(0,0,0,.08);'
-    : 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:transparent;color:#64748b;box-shadow:none;';
-  document.getElementById('land-annual-btn').style.cssText = !monthly
-    ? 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:white;color:#0A1E52;box-shadow:0 1px 4px rgba(0,0,0,.08);'
-    : 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:transparent;color:#64748b;box-shadow:none;';
-  document.getElementById('land-starter-price').textContent = monthly ? '19 900' : '15 900';
-  document.getElementById('land-starter-period').textContent = monthly ? '/ mois · ~33 USD' : '/ mois · ~26 USD · (annuel)';
-  document.getElementById('land-pro-price').textContent = monthly ? '49 900' : '39 900';
-  document.getElementById('land-pro-period').textContent = monthly ? '/ mois · ~83 USD' : '/ mois · ~66 USD · (annuel)';
-}
-</script>
-
-
-<!-- ═══════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════ -->
 <footer class="landing-footer">
@@ -836,7 +489,11 @@ function landSetBilling(mode) {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
       Certichain Africa
     </div>
-    <div class="landing-footer__links"></div>
+    <div class="landing-footer__links">
+      <a href="/pricing" style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem; margin-right:1.5rem;">Tarifs</a>
+      <a href="/verify"  style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem; margin-right:1.5rem;">Vérifier</a>
+      <a href="/login"   style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem;">Connexion</a>
+    </div>
     <div class="landing-footer__copy">&copy; 2025 Certichain Africa. Tous droits réservés.</div>
   </div>
 </footer>

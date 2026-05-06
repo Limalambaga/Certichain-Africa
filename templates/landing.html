@@ -27,7 +27,10 @@
       Certichain
     </a>
 
-    <nav class="c-navbar__nav"></nav>
+    <nav class="c-navbar__nav">
+      <a href="#features" style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; transition:color .2s;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Fonctionnalités</a>
+      <a href="#pricing"  style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; transition:color .2s; margin-left:1.5rem;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Tarifs</a>
+    </nav>
 
     <div class="c-navbar__actions">
       <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
@@ -471,6 +474,224 @@
     </div>
   </div>
 </section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════════════ -->
+<section class="landing-section" id="pricing">
+  <div class="container">
+
+    <div class="section-head text-center">
+      <div class="section-eyebrow">Tarifs</div>
+      <h2 class="section-title">Simple, transparent, accessible</h2>
+      <p class="section-desc" style="margin:0 auto 2rem;">
+        Commencez gratuitement avec la blockchain incluse. Évoluez quand vous en avez besoin.
+      </p>
+      <!-- Billing toggle -->
+      <div style="display:inline-flex; background:#f1f5f9; border-radius:100px; padding:4px; gap:2px; margin-bottom:2.5rem;">
+        <button id="land-monthly-btn" onclick="landSetBilling('monthly')"
+          style="border:none; cursor:pointer; padding:.45rem 1.25rem; border-radius:100px; font-size:.85rem; font-weight:600; transition:all .2s; background:white; color:#0A1E52; box-shadow:0 1px 4px rgba(0,0,0,.08);">
+          Mensuel
+        </button>
+        <button id="land-annual-btn" onclick="landSetBilling('annual')"
+          style="border:none; cursor:pointer; padding:.45rem 1.25rem; border-radius:100px; font-size:.85rem; font-weight:600; transition:all .2s; background:transparent; color:#64748b;">
+          Annuel <span style="background:#C9A84C; color:#0A1E52; font-size:.62rem; font-weight:800; padding:.1rem .4rem; border-radius:100px; margin-left:.3rem; vertical-align:middle;">-20%</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; align-items:start;">
+
+      <!-- FREE -->
+      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #e2e8f0; display:flex; flex-direction:column;">
+        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Découverte</div>
+        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Idéal pour tester ou les petites associations.</div>
+        <div style="margin-bottom:1.5rem;">
+          <span style="font-size:2.1rem; font-weight:800; color:#2DD4BF;">Gratuit</span>
+          <span style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">pour toujours</span>
+        </div>
+        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>5 certificats</strong>/mois</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Blockchain Polygon incluse</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>QR code &amp; PDF</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Vérification publique</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#cbd5e0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span>Logo institution</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#cbd5e0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span>Support prioritaire</span>
+          </li>
+        </ul>
+        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; border:1.5px solid #e2e8f0; color:#0A1E52; background:white; transition:all .2s;"
+          onmouseover="this.style.borderColor='#0A1E52';this.style.background='#f0f4ff';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='white';">
+          Commencer gratuitement
+        </a>
+      </div>
+
+      <!-- STARTER (featured) -->
+      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #0A1E52; display:flex; flex-direction:column; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(10,30,82,.1);">
+        <div style="position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,#0A1E52,#2DD4BF);"></div>
+        <span style="display:inline-block; background:#2DD4BF; color:#0A1E52; font-size:.67rem; font-weight:700; letter-spacing:.04em; padding:.22rem .7rem; border-radius:100px; margin-bottom:.85rem;">⭐ Populaire</span>
+        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Starter</div>
+        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Pour les lycées, centres de formation et ONG.</div>
+        <div style="margin-bottom:1.5rem;">
+          <span style="font-size:.95rem; font-weight:700; color:#0A1E52; vertical-align:super;">XAF</span>
+          <span id="land-starter-price" style="font-size:2.1rem; font-weight:800; color:#0A1E52;">19 900</span>
+          <span id="land-starter-period" style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">/ mois · ~33 USD</span>
+        </div>
+        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>50 certificats</strong>/mois</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Blockchain Polygon ✓</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>3 types : Diplôme, Certif, Badge</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>PDF branded haute qualité</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Support email 48h</span>
+          </li>
+        </ul>
+        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#0A1E52; color:white; transition:all .2s;"
+          onmouseover="this.style.background='#0d2560';" onmouseout="this.style.background='#0A1E52';">
+          Essai 14 jours gratuit
+        </a>
+      </div>
+
+      <!-- ACADEMIQUE -->
+      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #e2e8f0; display:flex; flex-direction:column;">
+        <div style="font-size:1rem; font-weight:700; color:#0A1E52; margin-bottom:.3rem;">Académique</div>
+        <div style="font-size:.78rem; color:#64748b; line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Pour les universités, grandes écoles et instituts.</div>
+        <div style="margin-bottom:1.5rem;">
+          <span style="font-size:.95rem; font-weight:700; color:#0A1E52; vertical-align:super;">XAF</span>
+          <span id="land-pro-price" style="font-size:2.1rem; font-weight:800; color:#0A1E52;">49 900</span>
+          <span id="land-pro-period" style="display:block; font-size:.76rem; color:#94a3b8; margin-top:.2rem;">/ mois · ~83 USD</span>
+        </div>
+        <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 1.25rem;">
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>300 certificats</strong>/mois</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Tout Starter +</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Envoi email au bénéficiaire</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Logo &amp; couleurs institution</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Stockage IPFS permanent</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:#374151;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Support prioritaire 24h</span>
+          </li>
+        </ul>
+        <a href="/signup" style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#2DD4BF; color:#0A1E52; transition:all .2s;"
+          onmouseover="this.style.background='#22c5b0';" onmouseout="this.style.background='#2DD4BF';">
+          Essai 14 jours gratuit
+        </a>
+      </div>
+
+      <!-- ENTERPRISE -->
+      <div class="card" style="border-radius:16px; padding:2rem 1.5rem; border:1.5px solid #0A1E52; background:#0A1E52; display:flex; flex-direction:column;">
+        <div style="font-size:1rem; font-weight:700; color:white; margin-bottom:.3rem;">Entreprise</div>
+        <div style="font-size:.78rem; color:rgba(255,255,255,.5); line-height:1.55; margin-bottom:1.5rem; min-height:2.5rem;">Ministères, réseaux d'écoles et groupes multi-campus.</div>
+        <div style="margin-bottom:1.5rem;">
+          <span style="font-size:1.7rem; font-weight:800; color:#C9A84C;">Sur devis</span>
+          <span style="display:block; font-size:.76rem; color:rgba(255,255,255,.35); margin-top:.2rem;">volume négocié</span>
+        </div>
+        <hr style="border:none; border-top:1px solid rgba(255,255,255,.1); margin:0 0 1.25rem;">
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:.6rem; flex:1; margin-bottom:1.75rem; padding:0;">
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Certificats illimités</strong></span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Multi-établissements</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>API REST + webhooks</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>SSO / intégration LMS</span>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:.45rem; font-size:.81rem; color:rgba(255,255,255,.75);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0; margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>SLA 99.9% + Account manager</span>
+          </li>
+        </ul>
+        <a href="mailto:contact@certichain.africa?subject=Demande Enterprise"
+          style="display:block; text-align:center; padding:.72rem; border-radius:10px; font-weight:700; font-size:.875rem; text-decoration:none; background:#C9A84C; color:#0A1E52; transition:all .2s;"
+          onmouseover="this.style.background='#b8973f';" onmouseout="this.style.background='#C9A84C';">
+          Nous contacter
+        </a>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Mobile responsive note -->
+    <style>
+      @media (max-width:900px) { #pricing-cards { grid-template-columns:repeat(2,1fr) !important; } }
+      @media (max-width:600px) { #pricing-cards { grid-template-columns:1fr !important; } }
+    </style>
+
+  </div>
+</section>
+
+<script>
+function landSetBilling(mode) {
+  const monthly = mode === 'monthly';
+  document.getElementById('land-monthly-btn').style.cssText = monthly
+    ? 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:white;color:#0A1E52;box-shadow:0 1px 4px rgba(0,0,0,.08);'
+    : 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:transparent;color:#64748b;box-shadow:none;';
+  document.getElementById('land-annual-btn').style.cssText = !monthly
+    ? 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:white;color:#0A1E52;box-shadow:0 1px 4px rgba(0,0,0,.08);'
+    : 'border:none;cursor:pointer;padding:.45rem 1.25rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:all .2s;background:transparent;color:#64748b;box-shadow:none;';
+  document.getElementById('land-starter-price').textContent = monthly ? '19 900' : '15 900';
+  document.getElementById('land-starter-period').textContent = monthly ? '/ mois · ~33 USD' : '/ mois · ~26 USD · (annuel)';
+  document.getElementById('land-pro-price').textContent = monthly ? '49 900' : '39 900';
+  document.getElementById('land-pro-period').textContent = monthly ? '/ mois · ~83 USD' : '/ mois · ~66 USD · (annuel)';
+}
+</script>
 
 
 <!-- ═══════════════════════════════════════════════════

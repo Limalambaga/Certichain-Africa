@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarifs — Certichain Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* ── Page reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1a202c; }
+
+    /* ── Navbar ── */
+    .p-nav { background: #0A1E52; padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .p-nav__brand { color: white; font-weight: 800; font-size: 1.1rem; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+    .p-nav__brand svg { background: rgba(255,255,255,.15); border-radius: 8px; padding: 3px; }
+    .p-nav__links { display: flex; gap: 1rem; align-items: center; }
+    .p-nav__links a { color: rgba(255,255,255,.75); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
+    .p-nav__links a:hover { color: white; }
+    .p-nav__cta { background: #2DD4BF; color: #0A1E52 !important; font-weight: 700 !important; padding: .4rem 1.1rem; border-radius: 8px; }
+
+    /* ── Hero ── */
+    .p-hero { background: linear-gradient(135deg, #0A1E52 0%, #1A3A7A 60%, #0D2045 100%); padding: 5rem 2rem 4rem; text-align: center; position: relative; overflow: hidden; }
+    .p-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(45,212,191,.08); pointer-events: none; }
+    .p-hero::after  { content: ''; position: absolute; bottom: -80px; left: -80px; width: 350px; height: 350px; border-radius: 50%; background: rgba(201,168,76,.06); pointer-events: none; }
+    .p-hero__badge { display: inline-block; background: rgba(45,212,191,.15); border: 1px solid rgba(45,212,191,.35); color: #2DD4BF; font-size: .75rem; font-weight: 700; letter-spacing: .06em; padding: .35rem .9rem; border-radius: 100px; margin-bottom: 1.25rem; }
+    .p-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: white; line-height: 1.15; margin-bottom: 1rem; }
+    .p-hero h1 span { color: #C9A84C; }
+    .p-hero p { color: rgba(255,255,255,.65); font-size: 1.05rem; max-width: 540px; margin: 0 auto 2rem; line-height: 1.65; }
+    .p-toggle { display: inline-flex; background: rgba(255,255,255,.1); border-radius: 100px; padding: 4px; gap: 2px; }
+    .p-toggle button { border: none; cursor: pointer; padding: .45rem 1.25rem; border-radius: 100px; font-size: .85rem; font-weight: 600; transition: all .2s; }
+    .p-toggle button.active { background: white; color: #0A1E52; }
+    .p-toggle button:not(.active) { background: transparent; color: rgba(255,255,255,.6); }
+    .p-save-badge { display: inline-block; background: #C9A84C; color: #0A1E52; font-size: .65rem; font-weight: 800; padding: .15rem .45rem; border-radius: 100px; margin-left: .4rem; vertical-align: middle; }
+
+    /* ── Pricing grid ── */
+    .p-grid { max-width: 1100px; margin: -2.5rem auto 0; padding: 0 2rem 5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; position: relative; z-index: 1; }
+    .p-card { background: white; border-radius: 16px; border: 1.5px solid #e2e8f0; padding: 2rem 1.75rem; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+    .p-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(10,30,82,.10); }
+    .p-card--featured { border-color: #0A1E52; box-shadow: 0 8px 32px rgba(10,30,82,.12); position: relative; overflow: hidden; }
+    .p-card--featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #0A1E52, #2DD4BF); }
+    .p-card--dark { background: #0A1E52; border-color: #0A1E52; }
+    .p-popular { display: inline-block; background: #0A1E52; color: white; font-size: .68rem; font-weight: 700; letter-spacing: .05em; padding: .25rem .75rem; border-radius: 100px; margin-bottom: 1rem; }
+    .p-card--featured .p-popular { background: #2DD4BF; color: #0A1E52; }
+    .p-plan-name { font-size: 1.05rem; font-weight: 700; color: #1a202c; margin-bottom: .35rem; }
+    .p-card--dark .p-plan-name { color: white; }
+    .p-plan-desc { font-size: .8rem; color: #64748b; line-height: 1.55; margin-bottom: 1.5rem; min-height: 2.5rem; }
+    .p-card--dark .p-plan-desc { color: rgba(255,255,255,.55); }
+    .p-price { margin-bottom: 1.5rem; }
+    .p-price__amount { font-size: 2.4rem; font-weight: 800; color: #0A1E52; line-height: 1; }
+    .p-card--dark .p-price__amount { color: #C9A84C; }
+    .p-price__currency { font-size: 1.1rem; font-weight: 700; vertical-align: super; color: #0A1E52; }
+    .p-card--dark .p-price__currency { color: #C9A84C; }
+    .p-price__period { font-size: .78rem; color: #94a3b8; display: block; margin-top: .25rem; }
+    .p-price__free { font-size: 2rem; font-weight: 800; color: #2DD4BF; }
+    .p-price__custom { font-size: 1.6rem; font-weight: 800; color: white; }
+    .p-divider { height: 1px; background: #f1f5f9; margin: 1.25rem 0; }
+    .p-card--dark .p-divider { background: rgba(255,255,255,.1); }
+    .p-features { list-style: none; display: flex; flex-direction: column; gap: .65rem; flex: 1; margin-bottom: 1.75rem; }
+    .p-features li { display: flex; align-items: flex-start; gap: .5rem; font-size: .82rem; color: #374151; }
+    .p-card--dark .p-features li { color: rgba(255,255,255,.75); }
+    .p-features li svg { flex-shrink: 0; margin-top: 1px; }
+    .p-features li.disabled { color: #cbd5e0; }
+    .p-features li.disabled svg { opacity: .35; }
+    .p-btn { display: block; text-align: center; padding: .75rem; border-radius: 10px; font-weight: 700; font-size: .875rem; text-decoration: none; cursor: pointer; border: none; transition: all .2s; }
+    .p-btn--outline { border: 1.5px solid #e2e8f0; color: #0A1E52; background: white; }
+    .p-btn--outline:hover { border-color: #0A1E52; background: #f0f4ff; }
+    .p-btn--primary { background: #0A1E52; color: white; }
+    .p-btn--primary:hover { background: #0d2560; }
+    .p-btn--teal { background: #2DD4BF; color: #0A1E52; }
+    .p-btn--teal:hover { background: #22c5b0; }
+    .p-btn--gold { background: #C9A84C; color: #0A1E52; }
+    .p-btn--gold:hover { background: #b8973f; }
+
+    /* ── FAQ / ROI ── */
+    .p-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 5rem; }
+    .p-section__title { font-size: 1.5rem; font-weight: 800; color: #0A1E52; margin-bottom: .5rem; }
+    .p-section__sub { color: #64748b; font-size: .9rem; margin-bottom: 2.5rem; }
+
+    /* ROI cards */
+    .p-roi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 4rem; }
+    .p-roi-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
+    .p-roi-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .p-roi-card h3 { font-size: .95rem; font-weight: 700; color: #1a202c; margin-bottom: .4rem; }
+    .p-roi-card p  { font-size: .8rem; color: #64748b; line-height: 1.6; }
+
+    /* Compare table */
+    .p-compare { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .p-compare th { background: #0A1E52; color: white; padding: .75rem 1rem; text-align: left; font-weight: 600; }
+    .p-compare th:first-child { border-radius: 10px 0 0 0; }
+    .p-compare th:last-child  { border-radius: 0 10px 0 0; }
+    .p-compare td { padding: .7rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+    .p-compare tr:hover td { background: #f8fafc; }
+    .p-compare .check { color: #2DD4BF; font-weight: 700; }
+    .p-compare .cross  { color: #cbd5e0; }
+    .p-compare .feat-name { font-weight: 600; color: #0A1E52; }
+
+    /* FAQ */
+    .p-faq { display: flex; flex-direction: column; gap: .75rem; }
+    .p-faq-item { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .p-faq-item summary { padding: 1rem 1.25rem; font-weight: 600; font-size: .875rem; cursor: pointer; color: #1a202c; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .p-faq-item summary::after { content: '+'; font-size: 1.2rem; color: #94a3b8; }
+    .p-faq-item[open] summary::after { content: '−'; }
+    .p-faq-item p { padding: 0 1.25rem 1rem; font-size: .83rem; color: #64748b; line-height: 1.65; }
+
+    /* CTA banner */
+    .p-cta { background: linear-gradient(135deg, #0A1E52, #1A3A7A); border-radius: 20px; padding: 3rem 2.5rem; text-align: center; margin-bottom: 4rem; }
+    .p-cta h2 { font-size: 1.75rem; font-weight: 800; color: white; margin-bottom: .75rem; }
+    .p-cta p { color: rgba(255,255,255,.65); font-size: .95rem; margin-bottom: 2rem; }
+    .p-cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer */
+    .p-footer { text-align: center; padding: 2rem; color: #94a3b8; font-size: .8rem; border-top: 1px solid #e2e8f0; }
+
+    @media (max-width: 900px) {
+      .p-grid { grid-template-columns: repeat(2, 1fr); }
+      .p-roi-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .p-grid { grid-template-columns: 1fr; }
+      .p-nav__links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────────────────────── -->
+<nav class="p-nav">
+  <a href="/" class="p-nav__brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+      <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+    </svg>
+    Certichain Africa
+  </a>
+  <div class="p-nav__links">
+    <a href="/verify">Vérifier</a>
+    <a href="/pricing">Tarifs</a>
+    <a href="/login">Connexion</a>
+    <a href="/signup" class="p-nav__cta">Commencer gratuitement</a>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────────────────────── -->
+<section class="p-hero">
+  <div class="p-hero__badge">🌍 Conçu pour l'Afrique</div>
+  <h1>Des tarifs <span>transparents</span><br>pour chaque institution</h1>
+  <p>Émettez des diplômes infalsifiables ancrés sur la blockchain Polygon. Commencez gratuitement, montez en puissance selon vos besoins.</p>
+
+  <div class="p-toggle" id="billingToggle">
+    <button class="active" onclick="setBilling('monthly', this)">Mensuel</button>
+    <button onclick="setBilling('annual', this)">Annuel <span class="p-save-badge">-20%</span></button>
+  </div>
+</section>
+
+<!-- ── Pricing cards ──────────────────────────────────────────────────────── -->
+<div class="p-grid">
+
+  <!-- FREE -->
+  <div class="p-card">
+    <div class="p-plan-name">Découverte</div>
+    <div class="p-plan-desc">Idéal pour tester la plateforme ou les petites associations.</div>
+    <div class="p-price">
+      <span class="p-price__free">Gratuit</span>
+      <span class="p-price__period">pour toujours</span>
+    </div>
+    <div class="p-divider"></div>
+    <ul class="p-features">
+      <li><?xml version="1.0"?><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>5 certificats</strong>/mois</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Empreinte SHA-256</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>PDF téléchargeable</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>QR code de vérification</span></li>
+      <li class="disabled"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span>Blockchain Polygon</span></li>
+      <li class="disabled"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span>Logo institution personnalisé</span></li>
+      <li class="disabled"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span>Support prioritaire</span></li>
+    </ul>
+    <a href="/signup" class="p-btn p-btn--outline">Commencer gratuitement</a>
+  </div>
+
+  <!-- STARTER -->
+  <div class="p-card p-card--featured">
+    <span class="p-popular">⭐ Le plus populaire</span>
+    <div class="p-plan-name">Starter</div>
+    <div class="p-plan-desc">Pour les lycées, centres de formation et ONG.</div>
+    <div class="p-price">
+      <span class="p-price__currency">XAF</span>
+      <span class="p-price__amount" data-monthly="19900" data-annual="15900">19 900</span>
+      <span class="p-price__period" id="starter-period">/ mois · ~33 USD</span>
+    </div>
+    <div class="p-divider"></div>
+    <ul class="p-features">
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>50 certificats</strong>/mois</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Blockchain Polygon ✓</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>3 types : Diplôme, Certif, Badge</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>PDF branded haute qualité</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Page de vérification publique</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Support email 48h</span></li>
+      <li class="disabled"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span>Envoi email au bénéficiaire</span></li>
+    </ul>
+    <a href="/signup" class="p-btn p-btn--primary">Démarrer l'essai 14 jours</a>
+  </div>
+
+  <!-- PRO -->
+  <div class="p-card">
+    <div class="p-plan-name">Académique</div>
+    <div class="p-plan-desc">Pour les universités, grandes écoles et instituts.</div>
+    <div class="p-price">
+      <span class="p-price__currency">XAF</span>
+      <span class="p-price__amount" data-monthly="49900" data-annual="39900">49 900</span>
+      <span class="p-price__period" id="pro-period">/ mois · ~83 USD</span>
+    </div>
+    <div class="p-divider"></div>
+    <ul class="p-features">
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>300 certificats</strong>/mois</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Tout Starter +</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Envoi email automatique au bénéficiaire</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Logo & couleurs institution</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Stockage IPFS permanent</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Tableau de bord analytique</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Support prioritaire 24h</span></li>
+    </ul>
+    <a href="/signup" class="p-btn p-btn--teal">Essayer 14 jours gratuits</a>
+  </div>
+
+  <!-- ENTERPRISE -->
+  <div class="p-card p-card--dark">
+    <div class="p-plan-name">Entreprise</div>
+    <div class="p-plan-desc">Pour les ministères, réseaux d'écoles et groupes multi-campus.</div>
+    <div class="p-price">
+      <span class="p-price__custom">Sur devis</span>
+      <span class="p-price__period" style="color:rgba(255,255,255,.4);">volume négocié</span>
+    </div>
+    <div class="p-divider"></div>
+    <ul class="p-features">
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span><strong>Certificats illimités</strong></span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Tout Académique +</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Multi-établissements</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>API REST + webhooks</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>SSO / intégration LMS</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>SLA garanti 99.9%</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Account manager dédié</span></li>
+    </ul>
+    <a href="mailto:contact@certichain.africa?subject=Demande Enterprise" class="p-btn p-btn--gold">Nous contacter</a>
+  </div>
+
+</div>
+
+<!-- ── Why it pays off ─────────────────────────────────────────────────────── -->
+<div class="p-section">
+  <h2 class="p-section__title">Pourquoi investir dans Certichain ?</h2>
+  <p class="p-section__sub">Ce que votre institution gagne concrètement.</p>
+  <div class="p-roi-grid">
+    <div class="p-roi-card">
+      <div class="p-roi-card__icon" style="background:#EFF6FF;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1E52" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Diplômes infalsifiables</h3>
+      <p>Chaque certificat est ancré sur la blockchain Polygon. Toute modification est détectable instantanément. Votre réputation est protégée.</p>
+    </div>
+    <div class="p-roi-card">
+      <div class="p-roi-card__icon" style="background:#F0FFF4;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <h3>Vérification en 3 secondes</h3>
+      <p>Employeurs et recruteurs vérifient l'authenticité d'un diplôme en scannant simplement le QR code. Zéro délai, zéro intermédiaire.</p>
+    </div>
+    <div class="p-roi-card">
+      <div class="p-roi-card__icon" style="background:#FFF7ED;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+      <h3>Réduction des coûts</h3>
+      <p>Finies les impressions coûteuses, les envois postaux et les vérifications manuelles. Économisez jusqu'à 70% sur la gestion documentaire.</p>
+    </div>
+  </div>
+
+  <!-- Compare table -->
+  <h2 class="p-section__title">Comparatif détaillé</h2>
+  <p class="p-section__sub" style="margin-bottom:1.5rem;">Toutes les fonctionnalités, plan par plan.</p>
+  <div style="overflow-x:auto; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:4rem;">
+    <table class="p-compare">
+      <thead>
+        <tr>
+          <th style="width:35%;">Fonctionnalité</th>
+          <th>Découverte</th>
+          <th>Starter</th>
+          <th>Académique</th>
+          <th>Entreprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="feat-name">Certificats/mois</td><td>5</td><td>50</td><td>300</td><td>Illimité</td></tr>
+        <tr><td class="feat-name">Types de certificats</td><td>3</td><td>3</td><td>3</td><td>3 + custom</td></tr>
+        <tr><td class="feat-name">PDF haute qualité</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">QR code de vérification</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Empreinte SHA-256</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Blockchain Polygon</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Stockage IPFS</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Email au bénéficiaire</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Logo institution</td><td class="cross">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Multi-établissements</td><td class="cross">—</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">API REST</td><td class="cross">—</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td class="feat-name">Support</td><td>Communauté</td><td>Email 48h</td><td>Prioritaire 24h</td><td>Dédié</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FAQ -->
+  <h2 class="p-section__title">Questions fréquentes</h2>
+  <p class="p-section__sub">Tout ce que vous devez savoir avant de vous lancer.</p>
+  <div class="p-faq">
+    <details class="p-faq-item">
+      <summary>Puis-je changer de plan à tout moment ?</summary>
+      <p>Oui, vous pouvez upgrader ou downgrader votre abonnement à n'importe quel moment depuis votre tableau de bord. Les changements prennent effet immédiatement, avec prorata calculé automatiquement.</p>
+    </details>
+    <details class="p-faq-item">
+      <summary>Que se passe-t-il si je dépasse mon quota mensuel ?</summary>
+      <p>Nous vous avertissons par email à 80% et 100% de votre quota. Passé le quota, vous pouvez acheter des certificats supplémentaires à l'unité (500 XAF/certificat) ou passer au plan supérieur.</p>
+    </details>
+    <details class="p-faq-item">
+      <summary>Les certificats émis sont-ils permanents sur la blockchain ?</summary>
+      <p>Oui. Une fois ancré sur la blockchain Polygon, le hash du certificat est permanent et immuable. Même si vous résiliez votre abonnement, les certificats déjà émis restent vérifiables indéfiniment.</p>
+    </details>
+    <details class="p-faq-item">
+      <summary>Acceptez-vous les paiements Mobile Money (MTN, Orange) ?</summary>
+      <p>Oui — nous acceptons MTN Mobile Money, Orange Money, Wave, ainsi que les cartes Visa/Mastercard et les virements bancaires BEAC/BCEAO. Idéal pour les institutions africaines.</p>
+    </details>
+    <details class="p-faq-item">
+      <summary>Y a-t-il un engagement de durée ?</summary>
+      <p>Non. Tous les plans sont sans engagement, résiliables à tout moment. Le plan annuel offre 2 mois offerts mais reste résiliable avec remboursement au prorata.</p>
+    </details>
+    <details class="p-faq-item">
+      <summary>Proposez-vous des tarifs spéciaux pour les ONG et institutions publiques ?</summary>
+      <p>Oui. Les ONG, ministères et établissements publics africains bénéficient de 30% de réduction sur tous les plans. Contactez-nous avec une preuve de statut.</p>
+    </details>
+  </div>
+</div>
+
+<!-- ── CTA Banner ──────────────────────────────────────────────────────────── -->
+<div class="p-section">
+  <div class="p-cta">
+    <h2>Prêt à sécuriser vos diplômes ?</h2>
+    <p>Rejoignez les institutions africaines qui font confiance à Certichain. Commencez gratuitement, sans carte bancaire.</p>
+    <div class="p-cta-btns">
+      <a href="/signup" style="background:#2DD4BF;color:#0A1E52;font-weight:700;padding:.8rem 2rem;border-radius:10px;text-decoration:none;font-size:.95rem;">Commencer gratuitement</a>
+      <a href="mailto:contact@certichain.africa" style="background:rgba(255,255,255,.1);color:white;font-weight:600;padding:.8rem 2rem;border-radius:10px;text-decoration:none;font-size:.95rem;border:1.5px solid rgba(255,255,255,.25);">Parler à l'équipe</a>
+    </div>
+  </div>
+</div>
+
+<footer class="p-footer">
+  © 2025 Certichain Africa · Blockchain certificate platform for Africa ·
+  <a href="/verify" style="color:#2DD4BF;">Vérifier un certificat</a>
+</footer>
+
+<script>
+  let billing = 'monthly';
+  function setBilling(mode, btn) {
+    billing = mode;
+    document.querySelectorAll('#billingToggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[data-monthly]').forEach(el => {
+      const val = mode === 'annual' ? el.dataset.annual : el.dataset.monthly;
+      el.textContent = parseInt(val).toLocaleString('fr-FR');
+    });
+    const usd = { starter: [33, 26], pro: [83, 66] };
+    document.getElementById('starter-period').textContent = mode === 'annual'
+      ? '/ mois · ~26 USD · facturé annuellement' : '/ mois · ~33 USD';
+    document.getElementById('pro-period').textContent = mode === 'annual'
+      ? '/ mois · ~66 USD · facturé annuellement' : '/ mois · ~83 USD';
+  }
+</script>
+
+</body>
+</html>

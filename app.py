@@ -231,6 +231,10 @@ def send_otp_email(to_email, otp_code, institution_name=''):
 def index():
     return render_template('landing.html')
 
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'GET':

@@ -32,6 +32,7 @@
             <button type="submit" class="btn btn-outline btn-sm">Déconnexion</button>
           </form>
         {% else %}
+          <a href="/pricing" class="btn btn-ghost btn-sm">Tarifs</a>
           <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
           <a href="/signup" class="btn btn-primary btn-sm">Commencer</a>
         {% endif %}
@@ -81,6 +82,13 @@
       </a>
 
       <span class="c-sidebar__label" style="margin-top:1rem;">Ressources</span>
+
+      <a href="/pricing" class="c-sidebar__link {% if request.endpoint == 'pricing' %}is-active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+        Tarifs
+      </a>
 
       <a href="/templates" class="c-sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

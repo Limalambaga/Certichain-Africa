@@ -420,7 +420,8 @@ def forgot_password():
         institution.reset_token_expiry = expiry
         db.session.commit()
 
-        reset_url = url_for('reset_password', token=token, _external=True)
+        base = os.getenv('APP_BASE_URL', request.host_url.rstrip('/'))
+        reset_url = f"{base}/reset-password/{token}"
         html_body = f"""<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',sans-serif;">

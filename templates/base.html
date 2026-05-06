@@ -32,7 +32,6 @@
             <button type="submit" class="btn btn-outline btn-sm">Déconnexion</button>
           </form>
         {% else %}
-          <a href="/pricing" class="btn btn-ghost btn-sm">Tarifs</a>
           <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
           <a href="/signup" class="btn btn-primary btn-sm">Commencer</a>
         {% endif %}
@@ -83,13 +82,6 @@
 
       <span class="c-sidebar__label" style="margin-top:1rem;">Ressources</span>
 
-      <a href="/pricing" class="c-sidebar__link {% if request.endpoint == 'pricing' %}is-active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-        </svg>
-        Tarifs
-      </a>
-
       <a href="/templates" class="c-sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -105,6 +97,22 @@
         </svg>
         Paramètres
       </a>
+
+      <!-- Plan widget -->
+      <div style="margin:1.25rem 0 .5rem; background:linear-gradient(135deg,#0A1E52,#1A3A7A); border-radius:12px; padding:1rem 1.1rem;">
+        <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem;">
+          <span style="font-size:.7rem; font-weight:700; letter-spacing:.05em; color:rgba(255,255,255,.5); text-transform:uppercase;">Votre plan</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.65rem;">
+          <span style="background:#2DD4BF; color:#0A1E52; font-size:.65rem; font-weight:800; padding:.2rem .55rem; border-radius:100px;">GRATUIT</span>
+          <span style="color:white; font-size:.82rem; font-weight:600;">Découverte</span>
+        </div>
+        <div style="font-size:.72rem; color:rgba(255,255,255,.45); margin-bottom:.85rem;">5 certificats · Blockchain incluse</div>
+        <a href="/#pricing" style="display:block; text-align:center; background:#C9A84C; color:#0A1E52; font-size:.78rem; font-weight:700; padding:.45rem; border-radius:8px; text-decoration:none; transition:background .2s;"
+           onmouseover="this.style.background='#b8973f';" onmouseout="this.style.background='#C9A84C';">
+          Passer à Starter →
+        </a>
+      </div>
 
       <!-- User footer -->
       <div class="c-sidebar__footer">

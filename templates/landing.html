@@ -9,6 +9,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* ── Pricing extras (ROI, table, FAQ, CTA) ── */
+    .lp-pricing-wrap { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .lp-roi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 2.5rem 0 3.5rem; }
+    .lp-roi-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
+    .lp-roi-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .lp-roi-card h3 { font-size: .95rem; font-weight: 700; color: #1a202c; margin-bottom: .4rem; }
+    .lp-roi-card p  { font-size: .8rem; color: #64748b; line-height: 1.6; }
+    .lp-compare { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .lp-compare th { background: #0A1E52; color: white; padding: .75rem 1rem; text-align: left; font-weight: 600; }
+    .lp-compare th:first-child { border-radius: 10px 0 0 0; }
+    .lp-compare th:last-child  { border-radius: 0 10px 0 0; }
+    .lp-compare td { padding: .7rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+    .lp-compare tr:hover td { background: #f8fafc; }
+    .lp-compare .lp-check { color: #2DD4BF; font-weight: 700; }
+    .lp-compare .lp-cross  { color: #cbd5e0; }
+    .lp-compare .lp-feat { font-weight: 600; color: #0A1E52; }
+    .lp-faq { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0 3rem; }
+    .lp-faq details { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .lp-faq summary { padding: 1rem 1.25rem; font-weight: 600; font-size: .875rem; cursor: pointer; color: #1a202c; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .lp-faq summary::after { content: '+'; font-size: 1.2rem; color: #94a3b8; }
+    .lp-faq details[open] summary::after { content: '−'; }
+    .lp-faq details p { padding: 0 1.25rem 1rem; font-size: .83rem; color: #64748b; line-height: 1.65; }
+    .lp-cta-box { background: linear-gradient(135deg, #0A1E52, #1A3A7A); border-radius: 20px; padding: 3rem 2.5rem; text-align: center; margin: 0 0 4rem; }
+    .lp-cta-box h2 { font-size: 1.75rem; font-weight: 800; color: white; margin-bottom: .75rem; }
+    .lp-cta-box p { color: rgba(255,255,255,.65); font-size: .95rem; margin-bottom: 2rem; }
+    .lp-cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .lp-sub-title { font-size: 1.4rem; font-weight: 800; color: #0A1E52; margin-bottom: .35rem; }
+    .lp-sub-desc  { color: #64748b; font-size: .88rem; margin-bottom: 1.75rem; }
+    @media (max-width: 900px) {
+      .lp-roi-grid { grid-template-columns: 1fr; }
+      .lp-cta-box { padding: 2rem 1.25rem; }
+    }
+    @media (max-width: 600px) {
+      .lp-cta-btns { flex-direction: column; }
+    }
+  </style>
 </head>
 <body class="landing-body">
 
@@ -668,13 +705,109 @@
 
     </div><!-- /grid -->
 
-    <!-- Mobile responsive note -->
-    <style>
-      @media (max-width:900px) { #pricing-cards { grid-template-columns:repeat(2,1fr) !important; } }
-      @media (max-width:600px) { #pricing-cards { grid-template-columns:1fr !important; } }
-    </style>
+  </div><!-- /container -->
 
-  </div>
+  <!-- ── ROI ── -->
+  <div class="lp-pricing-wrap" style="margin-top:4rem;">
+    <div class="lp-sub-title">Pourquoi investir dans Certichain ?</div>
+    <div class="lp-sub-desc">Ce que votre institution gagne concrètement.</div>
+    <div class="lp-roi-grid">
+      <div class="lp-roi-card">
+        <div class="lp-roi-card__icon" style="background:#EFF6FF;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1E52" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Diplômes infalsifiables</h3>
+        <p>Chaque certificat est ancré sur la blockchain Polygon. Toute modification est détectable instantanément. Votre réputation est protégée.</p>
+      </div>
+      <div class="lp-roi-card">
+        <div class="lp-roi-card__icon" style="background:#F0FFF4;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Vérification en 3 secondes</h3>
+        <p>Employeurs et recruteurs vérifient l'authenticité d'un diplôme en scannant simplement le QR code. Zéro délai, zéro intermédiaire.</p>
+      </div>
+      <div class="lp-roi-card">
+        <div class="lp-roi-card__icon" style="background:#FFF7ED;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <h3>Réduction des coûts</h3>
+        <p>Finies les impressions coûteuses et les vérifications manuelles. Économisez jusqu'à 70% sur la gestion documentaire.</p>
+      </div>
+    </div>
+
+    <!-- Compare table -->
+    <div class="lp-sub-title">Comparatif détaillé</div>
+    <div class="lp-sub-desc">Toutes les fonctionnalités, plan par plan.</div>
+    <div style="overflow-x:auto; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:3.5rem;">
+      <table class="lp-compare">
+        <thead>
+          <tr>
+            <th style="width:35%;">Fonctionnalité</th>
+            <th>Découverte</th>
+            <th>Starter</th>
+            <th>Académique</th>
+            <th>Entreprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="lp-feat">Certificats/mois</td><td>5</td><td>50</td><td>300</td><td>Illimité</td></tr>
+          <tr><td class="lp-feat">Types de certificats</td><td>3</td><td>3</td><td>3</td><td>3 + custom</td></tr>
+          <tr><td class="lp-feat">PDF haute qualité</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">QR code de vérification</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Blockchain Polygon</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Empreinte SHA-256</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Stockage IPFS</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Email au bénéficiaire</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Logo institution</td><td class="lp-cross">—</td><td class="lp-check">✓</td><td class="lp-check">✓</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Multi-établissements</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">API REST</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-cross">—</td><td class="lp-check">✓</td></tr>
+          <tr><td class="lp-feat">Support</td><td>Communauté</td><td>Email 48h</td><td>Prioritaire 24h</td><td>Dédié</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FAQ -->
+    <div class="lp-sub-title">Questions fréquentes</div>
+    <div class="lp-sub-desc">Tout ce que vous devez savoir avant de vous lancer.</div>
+    <div class="lp-faq">
+      <details>
+        <summary>Puis-je changer de plan à tout moment ?</summary>
+        <p>Oui, vous pouvez upgrader ou downgrader votre abonnement à n'importe quel moment depuis votre tableau de bord. Les changements prennent effet immédiatement, avec prorata calculé automatiquement.</p>
+      </details>
+      <details>
+        <summary>Que se passe-t-il si je dépasse mon quota mensuel ?</summary>
+        <p>Nous vous avertissons par email à 80% et 100% de votre quota. Passé le quota, vous pouvez acheter des certificats supplémentaires à l'unité (500 XAF/certificat) ou passer au plan supérieur.</p>
+      </details>
+      <details>
+        <summary>Les certificats émis sont-ils permanents sur la blockchain ?</summary>
+        <p>Oui. Une fois ancré sur la blockchain Polygon, le hash du certificat est permanent et immuable. Même si vous résiliez votre abonnement, les certificats déjà émis restent vérifiables indéfiniment.</p>
+      </details>
+      <details>
+        <summary>Acceptez-vous les paiements Mobile Money (MTN, Orange) ?</summary>
+        <p>Oui — nous acceptons MTN Mobile Money, Orange Money, Wave, ainsi que les cartes Visa/Mastercard et les virements bancaires BEAC/BCEAO. Idéal pour les institutions africaines.</p>
+      </details>
+      <details>
+        <summary>Y a-t-il un engagement de durée ?</summary>
+        <p>Non. Tous les plans sont sans engagement, résiliables à tout moment. Le plan annuel offre 2 mois offerts mais reste résiliable avec remboursement au prorata.</p>
+      </details>
+      <details>
+        <summary>Proposez-vous des tarifs spéciaux pour les ONG et institutions publiques ?</summary>
+        <p>Oui. Les ONG, ministères et établissements publics africains bénéficient de 30% de réduction sur tous les plans. Contactez-nous avec une preuve de statut.</p>
+      </details>
+    </div>
+
+    <!-- CTA -->
+    <div class="lp-cta-box">
+      <h2>Prêt à sécuriser vos diplômes ?</h2>
+      <p>Rejoignez les institutions africaines qui font confiance à Certichain. Commencez gratuitement, sans carte bancaire.</p>
+      <div class="lp-cta-btns">
+        <a href="/signup" style="background:#2DD4BF; color:#0A1E52; font-weight:700; padding:.8rem 2rem; border-radius:10px; text-decoration:none; font-size:.95rem;">Commencer gratuitement</a>
+        <a href="mailto:contact@certichain.africa" style="background:rgba(255,255,255,.1); color:white; font-weight:600; padding:.8rem 2rem; border-radius:10px; text-decoration:none; font-size:.95rem; border:1.5px solid rgba(255,255,255,.25);">Parler à l'équipe</a>
+      </div>
+    </div>
+
+  </div><!-- /lp-pricing-wrap -->
+
 </section>
 
 <script>

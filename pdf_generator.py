@@ -270,7 +270,7 @@ def create_diploma_pdf(data=None):
     c.setFont("Courier", 6.5)
     c.setFillColor(TEXT_LIGHT)
     c.drawString(1.2*cm, 0.9*cm, cert_num)
-    c.drawString(1.2*cm, 0.6*cm, f"Hash: {blockchain_hash[:40]}")
+    c.drawString(1.2*cm, 0.6*cm, f"Hash: {blockchain_hash}")
 
     c.save()
     buffer.seek(0)
@@ -465,7 +465,7 @@ def create_certification_pdf(data=None):
     c.setFont("Courier", 5.5)
     c.setFillColor(HexColor('#4A5568'))
     c.drawString(0.8*cm, 0.6*cm, cert_number)
-    c.drawString(0.8*cm, 0.35*cm, f"Hash: {blockchain_hash[:38]}")
+    c.drawString(0.8*cm, 0.35*cm, f"Hash: {blockchain_hash}")
 
     c.save()
     buffer.seek(0)
@@ -604,8 +604,7 @@ def create_badge_pdf(data=None):
     c.drawString(2.4*cm, box_y - 0.3*cm, "Vérifiable sur Blockchain Polygon")
     c.setFont("Courier", 6.5)
     c.setFillColor(TEXT_MID)
-    hash_display = (blockchain_hash[:52] + '…') if len(blockchain_hash) > 52 else blockchain_hash
-    c.drawString(2.4*cm, box_y - 0.6*cm, hash_display)
+    c.drawString(2.4*cm, box_y - 0.6*cm, blockchain_hash)
 
     # ── Signature & Seal ──────────────────────────────────────────────────────
     sig_y = box_y - 2.3*cm
@@ -632,7 +631,7 @@ def create_badge_pdf(data=None):
     c.setFont("Courier", 6)
     c.setFillColor(TEXT_LIGHT)
     c.drawString(1*cm, 0.8*cm, cert_number)
-    c.drawString(1*cm, 0.55*cm, f"Hash: {blockchain_hash[:38]}")
+    c.drawString(1*cm, 0.55*cm, f"Hash: {blockchain_hash}")
 
     c.save()
     buffer.seek(0)

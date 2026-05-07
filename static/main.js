@@ -6,15 +6,17 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ═══════════════════════════════════════════
    1. NAVBAR — glassmorphism on scroll
+      Handles both .c-navbar (dashboard) and .mm-nav (landing)
 ═══════════════════════════════════════════ */
-const navbar = document.querySelector('.c-navbar');
-if (navbar) {
-  const onScroll = () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 20);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-}
+const navbar   = document.querySelector('.c-navbar');
+const mmNavbar = document.querySelector('.mm-nav');
+const _scrolled = () => {
+  const s = window.scrollY > 20;
+  if (navbar)   navbar.classList.toggle('scrolled', s);
+  if (mmNavbar) mmNavbar.classList.toggle('scrolled', s);
+};
+window.addEventListener('scroll', _scrolled, { passive: true });
+_scrolled();
 
 /* ═══════════════════════════════════════════
    2. SMOOTH SCROLL for anchor links
@@ -253,3 +255,82 @@ if (!REDUCED && 'IntersectionObserver' in window) {
 ═══════════════════════════════════════════ */
 const heroCta = document.querySelector('.hero__actions .btn-primary');
 if (heroCta && !REDUCED) heroCta.classList.add('btn-glow');
+
+/* ═══════════════════════════════════════════
+   11. mm-REVEAL — IntersectionObserver
+       for MetaMask-style landing sections
+═══════════════════════════════════════════ */
+if ('IntersectionObserver' in window) {
+  const mmRevealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        mmRevealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -44px 0px' });
+
+  document.querySelectorAll('.mm-reveal').forEach(el => mmRevealObs.observe(el));
+}
+
+/* ═══════════════════════════════════════════
+   12. MAGNETIC BUTTONS — subtle pull on hover
+═══════════════════════════════════════════ */
+if (!REDUCED) {
+  document.querySelectorAll('.mm-magnetic').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r  = btn.getBoundingClientRect();
+      const cx = r.left + r.width  / 2;
+      const cy = r.top  + r.height / 2;
+      const dx = (e.clientX - cx) * 0.28;
+      const dy = (e.clientY - cy) * 0.28;
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transition = 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+      btn.style.transform  = '';
+      setTimeout(() => { btn.style.transition = ''; }, 520);
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   13. CANVAS PARTICLES — also works in .mm-hero
+═══════════════════════════════════════════ */
+if (!REDUCED) {
+  const mmHero = document.querySelector('.mm-hero');
+  if (mmHero && !document.querySelector('.hero')) {
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0;opacity:0.45;';
+    mmHero.insertBefore(canvas, mmHero.firstChild);
+    const ctx2 = canvas.getContext('2d');
+    let w2, h2, pts = [];
+    const resize2 = () => { w2 = canvas.width = mmHero.offsetWidth; h2 = canvas.height = mmHero.offsetHeight; };
+    const mkPt = () => ({ x: Math.random()*w2, y: Math.random()*h2, r: Math.random()*1.4+0.3,
+      vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18, a: Math.random()*0.45+0.1 });
+    const init2 = () => { resize2(); pts = Array.from({length:55}, mkPt); };
+    const draw2 = () => {
+      ctx2.clearRect(0, 0, w2, h2);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = w2; if (p.x > w2) p.x = 0;
+        if (p.y < 0) p.y = h2; if (p.y > h2) p.y = 0;
+        ctx2.beginPath(); ctx2.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx2.fillStyle = `rgba(246,133,27,${p.a})`; ctx2.fill();
+      });
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i+1; j < pts.length; j++) {
+          const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+          const d  = Math.sqrt(dx*dx + dy*dy);
+          if (d < 85) {
+            ctx2.beginPath(); ctx2.moveTo(pts[i].x, pts[i].y); ctx2.lineTo(pts[j].x, pts[j].y);
+            ctx2.strokeStyle = `rgba(246,133,27,${0.06*(1-d/85)})`; ctx2.lineWidth = 0.5; ctx2.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw2);
+    };
+    window.addEventListener('resize', resize2, { passive: true });
+    init2(); draw2();
+  }
+}

@@ -7,7 +7,7 @@
   <meta name="description" content="Émettez, gérez et vérifiez vos certificats numériques avec la blockchain. La plateforme de référence pour les institutions africaines."/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="landing-body">
@@ -15,27 +15,25 @@
 <!-- ═══════════════════════════════════════════════════
      NAVBAR
 ════════════════════════════════════════════════════ -->
-<header class="c-navbar">
-  <div class="c-navbar__inner">
+<header class="mm-nav" id="mm-nav">
+  <div class="mm-nav__inner">
 
-    <a href="/" class="c-navbar__brand">
-      <div class="c-navbar__brand-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+    <a href="/" class="mm-nav__brand">
+      <div class="mm-nav__brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="white"/>
+          <path d="M7.5 10.5V15C7.5 17.2 9.5 19 12 19C14.5 19 16.5 17.2 16.5 15V10.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <line x1="21" y1="8" x2="21" y2="14" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="21" cy="15.5" r="1.3" fill="white"/>
         </svg>
       </div>
       Certichain
     </a>
 
-    <nav class="c-navbar__nav">
-      <a href="#features" style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; transition:color .2s;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Fonctionnalités</a>
-      <a href="#how" style="color:rgba(255,255,255,.75); text-decoration:none; font-size:.875rem; font-weight:500; margin-left:1.5rem; transition:color .2s;" onmouseover="this.style.color='white';" onmouseout="this.style.color='rgba(255,255,255,.75)';">Comment ça marche</a>
-    </nav>
-
-    <div class="c-navbar__actions">
-      <a href="/pricing" class="btn btn-ghost btn-sm">Tarifs</a>
-      <a href="/login"   class="btn btn-ghost btn-sm">Connexion</a>
-      <a href="/signup"  class="btn btn-primary btn-sm">Commencer gratuitement</a>
+    <div class="mm-nav__actions">
+      <a href="/pricing" class="mm-btn mm-btn--ghost mm-btn--sm">Tarifs</a>
+      <a href="/login"   class="mm-btn mm-btn--ghost mm-btn--sm">Connexion</a>
+      <a href="/signup"  class="mm-btn mm-btn--orange mm-btn--sm">Commencer</a>
     </div>
 
   </div>
@@ -45,124 +43,142 @@
 <!-- ═══════════════════════════════════════════════════
      HERO
 ════════════════════════════════════════════════════ -->
-<section class="hero" style="padding-top: calc(64px + 5rem);">
-  <div class="hero__bg"></div>
-  <div class="hero__grid"></div>
-  <div class="hero-blob hero-blob--1"></div>
-  <div class="hero-blob hero-blob--2"></div>
-  <div class="hero-blob hero-blob--3"></div>
+<section class="mm-hero">
 
-  <div class="hero__inner">
+  <!-- Atmospheric background -->
+  <div class="mm-atm">
+    <div class="mm-atm__blob mm-atm__blob--1"></div>
+    <div class="mm-atm__blob mm-atm__blob--2"></div>
+    <div class="mm-atm__blob mm-atm__blob--3"></div>
+  </div>
 
-    <!-- Text -->
-    <div class="hero__text">
-      <h1 class="hero__title">
+  <div class="mm-hero__inner">
+
+    <!-- Left: text -->
+    <div class="mm-hero__text">
+      <div class="mm-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Blockchain · IPFS · Certifié
+      </div>
+
+      <h1 class="mm-hero__h1">
         La certification numérique<br>
-        de <em>confiance</em> pour<br>
-        l'Afrique
+        <span class="mm-gradient-text">de confiance</span><br>
+        pour l'Afrique
       </h1>
 
-      <p class="hero__desc">
+      <p class="mm-hero__sub">
         Émettez, partagez et vérifiez des certificats inviolables
         grâce à la technologie blockchain. Une solution institutionnelle
         pensée pour les universités, écoles et organismes de formation.
       </p>
 
-      <div class="hero__actions">
-        <a href="/signup" class="btn btn-primary btn-lg">
+      <div class="mm-hero__cta">
+        <a href="/signup" class="mm-btn mm-btn--orange mm-btn--lg mm-magnetic">
           Démarrer maintenant
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
           </svg>
         </a>
-        <a href="/pricing" class="btn btn-outline btn-lg" style="margin-left:.75rem;">
-          Voir les tarifs
-        </a>
       </div>
 
-      <div class="hero__trust">
-        <div class="hero__trust-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+      <div class="mm-hero__trust">
+        <div class="mm-trust-item">
+          <svg class="mm-trust-item__check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           Sécurisé par blockchain
         </div>
-        <div class="hero__trust-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+        <div class="mm-trust-item">
+          <svg class="mm-trust-item__check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           Stockage IPFS décentralisé
         </div>
-        <div class="hero__trust-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+        <div class="mm-trust-item">
+          <svg class="mm-trust-item__check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           Vérification instantanée
         </div>
       </div>
     </div>
 
-    <!-- Certificate Mockup -->
-    <div class="hero__visual">
-      <div class="mockup-wrapper">
-        <div class="float-badge float-badge--1">
-          <span class="badge-dot"></span>
+    <!-- Right: certificate mockup -->
+    <div class="mm-hero__visual">
+      <div class="mockup-wrapper" style="position:relative;">
+
+        <!-- Float badges -->
+        <div class="mm-float-badge mm-float-badge--1">
+          <div class="mm-badge-dot"></div>
           Vérifié en temps réel
         </div>
-        <div class="float-badge float-badge--2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0F9589" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <div class="mm-float-badge mm-float-badge--2">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0F9589" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
           Ancré sur blockchain
         </div>
 
-        <div class="cert-mockup">
+        <!-- Certificate card -->
+        <div class="mm-cert cert-mockup">
+
           <!-- Header -->
-          <div class="cert-mockup__top">
-            <div class="cert-mockup__brand">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.45rem; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.85); letter-spacing:0.05em;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="var(--mm-orange)"/>
+                <path d="M7.5 10.5V15C7.5 17.2 9.5 19 12 19C14.5 19 16.5 17.2 16.5 15V10.5" stroke="var(--mm-orange)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                <line x1="21" y1="8" x2="21" y2="14" stroke="var(--mm-orange)" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="21" cy="15.5" r="1.2" fill="var(--mm-orange)"/>
+              </svg>
               CERTICHAIN AFRICA
             </div>
-            <div class="cert-mockup__verified">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="mm-badge mm-badge--success">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Authentique
             </div>
           </div>
+
           <!-- Body -->
-          <div class="cert-mockup__body">
-            <div class="cert-mockup__school">Université de Yaoundé I</div>
-            <div class="cert-mockup__title">Master en Informatique</div>
-            <div class="cert-mockup__name-label">Décerné à</div>
-            <div class="cert-mockup__name">Marie Nkoulou Eto'o</div>
-            <div class="cert-mockup__meta">
-              <div class="cert-mockup__meta-item">
-                <label>Domaine</label>
-                <span>Sciences &amp; Technologies</span>
-              </div>
-              <div class="cert-mockup__meta-item">
-                <label>Mention</label>
-                <span>Très Bien</span>
-              </div>
-              <div class="cert-mockup__meta-item">
-                <label>Date</label>
-                <span>15 juin 2024</span>
-              </div>
-              <div class="cert-mockup__meta-item">
-                <label>Statut</label>
-                <span style="color:var(--teal-500); font-weight:700;">Vérifié</span>
-              </div>
+          <div style="margin-bottom:1.25rem;">
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.40); font-weight:500; margin-bottom:0.2rem;">Institution</div>
+            <div style="font-size:0.95rem; font-weight:700; color:rgba(255,255,255,0.90); margin-bottom:0.85rem;">Université de Yaoundé I</div>
+
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.40); font-weight:500; margin-bottom:0.2rem;">Certificat</div>
+            <div style="font-size:1.05rem; font-weight:800; color:#FFFFFF; letter-spacing:-0.02em; margin-bottom:1rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Master en Informatique</div>
+
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.40); font-weight:500; margin-bottom:0.2rem;">Décerné à</div>
+            <div style="font-size:1.05rem; font-weight:700; color:var(--mm-orange-light,#FFB26B);">Marie Nkoulou Eto'o</div>
+          </div>
+
+          <!-- Meta grid -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:1.25rem;">
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0.6rem 0.75rem;">
+              <div style="font-size:0.65rem; color:rgba(255,255,255,0.38); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.15rem;">Mention</div>
+              <div style="font-size:0.82rem; font-weight:600; color:rgba(255,255,255,0.85);">Très Bien</div>
             </div>
-            <div class="cert-mockup__hash">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-              <span>0x7f4e3a8b2c91d5f6e4a0b3c2d1e9f847a6b5c4d3...</span>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0.6rem 0.75rem;">
+              <div style="font-size:0.65rem; color:rgba(255,255,255,0.38); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.15rem;">Date</div>
+              <div style="font-size:0.82rem; font-weight:600; color:rgba(255,255,255,0.85);">15 juin 2024</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0.6rem 0.75rem;">
+              <div style="font-size:0.65rem; color:rgba(255,255,255,0.38); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.15rem;">Domaine</div>
+              <div style="font-size:0.82rem; font-weight:600; color:rgba(255,255,255,0.85);">Sciences &amp; Tech.</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0.6rem 0.75rem;">
+              <div style="font-size:0.65rem; color:rgba(255,255,255,0.38); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.15rem;">Statut</div>
+              <div style="font-size:0.82rem; font-weight:700; color:#22C55E;">✓ Vérifié</div>
             </div>
           </div>
+
+          <!-- Hash -->
+          <div class="mm-hash">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            0x7f4e3a8b2c91d5f6e4a0b3c2d1e9f847a6b5c4d3...
+          </div>
+
           <!-- Footer -->
-          <div class="cert-mockup__footer">
-            <span style="font-size:0.73rem; font-weight:600; color:var(--text-muted);">Polygon Mainnet · IPFS</span>
-            <span class="badge badge-teal" style="font-size:0.7rem;">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.07);">
+            <span style="font-size:0.7rem; font-weight:500; color:rgba(255,255,255,0.35);">Polygon Mainnet · IPFS</span>
+            <div class="mm-badge mm-badge--orange">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Ancré
-            </span>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -174,84 +190,30 @@
 <!-- ═══════════════════════════════════════════════════
      TRUST BAR
 ════════════════════════════════════════════════════ -->
-<section class="trust-bar">
-  <div class="trust-bar__label">Fait confiance par des institutions à travers l'Afrique</div>
+<section class="mm-trust-bar">
+  <div class="mm-trust-bar__label">Fait confiance par des institutions à travers l'Afrique</div>
   <div class="logos-track-wrapper">
     <div class="logos-track">
       <!-- Set 1 -->
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div>
-        <span class="logo-item__name">Univ. Cheikh Anta Diop</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div>
-        <span class="logo-item__name">Univ. de Yaoundé I</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div>
-        <span class="logo-item__name">Cairo University</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div>
-        <span class="logo-item__name">Lagos Business School</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div>
-        <span class="logo-item__name">INES Ruhengeri</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div>
-        <span class="logo-item__name">Stellenbosch University</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div>
-        <span class="logo-item__name">Université de Lomé</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div>
-        <span class="logo-item__name">ESMT Abidjan</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div>
-        <span class="logo-item__name">Univ. Gaston Berger</span>
-      </div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div><span class="logo-item__name">Univ. Cheikh Anta Diop</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div><span class="logo-item__name">Univ. de Yaoundé I</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div><span class="logo-item__name">Cairo University</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div><span class="logo-item__name">Lagos Business School</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div><span class="logo-item__name">INES Ruhengeri</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div><span class="logo-item__name">Stellenbosch University</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div><span class="logo-item__name">Université de Lomé</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div><span class="logo-item__name">ESMT Abidjan</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div><span class="logo-item__name">Univ. Gaston Berger</span></div>
       <!-- Set 2 (duplicate for infinite loop) -->
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div>
-        <span class="logo-item__name">Univ. Cheikh Anta Diop</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div>
-        <span class="logo-item__name">Univ. de Yaoundé I</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div>
-        <span class="logo-item__name">Cairo University</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div>
-        <span class="logo-item__name">Lagos Business School</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div>
-        <span class="logo-item__name">INES Ruhengeri</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div>
-        <span class="logo-item__name">Stellenbosch University</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div>
-        <span class="logo-item__name">Université de Lomé</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div>
-        <span class="logo-item__name">ESMT Abidjan</span>
-      </div>
-      <div class="logo-item">
-        <div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div>
-        <span class="logo-item__name">Univ. Gaston Berger</span>
-      </div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1a3c6e,#2563EB);">UCAD</div><span class="logo-item__name">Univ. Cheikh Anta Diop</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#14532d,#16a34a);">UY1</div><span class="logo-item__name">Univ. de Yaoundé I</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#7c2d12,#c2410c);">CU</div><span class="logo-item__name">Cairo University</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">LBS</div><span class="logo-item__name">Lagos Business School</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#6b21a8,#9333ea);">INES</div><span class="logo-item__name">INES Ruhengeri</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#713f12,#d97706);">SU</div><span class="logo-item__name">Stellenbosch University</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#0f4c81,#0ea5e9);">UL</div><span class="logo-item__name">Université de Lomé</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#134e4a,#0f9589);">ESMT</div><span class="logo-item__name">ESMT Abidjan</span></div>
+      <div class="logo-item"><div class="logo-mark" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);">UGB</div><span class="logo-item__name">Univ. Gaston Berger</span></div>
     </div>
   </div>
 </section>
@@ -260,13 +222,13 @@
 <!-- ═══════════════════════════════════════════════════
      FEATURES
 ════════════════════════════════════════════════════ -->
-<section class="landing-section landing-section--alt" id="features">
+<section class="mm-section-cream" id="features">
   <div class="container">
 
-    <div class="section-head text-center">
-      <div class="section-eyebrow">Fonctionnalités</div>
-      <h2 class="section-title">Tout ce dont une institution a besoin</h2>
-      <p class="section-desc" style="margin: 0 auto;">
+    <div class="text-center mm-reveal" style="margin-bottom:3.5rem;">
+      <div class="mm-section-eyebrow">Fonctionnalités</div>
+      <h2 class="mm-section-h2">Tout ce dont une institution a besoin</h2>
+      <p class="mm-section-sub" style="margin:0 auto;">
         De l'émission à la vérification, Certichain couvre l'intégralité
         du cycle de vie du certificat numérique.
       </p>
@@ -274,70 +236,82 @@
 
     <div class="feature-grid">
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--navy">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="1">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--navy">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Sécurité blockchain</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Chaque certificat est ancré de manière immuable sur la blockchain Polygon. Impossible à falsifier, impossible à perdre.</p>
         </div>
-        <h3>Sécurité blockchain</h3>
-        <p>Chaque certificat est ancré de manière immuable sur la blockchain Polygon. Impossible à falsifier, impossible à perdre.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--teal">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="2">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--teal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Vérification instantanée</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">N'importe qui peut vérifier l'authenticité d'un certificat en quelques secondes, depuis n'importe où dans le monde.</p>
         </div>
-        <h3>Vérification instantanée</h3>
-        <p>N'importe qui peut vérifier l'authenticité d'un certificat en quelques secondes, depuis n'importe où dans le monde.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="3">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Stockage IPFS</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Les fichiers PDF sont stockés sur le réseau IPFS décentralisé — pérennité garantie et accès mondial sans dépendance à un serveur central.</p>
         </div>
-        <h3>Stockage IPFS</h3>
-        <p>Les fichiers PDF sont stockés sur le réseau IPFS décentralisé — pérennité garantie et accès mondial sans dépendance à un serveur central.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--success">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="1">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Modèles professionnels</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Bibliothèque de modèles PDF prêts à l'emploi : diplômes, certifications, badges. Personnalisables avec le logo de votre institution.</p>
         </div>
-        <h3>Modèles professionnels</h3>
-        <p>Bibliothèque de modèles PDF prêts à l'emploi : diplômes, certifications, badges. Personnalisables avec le logo de votre institution.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--navy">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="2">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Tableau de bord temps réel</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Suivez en temps réel tous vos certificats émis, leur statut blockchain et l'historique complet de vos actions.</p>
         </div>
-        <h3>Tableau de bord temps réel</h3>
-        <p>Suivez en temps réel tous vos certificats émis, leur statut blockchain et l'historique complet de vos actions.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon feature-icon--blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-          </svg>
+      <div class="mm-card mm-reveal" data-delay="3">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Multi-institutionnel</h3>
+          <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Chaque institution dispose de son espace sécurisé, de ses propres modèles et de son portefeuille blockchain dédié.</p>
         </div>
-        <h3>Multi-institutionnel</h3>
-        <p>Chaque institution dispose de son espace sécurisé, de ses propres modèles et de son portefeuille blockchain dédié.</p>
       </div>
 
     </div>
@@ -348,13 +322,13 @@
 <!-- ═══════════════════════════════════════════════════
      HOW IT WORKS
 ════════════════════════════════════════════════════ -->
-<section class="landing-section" id="how">
+<section class="mm-section-white" id="how">
   <div class="container">
 
-    <div class="section-head text-center">
-      <div class="section-eyebrow">Processus</div>
-      <h2 class="section-title">Simple en 3 étapes</h2>
-      <p class="section-desc" style="margin: 0 auto;">
+    <div class="text-center mm-reveal" style="margin-bottom:3.5rem;">
+      <div class="mm-section-eyebrow">Processus</div>
+      <h2 class="mm-section-h2">Simple en 3 étapes</h2>
+      <p class="mm-section-sub" style="margin:0 auto;">
         De l'inscription à l'émission de votre premier certificat blockchain,
         le processus est conçu pour être rapide et intuitif.
       </p>
@@ -362,22 +336,22 @@
 
     <div class="steps-grid">
 
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <h3>Inscription institution</h3>
-        <p>Créez le compte de votre institution en quelques minutes. Vos informations sont vérifiées et sécurisées.</p>
+      <div class="mm-step-card mm-reveal" data-delay="1">
+        <div class="mm-step-num">1</div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Inscription institution</h3>
+        <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Créez le compte de votre institution en quelques minutes. Vos informations sont vérifiées et sécurisées.</p>
       </div>
 
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <h3>Remplissez le certificat</h3>
-        <p>Choisissez un modèle, saisissez les informations du bénéficiaire. Le PDF est généré automatiquement.</p>
+      <div class="mm-step-card mm-reveal" data-delay="2">
+        <div class="mm-step-num">2</div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Remplissez le certificat</h3>
+        <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">Choisissez un modèle, saisissez les informations du bénéficiaire. Le PDF est généré automatiquement.</p>
       </div>
 
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <h3>Ancrage blockchain</h3>
-        <p>En un clic, le certificat est ancré sur la blockchain et stocké sur IPFS. La preuve est immuable et vérifiable à vie.</p>
+      <div class="mm-step-card mm-reveal" data-delay="3">
+        <div class="mm-step-num">3</div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.65rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Ancrage blockchain</h3>
+        <p style="font-size:0.875rem; color:var(--mm-ink-muted); line-height:1.65;">En un clic, le certificat est ancré sur la blockchain et stocké sur IPFS. La preuve est immuable et vérifiable à vie.</p>
       </div>
 
     </div>
@@ -389,92 +363,92 @@
 <!-- ═══════════════════════════════════════════════════
      SOLUTIONS
 ════════════════════════════════════════════════════ -->
-<section class="landing-section landing-section--alt">
+<section class="mm-section-cream">
   <div class="container">
 
-    <div class="section-head text-center">
-      <div class="section-eyebrow">Solutions</div>
-      <h2 class="section-title">Pour chaque type d'institution</h2>
+    <div class="text-center mm-reveal" style="margin-bottom:3.5rem;">
+      <div class="mm-section-eyebrow">Solutions</div>
+      <h2 class="mm-section-h2">Pour chaque type d'institution</h2>
     </div>
 
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
 
-      <div class="card card--hover" style="border-top: 3px solid var(--navy-800);">
-        <div class="card-body-lg">
-          <div class="feature-icon feature-icon--navy" style="margin-bottom:1.25rem;">
+      <div class="mm-card mm-reveal" data-delay="1" style="border-top:3px solid var(--mm-ink);">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--navy" style="margin-bottom:1.25rem;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>
           </div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Universités &amp; Grandes écoles</h3>
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.85rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Universités &amp; Grandes écoles</h3>
           <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Diplômes de licence et master
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Relevés de notes certifiés
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Attestations de réussite
             </li>
           </ul>
-          <a href="/signup" class="btn btn-primary btn-full">Démarrer</a>
+          <a href="/signup" class="mm-btn mm-btn--primary mm-btn--full">Démarrer</a>
         </div>
       </div>
 
-      <div class="card card--hover" style="border-top: 3px solid var(--blue-500);">
-        <div class="card-body-lg">
-          <div class="feature-icon feature-icon--blue" style="margin-bottom:1.25rem;">
+      <div class="mm-card mm-reveal" data-delay="2" style="border-top:3px solid var(--mm-orange);">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--orange" style="margin-bottom:1.25rem;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
             </svg>
           </div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Organismes de formation</h3>
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.85rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">Organismes de formation</h3>
           <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Certifications professionnelles
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Badges de compétences
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Micro-certifications
             </li>
           </ul>
-          <a href="/signup" class="btn btn-blue btn-full">Démarrer</a>
+          <a href="/signup" class="mm-btn mm-btn--orange mm-btn--full">Démarrer</a>
         </div>
       </div>
 
-      <div class="card card--hover" style="border-top: 3px solid var(--teal-500);">
-        <div class="card-body-lg">
-          <div class="feature-icon feature-icon--teal" style="margin-bottom:1.25rem;">
+      <div class="mm-card mm-reveal" data-delay="3" style="border-top:3px solid #0F9589;">
+        <div class="mm-card__body">
+          <div class="mm-feature-icon mm-feature-icon--teal" style="margin-bottom:1.25rem;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
             </svg>
           </div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">RH &amp; Recruteurs</h3>
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--mm-ink); margin-bottom:0.85rem; font-family:'Bricolage Grotesque','Inter',sans-serif;">RH &amp; Recruteurs</h3>
           <ul style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.75rem;">
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Vérification instantanée
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               Zéro fraude documentaire
             </li>
-            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--text-secondary);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <li style="display:flex; align-items:center; gap:0.5rem; font-size:0.875rem; color:var(--mm-ink-muted);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mm-orange)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
               API d'intégration disponible
             </li>
           </ul>
-          <a href="/verify" class="btn btn-teal btn-full">Vérifier maintenant</a>
+          <a href="/verify" class="mm-btn mm-btn--ghost-dark mm-btn--full">Vérifier maintenant</a>
         </div>
       </div>
 
@@ -486,18 +460,18 @@
 <!-- ═══════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════ -->
-<footer class="landing-footer">
-  <div class="landing-footer__inner">
-    <div class="landing-footer__brand">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+<footer class="mm-footer">
+  <div class="mm-footer__inner">
+    <a href="/" class="mm-footer__brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="rgba(255,255,255,0.55)"/>
+        <path d="M7.5 10.5V15C7.5 17.2 9.5 19 12 19C14.5 19 16.5 17.2 16.5 15V10.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="21" y1="8" x2="21" y2="14" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="21" cy="15.5" r="1.2" fill="rgba(255,255,255,0.55)"/>
+      </svg>
       Certichain Africa
-    </div>
-    <div class="landing-footer__links">
-      <a href="/pricing" style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem; margin-right:1.5rem;">Tarifs</a>
-      <a href="/verify"  style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem; margin-right:1.5rem;">Vérifier</a>
-      <a href="/login"   style="color:rgba(255,255,255,.5); text-decoration:none; font-size:.8rem;">Connexion</a>
-    </div>
-    <div class="landing-footer__copy">&copy; 2025 Certichain Africa. Tous droits réservés.</div>
+    </a>
+    <div class="mm-footer__copy">&copy; 2025 Certichain Africa. Tous droits réservés.</div>
   </div>
 </footer>
 

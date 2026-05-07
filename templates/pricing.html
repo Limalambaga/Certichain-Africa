@@ -6,7 +6,7 @@
   <title>Tarifs — Certichain Africa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     /* ── Page reset ── */
@@ -27,7 +27,7 @@
     .p-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(45,212,191,.08); pointer-events: none; }
     .p-hero::after  { content: ''; position: absolute; bottom: -80px; left: -80px; width: 350px; height: 350px; border-radius: 50%; background: rgba(201,168,76,.06); pointer-events: none; }
     .p-hero__badge { display: inline-block; background: rgba(45,212,191,.15); border: 1px solid rgba(45,212,191,.35); color: #2DD4BF; font-size: .75rem; font-weight: 700; letter-spacing: .06em; padding: .35rem .9rem; border-radius: 100px; margin-bottom: 1.25rem; }
-    .p-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: white; line-height: 1.15; margin-bottom: 1rem; }
+    .p-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: white; line-height: 1.15; margin-bottom: 1rem; font-family: 'Bricolage Grotesque', 'Inter', sans-serif; }
     .p-hero h1 span { color: #C9A84C; }
     .p-hero p { color: rgba(255,255,255,.65); font-size: 1.05rem; max-width: 540px; margin: 0 auto 2rem; line-height: 1.65; }
     .p-toggle { display: inline-flex; background: rgba(255,255,255,.1); border-radius: 100px; padding: 4px; gap: 2px; }
@@ -38,13 +38,38 @@
 
     /* ── Pricing grid ── */
     .p-grid { max-width: 1100px; margin: -2.5rem auto 0; padding: 0 2rem 5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; position: relative; z-index: 1; }
-    .p-card { background: white; border-radius: 16px; border: 1.5px solid #e2e8f0; padding: 2rem 1.75rem; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+    .p-card { background: white; border-radius: 16px; border: 1.5px solid #e2e8f0; padding: 2rem 1.75rem; display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
     .p-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(10,30,82,.10); }
-    .p-card--featured { border-color: #0A1E52; box-shadow: 0 8px 32px rgba(10,30,82,.12); position: relative; overflow: hidden; }
-    .p-card--featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #0A1E52, #2DD4BF); }
+
+    /* Featured card — glow elevation instead of generic badge */
+    .p-card--featured {
+      border-color: rgba(10,30,82,0.22);
+      box-shadow: 0 0 0 1px rgba(10,30,82,0.10), 0 8px 32px rgba(10,30,82,.14), 0 20px 60px rgba(10,30,82,.08);
+      position: relative;
+      overflow: visible;
+      transform: translateY(-6px) scale(1.015);
+    }
+    .p-card--featured:hover { transform: translateY(-10px) scale(1.015); box-shadow: 0 0 0 1px rgba(10,30,82,0.15), 0 16px 48px rgba(10,30,82,.18), 0 32px 80px rgba(10,30,82,.10); }
+    .p-card--featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #0A1E52, #2DD4BF, #0A1E52); border-radius: 16px 16px 0 0; }
+
+    /* Elegant floating label instead of star badge */
+    .p-recommended {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0A1E52;
+      color: rgba(255,255,255,0.90);
+      font-size: .65rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .22rem .9rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+    }
+
     .p-card--dark { background: #0A1E52; border-color: #0A1E52; }
-    .p-popular { display: inline-block; background: #0A1E52; color: white; font-size: .68rem; font-weight: 700; letter-spacing: .05em; padding: .25rem .75rem; border-radius: 100px; margin-bottom: 1rem; }
-    .p-card--featured .p-popular { background: #2DD4BF; color: #0A1E52; }
     .p-plan-name { font-size: 1.05rem; font-weight: 700; color: #1a202c; margin-bottom: .35rem; }
     .p-card--dark .p-plan-name { color: white; }
     .p-plan-desc { font-size: .8rem; color: #64748b; line-height: 1.55; margin-bottom: 1.5rem; min-height: 2.5rem; }
@@ -130,17 +155,24 @@
 <!-- ── Navbar ─────────────────────────────────────────────────────────────── -->
 <nav class="p-nav">
   <a href="/" class="p-nav__brand">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
-      <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="background:rgba(255,255,255,.15);border-radius:6px;padding:2px;">
+      <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="white"/>
+      <path d="M7.5 10.5V15C7.5 17.2 9.5 19 12 19C14.5 19 16.5 17.2 16.5 15V10.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <line x1="21" y1="8" x2="21" y2="14" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="21" cy="15.5" r="1.2" fill="white"/>
     </svg>
     Certichain Africa
   </a>
-  <div class="p-nav__links"></div>
+  <div class="p-nav__links">
+    <a href="/" style="color:rgba(255,255,255,.65); text-decoration:none; font-size:.82rem; font-weight:500; display:flex; align-items:center; gap:.35rem; transition:color .2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.65)'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Retour à l'accueil
+    </a>
+  </div>
 </nav>
 
 <!-- ── Hero ───────────────────────────────────────────────────────────────── -->
 <section class="p-hero">
-  <div class="p-hero__badge">🌍 Conçu pour l'Afrique</div>
   <h1>Des tarifs <span>transparents</span><br>pour chaque institution</h1>
   <p>Émettez des diplômes infalsifiables ancrés sur la blockchain Polygon. Commencez gratuitement, montez en puissance selon vos besoins.</p>
 
@@ -176,7 +208,7 @@
 
   <!-- STARTER -->
   <div class="p-card p-card--featured">
-    <span class="p-popular">⭐ Le plus populaire</span>
+    <span class="p-recommended">Recommandé</span>
     <div class="p-plan-name">Starter</div>
     <div class="p-plan-desc">Pour les lycées, centres de formation et ONG.</div>
     <div class="p-price">

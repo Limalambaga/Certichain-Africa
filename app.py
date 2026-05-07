@@ -6,7 +6,7 @@ import secrets
 from datetime import datetime, timedelta
 from functools import wraps
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, send_file, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_mail import Mail, Message
@@ -172,6 +172,9 @@ def generate_file_hash(file_path):
     return sha256_hash.hexdigest()
 
 def upload_to_ipfs(file_path):
+    """Upload to Pinata IPFS. Returns IpfsHash string or raises."""
+    if not (PINATA_API_KEY and PINATA_SECRET_KEY):
+        raise Exception("Pinata non configuré — clés manquantes dans .env")
     url = "https://api.pinata.cloud/pinning/pinFileToIPFS"
     headers = {"pinata_api_key": PINATA_API_KEY, "pinata_secret_api_key": PINATA_SECRET_KEY}
     with open(file_path, "rb") as f:
@@ -588,14 +591,19 @@ def verify():
         cert = Certificate.query.filter_by(file_hash=file_hash).first()
 
         if cert:
+            on_chain = cert.blockchain_hash and cert.blockchain_hash.startswith('0x')
             return jsonify({
                 "verified": True,
+                "cert_id": cert.id,
                 "recipient": cert.recipient_name,
                 "issueDate": int(cert.created_at.timestamp()),
                 "ipfs": cert.ipfs_hash,
+                "blockchain_hash": cert.blockchain_hash,
                 "certificate_type": cert.certificate_type,
                 "domain": cert.domain,
-                "message": "Certificat authentique trouvé dans la base de données"
+                "mention": cert.mention,
+                "on_chain": on_chain,
+                "message": "Certificat authentique — ancré sur blockchain Polygon" if on_chain else "Certificat authentique — empreinte SHA-256 locale"
             })
 
         # Si pas trouvé en DB, vérifier sur la blockchain
@@ -641,8 +649,10 @@ def verify_by_hash():
         if not blockchain_hash:
             return jsonify({"verified": False, "message": "Hash blockchain requis"})
 
-        # Rechercher le certificat par hash blockchain dans la DB
+        # Chercher exactement, puis avec préfixe sha256: si non trouvé
         cert = Certificate.query.filter_by(blockchain_hash=blockchain_hash).first()
+        if not cert and not blockchain_hash.startswith('sha256:') and not blockchain_hash.startswith('0x'):
+            cert = Certificate.query.filter_by(blockchain_hash='sha256:' + blockchain_hash).first()
 
         if cert:
             return jsonify({
@@ -799,16 +809,8 @@ def create_certificate():
         with open(file_path, 'wb') as f:
             f.write(pdf_buffer.read())
 
-        # Calculer le hash du fichier initial (utilisé pour l'ID on-chain)
+        # Hash of the draft PDF — used as the on-chain certificate identifier
         file_hash = generate_file_hash(file_path)
-
-        # Uploader sur IPFS
-        try:
-            ipfs_hash = upload_to_ipfs(file_path)
-            cert.ipfs_hash = ipfs_hash
-        except Exception as e:
-            cert.ipfs_hash = None
-            print(f"IPFS upload failed: {e}")
 
         # ── Blockchain ou hash local ──────────────────────────────────────
         blockchain_hash = None
@@ -818,7 +820,7 @@ def create_certificate():
                 cert_id_bytes = w3.solidity_keccak(['string'], [file_hash])
                 nonce = w3.eth.get_transaction_count(CHECKED_ISSUER)
                 tx = contract.functions.issueCertificate(
-                    cert_id_bytes, cert.ipfs_hash or '', cert.recipient_name
+                    cert_id_bytes, '', cert.recipient_name
                 ).build_transaction({
                     'chainId': 137,  # Polygon mainnet
                     'gas': 500000,
@@ -828,43 +830,103 @@ def create_certificate():
                 signed  = w3.eth.account.sign_transaction(tx, private_key=ISSUER_PRIVATE_KEY)
                 tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
                 w3.eth.wait_for_transaction_receipt(tx_hash)
-                blockchain_hash     = w3.to_hex(tx_hash)
+                blockchain_hash      = w3.to_hex(tx_hash)
                 cert.blockchain_hash = blockchain_hash
                 cert.status          = 'issued'
                 print(f"[BLOCKCHAIN] Certificat {cert.id} enregistré → {blockchain_hash}")
             except Exception as e:
-                print(f"[BLOCKCHAIN] Échec transaction : {e}")
-                # Retomber sur le hash local si la transaction échoue
+                print(f"[BLOCKCHAIN] Echec transaction cert {cert.id}: {e}")
+                err_data = cert.data or {}
+                err_data['blockchain_error'] = str(e)
+                cert.data = err_data
                 blockchain_hash = None
 
         if not blockchain_hash:
-            # Fingerprint SHA-256 du PDF — vérifiable localement, sans frais de gas
+            # Fingerprint SHA-256 — vérifiable localement, sans frais de gas
             blockchain_hash      = 'sha256:' + file_hash
             cert.blockchain_hash = blockchain_hash
             cert.status          = 'issued'
+            print(f"[BLOCKCHAIN] Cert {cert.id} signe localement (sha256)")
 
-        # Régénérer le PDF avec le hash final inscrit dessus
-        pdf_payload['blockchain_hash'] = blockchain_hash[:40] + ('…' if len(blockchain_hash) > 40 else '')
+        # Régénérer le PDF avec le hash COMPLET inscrit dessus (sans troncature)
+        pdf_payload['blockchain_hash'] = blockchain_hash
         pdf_buffer_final = pdf_func(pdf_payload)
         pdf_buffer_final.seek(0)
         with open(file_path, 'wb') as f:
             f.write(pdf_buffer_final.read())
 
         # Recompute hash from the FINAL PDF (the one the user will download)
-        # so file-based verification works correctly
         cert.file_hash = generate_file_hash(file_path)
+
+        # Upload IPFS du PDF FINAL (après que le hash soit imprimé dessus)
+        try:
+            ipfs_hash = upload_to_ipfs(file_path)
+            cert.ipfs_hash = ipfs_hash
+            # Mettre à jour la tx blockchain avec le CID si possible
+            print(f"[IPFS] Certificat {cert.id} uploade → {ipfs_hash}")
+        except Exception as e:
+            cert.ipfs_hash = f"local:{cert.id}"
+            print(f"[IPFS] Fallback local pour cert {cert.id} — {e}")
 
         db.session.commit()
 
+        on_chain = cert.blockchain_hash and cert.blockchain_hash.startswith('0x')
         return jsonify({
-            'message': 'Certificat créé et enregistré (local/ipfs/blockchain si disponible)',
+            'message': 'Certificat ancré sur blockchain Polygon' if on_chain else 'Certificat signé (hash SHA-256 local)',
             'certificate_id': cert.id,
+            'on_chain': on_chain,
+            'blockchain_hash': cert.blockchain_hash,
             'certificate': cert.to_dict()
         }), 201
 
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': str(e)}), 400
+
+@app.route('/verify/<int:cert_id>')
+def verify_cert_public(cert_id):
+    """Page publique de vérification — appelée depuis le QR code dans le PDF."""
+    from models import Certificate
+    cert = Certificate.query.get(cert_id)
+    if not cert:
+        return render_template('verify_public.html', cert=None)
+    on_chain = bool(cert.blockchain_hash and cert.blockchain_hash.startswith('0x'))
+    institution = Institution.query.get(cert.institution_id)
+    return render_template('verify_public.html', cert=cert, on_chain=on_chain, institution=institution)
+
+@app.route('/certs/<int:cert_id>/pdf')
+def serve_cert_pdf(cert_id):
+    """Servir le fichier PDF d'un certificat (public)."""
+    from models import Certificate
+    cert = Certificate.query.get_or_404(cert_id)
+    file_path = os.path.join('certs', 'uploads', f'cert_{cert_id}.pdf')
+    if not os.path.exists(file_path):
+        abort(404)
+    safe_name = re.sub(r'[^\w\s-]', '', cert.recipient_name or 'certificat').strip().replace(' ', '_')
+    return send_file(
+        file_path,
+        mimetype='application/pdf',
+        as_attachment=False,
+        download_name=f'Certichain_{safe_name}_{cert_id}.pdf'
+    )
+
+@app.route('/api/blockchain/status')
+def blockchain_status():
+    """Diagnostic public de l'état blockchain/IPFS."""
+    status = {
+        'blockchain_configured': BLOCKCHAIN_CONFIGURED,
+        'ipfs_configured': bool(PINATA_API_KEY and PINATA_SECRET_KEY),
+        'polygon_rpc': POLYGON_RPC,
+    }
+    if BLOCKCHAIN_CONFIGURED:
+        try:
+            status['block_number'] = w3.eth.block_number
+            bal = w3.eth.get_balance(CHECKED_ISSUER)
+            status['wallet_matic'] = float(w3.from_wei(bal, 'ether'))
+            status['contract'] = CHECKED_CONTRACT
+        except Exception as e:
+            status['rpc_error'] = str(e)
+    return jsonify(status)
 
 @app.route('/api/certificates')
 @login_required
@@ -970,16 +1032,6 @@ def download_certificate_file(cert_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-@app.route('/verify/<int:cert_id>')
-def verify_by_id_public(cert_id):
-    """Public verification page — accessible without login via QR code."""
-    from models import Certificate, Institution
-    cert = Certificate.query.get(cert_id)
-    if not cert:
-        return render_template('verify.html', prefill_id=cert_id, not_found=True)
-    institution = Institution.query.get(cert.institution_id)
-    return render_template('verify_public.html', cert=cert, institution=institution)
 
 @app.route('/api/me')
 @login_required

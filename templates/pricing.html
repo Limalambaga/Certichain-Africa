@@ -226,7 +226,7 @@
       <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Support email 48h</span></li>
       <li class="disabled"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span>Envoi email au bénéficiaire</span></li>
     </ul>
-    <a href="/signup" class="p-btn p-btn--primary">Démarrer l'essai 14 jours</a>
+    <button class="p-btn p-btn--primary" onclick="openPayModal('starter')">Souscrire Starter</button>
   </div>
 
   <!-- PRO -->
@@ -248,7 +248,7 @@
       <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Tableau de bord analytique</span></li>
       <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> <span>Support prioritaire 24h</span></li>
     </ul>
-    <a href="/signup" class="p-btn p-btn--teal">Essayer 14 jours gratuits</a>
+    <button class="p-btn p-btn--teal" onclick="openPayModal('academique')">Souscrire Académique</button>
   </div>
 
   <!-- ENTERPRISE -->
@@ -381,8 +381,101 @@
   <a href="/verify" style="color:#2DD4BF;">Vérifier un certificat</a>
 </footer>
 
+<!-- ── MoMo Payment Modal ──────────────────────────────────────────────────── -->
+<div id="payModal" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:20px; padding:2.25rem 2rem; width:100%; max-width:420px; margin:1rem; box-shadow:0 24px 64px rgba(0,0,0,.2); position:relative;">
+
+    <!-- Close -->
+    <button onclick="closePayModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; cursor:pointer; color:#9CA3AF; font-size:1.3rem; line-height:1;">&#x2715;</button>
+
+    <!-- MTN MoMo logo row -->
+    <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem;">
+      <div style="width:44px; height:44px; background:#FFCC00; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:1rem; color:#1A1B1F; font-family:'Bricolage Grotesque',sans-serif;">Paiement MTN MoMo</div>
+        <div style="font-size:.78rem; color:#6B7280;" id="payModalSub">Abonnement Certichain</div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div style="background:#F9FAFB; border-radius:12px; padding:1rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:.72rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#9CA3AF; margin-bottom:.2rem;">Plan sélectionné</div>
+        <div style="font-weight:700; color:#0A1E52;" id="payModalPlan">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.72rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:#9CA3AF; margin-bottom:.2rem;">Montant</div>
+        <div style="font-weight:800; font-size:1.15rem; color:#0A1E52;" id="payModalAmount">—</div>
+      </div>
+    </div>
+
+    <!-- Phone input -->
+    <div id="payStep1">
+      <label style="font-size:.78rem; font-weight:700; color:#374151; display:block; margin-bottom:.4rem;">Numéro MTN MoMo</label>
+      <div style="display:flex; border:1.5px solid #E5E7EB; border-radius:10px; overflow:hidden; margin-bottom:1.25rem; transition:border-color .2s;" id="phoneWrap">
+        <span style="background:#F3F4F6; padding:.65rem .85rem; font-size:.88rem; font-weight:600; color:#6B7280; border-right:1.5px solid #E5E7EB;">+237</span>
+        <input type="tel" id="momoPhone" placeholder="6 XX XX XX XX" maxlength="9"
+          style="flex:1; border:none; outline:none; padding:.65rem .85rem; font-size:.95rem; font-family:'Plus Jakarta Sans',sans-serif;"
+          oninput="this.value=this.value.replace(/\D/g,'')"
+          onfocus="document.getElementById('phoneWrap').style.borderColor='#0A1E52'"
+          onblur="document.getElementById('phoneWrap').style.borderColor='#E5E7EB'">
+      </div>
+      <p style="font-size:.75rem; color:#6B7280; margin-bottom:1.25rem; line-height:1.5;">
+        Vous recevrez une notification USSD sur votre téléphone pour confirmer le paiement.
+      </p>
+      <button onclick="submitPayment()" id="paySubmitBtn"
+        style="width:100%; background:#FFCC00; color:#1A1A1A; font-weight:800; font-size:.95rem; padding:.8rem; border-radius:10px; border:none; cursor:pointer; transition:background .2s; font-family:'Plus Jakarta Sans',sans-serif;">
+        Payer maintenant
+      </button>
+      <div id="payError" style="display:none; margin-top:.75rem; padding:.65rem .9rem; background:#FEF2F2; border-radius:8px; font-size:.8rem; color:#DC2626; font-weight:500;"></div>
+    </div>
+
+    <!-- Pending state -->
+    <div id="payStep2" style="display:none; text-align:center; padding:.5rem 0;">
+      <div style="width:56px; height:56px; border:3px solid #FFCC00; border-top-color:transparent; border-radius:50%; margin:0 auto 1.25rem; animation:momo-spin 1s linear infinite;"></div>
+      <div style="font-weight:700; color:#1A1B1F; margin-bottom:.4rem;">En attente de confirmation</div>
+      <div style="font-size:.82rem; color:#6B7280; line-height:1.55;">Confirmez le paiement sur votre téléphone MTN.<br>Cette fenêtre se met à jour automatiquement.</div>
+    </div>
+
+    <!-- Success state -->
+    <div id="payStep3" style="display:none; text-align:center; padding:.5rem 0;">
+      <div style="width:56px; height:56px; background:#D1FAE5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1.15rem; color:#1A1B1F; margin-bottom:.4rem;">Paiement confirmé !</div>
+      <div style="font-size:.85rem; color:#6B7280; margin-bottom:1.5rem;">Votre plan a été mis à jour. Rechargez la page pour accéder à vos nouvelles fonctionnalités.</div>
+      <button onclick="location.reload()" style="background:#0A1E52; color:white; font-weight:700; padding:.7rem 1.75rem; border-radius:10px; border:none; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Accéder au tableau de bord</button>
+    </div>
+
+    <!-- Failed state -->
+    <div id="payStep4" style="display:none; text-align:center; padding:.5rem 0;">
+      <div style="width:56px; height:56px; background:#FEF2F2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <div style="font-weight:700; color:#1A1B1F; margin-bottom:.4rem;">Paiement échoué</div>
+      <div style="font-size:.82rem; color:#6B7280; margin-bottom:1.5rem;">Le paiement a été annulé ou a échoué. Vérifiez votre solde MoMo et réessayez.</div>
+      <button onclick="resetPayModal()" style="background:#F3F4F6; color:#374151; font-weight:600; padding:.65rem 1.5rem; border-radius:10px; border:none; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;">Réessayer</button>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@keyframes momo-spin { to { transform: rotate(360deg); } }
+</style>
+
 <script>
   let billing = 'monthly';
+  let _payPlan = '', _payRef = '', _pollTimer = null;
+
+  const PRICES = {
+    starter:    { monthly: 19900,  annual: 190800 },
+    academique: { monthly: 49900,  annual: 478800 },
+  };
+  const LABELS = { starter: 'Starter', academique: 'Académique' };
+
   function setBilling(mode, btn) {
     billing = mode;
     document.querySelectorAll('#billingToggle button').forEach(b => b.classList.remove('active'));
@@ -391,12 +484,99 @@
       const val = mode === 'annual' ? el.dataset.annual : el.dataset.monthly;
       el.textContent = parseInt(val).toLocaleString('fr-FR');
     });
-    const usd = { starter: [33, 26], pro: [83, 66] };
     document.getElementById('starter-period').textContent = mode === 'annual'
       ? '/ mois · ~26 USD · facturé annuellement' : '/ mois · ~33 USD';
     document.getElementById('pro-period').textContent = mode === 'annual'
       ? '/ mois · ~66 USD · facturé annuellement' : '/ mois · ~83 USD';
   }
+
+  function openPayModal(plan) {
+    _payPlan = plan;
+    const amount  = PRICES[plan][billing];
+    const period  = billing === 'annual' ? '/an' : '/mois';
+    document.getElementById('payModalPlan').textContent   = LABELS[plan] + ' · ' + (billing === 'annual' ? 'Annuel' : 'Mensuel');
+    document.getElementById('payModalAmount').textContent = amount.toLocaleString('fr-FR') + ' XAF' + period;
+    document.getElementById('payModalSub').textContent    = 'Certichain ' + LABELS[plan];
+    resetPayModal();
+    const m = document.getElementById('payModal');
+    m.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('momoPhone').focus(), 100);
+  }
+
+  function closePayModal() {
+    document.getElementById('payModal').style.display = 'none';
+    document.body.style.overflow = '';
+    if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+  }
+
+  function resetPayModal() {
+    ['payStep2','payStep3','payStep4'].forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById('payStep1').style.display = 'block';
+    document.getElementById('payError').style.display = 'none';
+    document.getElementById('momoPhone').value = '';
+    document.getElementById('paySubmitBtn').disabled = false;
+    document.getElementById('paySubmitBtn').textContent = 'Payer maintenant';
+  }
+
+  function showStep(n) {
+    [1,2,3,4].forEach(i => document.getElementById('payStep'+i).style.display = i===n ? 'block' : 'none');
+  }
+
+  async function submitPayment() {
+    const phone = document.getElementById('momoPhone').value.trim();
+    if (phone.length < 9) {
+      showError('Entrez un numéro MTN valide (9 chiffres).');
+      return;
+    }
+    const btn = document.getElementById('paySubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours…';
+    document.getElementById('payError').style.display = 'none';
+
+    try {
+      const res = await fetch('/api/payment/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: _payPlan, billing, phone: '237' + phone }),
+      });
+      const json = await res.json();
+      if (!res.ok) { showError(json.error || 'Erreur lors de l\'initiation.'); btn.disabled = false; btn.textContent = 'Payer maintenant'; return; }
+
+      _payRef = json.reference_id;
+      showStep(2);
+      _pollTimer = setInterval(pollStatus, 4000);
+    } catch (e) {
+      showError('Erreur réseau. Vérifiez votre connexion.');
+      btn.disabled = false;
+      btn.textContent = 'Payer maintenant';
+    }
+  }
+
+  async function pollStatus() {
+    try {
+      const res  = await fetch('/api/payment/status/' + _payRef);
+      const json = await res.json();
+      if (json.status === 'successful') {
+        clearInterval(_pollTimer); _pollTimer = null;
+        showStep(3);
+      } else if (json.status === 'failed') {
+        clearInterval(_pollTimer); _pollTimer = null;
+        showStep(4);
+      }
+    } catch (_) {}
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('payError');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // Close on backdrop click
+  document.getElementById('payModal').addEventListener('click', function(e) {
+    if (e.target === this) closePayModal();
+  });
 </script>
 
 </body>

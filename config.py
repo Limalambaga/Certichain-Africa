@@ -27,3 +27,12 @@ try:
         CONTRACT_ABI = json.load(f)
 except FileNotFoundError:
     CONTRACT_ABI = []
+
+# ─── MTN MoMo ─────────────────────────────────────────────────────────────────
+MOMO_SUBSCRIPTION_KEY = os.getenv('MOMO_SUBSCRIPTION_KEY', '')
+MOMO_API_USER         = os.getenv('MOMO_API_USER', '')
+MOMO_API_KEY          = os.getenv('MOMO_API_KEY', '')
+MOMO_ENVIRONMENT      = os.getenv('MOMO_ENVIRONMENT', 'sandbox')
+MOMO_BASE_URL         = os.getenv('MOMO_BASE_URL', 'https://sandbox.momodeveloper.mtn.com')
+MOMO_CALLBACK_URL     = os.getenv('MOMO_CALLBACK_URL', '')
+MOMO_CONFIGURED       = bool(MOMO_SUBSCRIPTION_KEY and MOMO_API_USER and MOMO_API_KEY)

@@ -12,7 +12,9 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from web3 import Web3
 
-from models import db, Institution
+from models import db, Institution, Payment
+
+import momo as momo_api
 
 from config import (
     PINATA_API_KEY,
@@ -28,6 +30,7 @@ from config import (
     MAIL_USERNAME,
     MAIL_PASSWORD,
     MAIL_DEFAULT_SENDER,
+    MOMO_CONFIGURED,
 )
 
 app = Flask(__name__)
@@ -1031,6 +1034,122 @@ def download_certificate_file(cert_id):
         )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# ── Plan pricing table (XAF) ─────────────────────────────────────────────────
+PLAN_PRICES = {
+    'starter':    {'monthly': 19900,  'annual': 190800},   # 15900 * 12
+    'academique': {'monthly': 49900,  'annual': 478800},   # 39900 * 12
+}
+PLAN_QUOTA = {'free': 5, 'starter': 50, 'academique': 300, 'enterprise': 999999}
+
+
+@app.route('/api/payment/initiate', methods=['POST'])
+@login_required
+def payment_initiate():
+    """Initiate a MoMo payment request."""
+    if not MOMO_CONFIGURED:
+        return jsonify({'error': 'Paiement MoMo non configuré sur ce serveur.'}), 503
+
+    data  = request.get_json() or {}
+    plan  = data.get('plan', '').lower()
+    billing = data.get('billing', 'monthly').lower()
+    phone = (data.get('phone') or '').strip().replace(' ', '').replace('-', '')
+
+    if plan not in PLAN_PRICES:
+        return jsonify({'error': 'Plan invalide.'}), 400
+    if billing not in ('monthly', 'annual'):
+        return jsonify({'error': 'Période invalide.'}), 400
+    if not phone or len(phone) < 9:
+        return jsonify({'error': 'Numéro de téléphone invalide.'}), 400
+
+    # Normalise Cameroon numbers: 6XXXXXXXX → 2376XXXXXXXX
+    if len(phone) == 9 and phone[0] in ('6', '2'):
+        phone = '237' + phone
+
+    amount    = PLAN_PRICES[plan][billing]
+    ref_id    = str(__import__('uuid').uuid4())
+    label     = f"Certichain {plan.capitalize()} {'mensuel' if billing == 'monthly' else 'annuel'}"
+
+    try:
+        ok = momo_api.request_to_pay(phone, amount, 'XAF', ref_id, label)
+    except Exception as e:
+        return jsonify({'error': f'Erreur MoMo: {str(e)}'}), 502
+
+    if not ok:
+        return jsonify({'error': 'La requête MoMo a été rejetée.'}), 502
+
+    payment = Payment(
+        institution_id=session['institution_id'],
+        reference_id=ref_id,
+        plan=plan,
+        billing=billing,
+        amount=amount,
+        phone=phone,
+        status='pending',
+    )
+    db.session.add(payment)
+    db.session.commit()
+
+    return jsonify({'reference_id': ref_id, 'amount': amount, 'currency': 'XAF'}), 202
+
+
+@app.route('/api/payment/status/<reference_id>')
+@login_required
+def payment_status(reference_id):
+    """Poll MoMo payment status and upgrade plan on success."""
+    payment = Payment.query.filter_by(
+        reference_id=reference_id,
+        institution_id=session['institution_id'],
+    ).first_or_404()
+
+    if payment.status == 'pending':
+        try:
+            result = momo_api.get_status(reference_id)
+            momo_status = result.get('status', 'PENDING').upper()
+        except Exception as e:
+            return jsonify({'status': 'pending', 'error': str(e)}), 200
+
+        if momo_status == 'SUCCESSFUL':
+            payment.status = 'successful'
+            institution = Institution.query.get(session['institution_id'])
+            institution.plan = payment.plan
+            days = 365 if payment.billing == 'annual' else 30
+            institution.plan_expires_at = datetime.utcnow() + timedelta(days=days)
+            db.session.commit()
+
+        elif momo_status == 'FAILED':
+            payment.status = 'failed'
+            db.session.commit()
+
+    return jsonify({
+        'status':   payment.status,
+        'plan':     payment.plan,
+        'billing':  payment.billing,
+        'amount':   payment.amount,
+    })
+
+
+@app.route('/api/payment/callback', methods=['POST'])
+def payment_callback():
+    """MoMo push notification webhook (optional — polling is the primary mechanism)."""
+    data = request.get_json(silent=True) or {}
+    ref_id = data.get('externalId') or data.get('referenceId', '')
+    status = data.get('status', '').upper()
+
+    if ref_id and status in ('SUCCESSFUL', 'FAILED'):
+        payment = Payment.query.filter_by(reference_id=ref_id).first()
+        if payment and payment.status == 'pending':
+            payment.status = status.lower()
+            if status == 'SUCCESSFUL':
+                institution = Institution.query.get(payment.institution_id)
+                if institution:
+                    institution.plan = payment.plan
+                    days = 365 if payment.billing == 'annual' else 30
+                    institution.plan_expires_at = datetime.utcnow() + timedelta(days=days)
+            db.session.commit()
+
+    return '', 204
 
 
 @app.route('/api/me')

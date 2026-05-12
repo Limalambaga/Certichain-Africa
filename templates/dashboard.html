@@ -132,10 +132,7 @@
 
 /* ── Content grid ── */
 .db-body {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 1.5rem;
-  align-items: start;
+  display: block;
 }
 
 /* ── Section titles ── */
@@ -433,145 +430,35 @@
 <!-- ── Body ─────────────────────────────────────────────── -->
 <div class="db-body">
 
-  <!-- Left: Recent activity -->
-  <div>
-    <div class="db-section-title">
-      Activité récente
-      <a href="/my-certificates">Voir tout →</a>
-    </div>
-    <div class="db-table-wrap">
-      <table class="db-table">
-        <thead>
-          <tr>
-            <th>Bénéficiaire</th>
-            <th>Type</th>
-            <th>Domaine</th>
-            <th>Blockchain</th>
-            <th>Date</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="recentBody">
-          <tr>
-            <td colspan="6">
-              <div class="db-empty">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <p>Chargement de l'activité…</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="db-section-title">
+    Activité récente
+    <a href="/my-certificates">Voir tous les certificats →</a>
   </div>
-
-  <!-- Right sidebar -->
-  <div class="db-side">
-
-    <!-- Profile -->
-    <div class="db-profile">
-      <div class="db-profile__top">
-        <div class="db-profile__avatar-wrap" id="profileInitials">—</div>
-        <div class="db-profile__iname">{{ institution.name }}</div>
-        <div class="db-profile__email">{{ institution.email }}</div>
-        <div style="margin-top:.75rem;">
-          {% set plan = institution.plan or 'free' %}
-          <span class="db-plan-pill db-plan-pill--{{ plan }}">
-            {% if plan == 'free' %}Découverte
-            {% elif plan == 'starter' %}Starter
-            {% elif plan == 'academique' %}Académique
-            {% else %}Entreprise{% endif %}
-          </span>
-        </div>
-      </div>
-      <div class="db-profile__body">
-        <div class="db-profile__row">
-          <span class="db-profile__key">Statut</span>
-          <span class="db-profile__val">
-            {% if institution.is_verified %}
-            <span style="color:#059669; font-size:.8rem;">✓ Vérifié</span>
-            {% else %}
-            <span style="color:#D97706; font-size:.8rem;">En attente</span>
-            {% endif %}
-          </span>
-        </div>
-        <div class="db-profile__row">
-          <span class="db-profile__key">Membre depuis</span>
-          <span class="db-profile__val">{{ institution.created_at.strftime('%b %Y') }}</span>
-        </div>
-        <div class="db-profile__row">
-          <span class="db-profile__key">Quota mensuel</span>
-          <span class="db-profile__val" id="quotaVal">
-            {% set plan = institution.plan or 'free' %}
-            {% if plan == 'free' %}5 certs
-            {% elif plan == 'starter' %}50 certs
-            {% elif plan == 'academique' %}300 certs
-            {% else %}Illimité{% endif %}
-          </span>
-        </div>
-        {% if institution.plan_expires_at %}
-        <div class="db-profile__row">
-          <span class="db-profile__key">Expire le</span>
-          <span class="db-profile__val">{{ institution.plan_expires_at.strftime('%d %b %Y') }}</span>
-        </div>
-        {% endif %}
-        <div style="margin-top:1rem;">
-          <a href="/settings" style="display:block; text-align:center; padding:.6rem; border-radius:8px; background:#F3F4F6; color:#374151; font-size:.82rem; font-weight:600; text-decoration:none; transition:background .2s;" onmouseover="this.style.background='#E5E7EB'" onmouseout="this.style.background='#F3F4F6'">Gérer le compte</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="db-actions">
-      <div class="db-section-title" style="margin-bottom:.75rem;">Actions</div>
-
-      <a href="/create-certificate" class="db-action-link">
-        <div class="db-action-icon" style="background:#EEF2FF;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4338CA" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </div>
-        <div class="db-action-text">
-          <strong>Émettre un certificat</strong>
-          <span>Diplôme, certification, badge</span>
-        </div>
-        <svg class="db-action-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-
-      <a href="/my-certificates" class="db-action-link">
-        <div class="db-action-icon" style="background:#F0FDFA;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D7A72" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-        </div>
-        <div class="db-action-text">
-          <strong>Mes certificats</strong>
-          <span>Gérer &amp; télécharger</span>
-        </div>
-        <svg class="db-action-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-
-      <a href="/verify" class="db-action-link">
-        <div class="db-action-icon" style="background:#FFF7ED;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-        </div>
-        <div class="db-action-text">
-          <strong>Vérifier un diplôme</strong>
-          <span>Par fichier ou hash</span>
-        </div>
-        <svg class="db-action-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-
-      <a href="/pricing" class="db-action-link">
-        <div class="db-action-icon" style="background:#FFFBEB;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        </div>
-        <div class="db-action-text">
-          <strong>Passer à un plan supérieur</strong>
-          <span>Starter, Académique…</span>
-        </div>
-        <svg class="db-action-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-
-    </div>
-
-  </div><!-- /db-side -->
+  <div class="db-table-wrap">
+    <table class="db-table">
+      <thead>
+        <tr>
+          <th>Bénéficiaire</th>
+          <th>Type</th>
+          <th>Domaine</th>
+          <th>Mention</th>
+          <th>Blockchain</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="recentBody">
+        <tr>
+          <td colspan="7">
+            <div class="db-empty">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <p>Chargement de l'activité…</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div><!-- /db-body -->
 
@@ -583,9 +470,8 @@
 const now = new Date();
 document.getElementById('todayDate').textContent = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-// Profile initials
+// Profile initials (sidebar avatar only)
 const name = {{ institution.name | tojson }};
-document.getElementById('profileInitials').textContent = name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
 
 // Avatar colours cycle
 const AVATAR_COLORS = [
@@ -623,7 +509,7 @@ async function loadDashboard() {
     const tbody  = document.getElementById('recentBody');
 
     if (recent.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6">
+      tbody.innerHTML = `<tr><td colspan="7">
         <div class="db-empty">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <p>Aucun certificat encore émis.</p>
@@ -662,6 +548,7 @@ async function loadDashboard() {
         </td>
         <td>${typeChip[c.certificate_type] || c.certificate_type}</td>
         <td style="color:#6B7280;font-size:.82rem;">${c.domain || '—'}</td>
+        <td style="color:#6B7280;font-size:.82rem;">${c.mention || '—'}</td>
         <td>${chainCell}</td>
         <td style="color:#9CA3AF;font-size:.8rem;white-space:nowrap;">${new Date(c.created_at).toLocaleDateString('fr-FR')}</td>
         <td>
@@ -676,7 +563,7 @@ async function loadDashboard() {
     }).join('');
 
   } catch (e) {
-    document.getElementById('recentBody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#EF4444;font-size:.85rem;">Erreur de chargement. Rechargez la page.</td></tr>`;
+    document.getElementById('recentBody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#EF4444;font-size:.85rem;">Erreur de chargement. Rechargez la page.</td></tr>`;
   }
 }
 

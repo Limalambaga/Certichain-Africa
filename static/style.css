@@ -228,8 +228,8 @@ h1, h2, h3, h4, h5, h6 {
 .c-sidebar__link {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.55rem 0.75rem;
+  gap: 0.7rem;
+  padding: 0.45rem 0.75rem;
   border-radius: var(--r-md);
   font-size: 0.875rem;
   font-weight: 500;
@@ -238,10 +238,32 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 .c-sidebar__link:hover { background: var(--surface); color: var(--text-primary); }
+
+/* ── Duo-tone icon squares ───────────────────────────── */
+.csb-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.c-sidebar__link:hover .csb-icon { filter: brightness(0.92); transform: scale(1.05); }
+.c-sidebar__link.is-active .csb-icon { filter: brightness(0.88); }
+
+.csb-icon--blue   { background: #DBEAFE; color: #2563EB; }
+.csb-icon--teal   { background: #CCFBF1; color: #0D9488; }
+.csb-icon--indigo { background: #E0E7FF; color: #4F46E5; }
+.csb-icon--orange { background: #FFEDD5; color: #EA580C; }
+.csb-icon--violet { background: #EDE9FE; color: #7C3AED; }
+.csb-icon--slate  { background: #F1F5F9; color: #475569; }
+
+.csb-icon svg { width: 15px; height: 15px; stroke: currentColor; opacity: 1; }
+
+/* active link: icon keeps its own color, link text goes blue */
 .c-sidebar__link.is-active { background: var(--blue-50); color: var(--blue-600); font-weight: 600; }
-.c-sidebar__link.is-active svg { color: var(--blue-500); }
-.c-sidebar__link svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.65; }
-.c-sidebar__link.is-active svg { opacity: 1; }
 
 .c-sidebar__footer {
   margin-top: auto;

@@ -19,7 +19,7 @@ Une plateforme web moderne pour émettre, gérer et vérifier des certificats de
 - **Backend** : Flask (Python)
 - **Base de données** : SQLite
 - **Email** : Flask-Mail (SMTP)
-- **Blockchain** : Web3.py + Ethereum Sepolia
+- **Blockchain** : Web3.py + Polygon Amoy
 - **Stockage** : Pinata IPFS
 - **Frontend** : HTML5 + CSS3 + Vanilla JavaScript
 

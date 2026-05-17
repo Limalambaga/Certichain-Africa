@@ -582,6 +582,54 @@ def settings():
     institution = Institution.query.get(session['institution_id'])
     return render_template('settings.html', institution=institution)
 
+@app.route('/update-profile', methods=['POST'])
+@login_required
+def update_profile():
+    institution = Institution.query.get(session['institution_id'])
+    name = request.form.get('name', '').strip()
+    if not name:
+        flash('Le nom ne peut pas être vide.', 'error')
+        return redirect(url_for('settings'))
+    institution.name = name
+    db.session.commit()
+    flash('Profil mis à jour avec succès.', 'success')
+    return redirect(url_for('settings'))
+
+@app.route('/change-password', methods=['POST'])
+@login_required
+def change_password():
+    institution = Institution.query.get(session['institution_id'])
+    current = request.form.get('current_password', '')
+    new_pw  = request.form.get('new_password', '')
+    confirm = request.form.get('confirm_password', '')
+    if not institution.check_password(current):
+        flash('Mot de passe actuel incorrect.', 'error')
+        return redirect(url_for('settings'))
+    if new_pw != confirm:
+        flash('Les nouveaux mots de passe ne correspondent pas.', 'error')
+        return redirect(url_for('settings'))
+    valid, msg = validate_password(new_pw)
+    if not valid:
+        flash(msg, 'error')
+        return redirect(url_for('settings'))
+    institution.set_password(new_pw)
+    db.session.commit()
+    flash('Mot de passe modifié avec succès.', 'success')
+    return redirect(url_for('settings'))
+
+@app.route('/update-wallet', methods=['POST'])
+@login_required
+def update_wallet():
+    institution = Institution.query.get(session['institution_id'])
+    wallet = request.form.get('wallet', '').strip()
+    if wallet and not re.match(r'^0x[0-9a-fA-F]{40}$', wallet):
+        flash("Adresse de portefeuille invalide. Format attendu : 0x suivi de 40 caractères hexadécimaux.", 'error')
+        return redirect(url_for('settings'))
+    institution.wallet_address = wallet or None
+    db.session.commit()
+    flash('Adresse blockchain mise à jour.', 'success')
+    return redirect(url_for('settings'))
+
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
     if request.method == 'GET':

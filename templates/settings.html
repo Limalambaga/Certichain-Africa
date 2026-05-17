@@ -1,418 +1,466 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paramètres - Certichain</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
+{% block title %}Paramètres{% endblock %}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
+{% block head %}
+<style>
+/* ── Settings layout ──────────────────────────────── */
+.st-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
 
-        .navbar {
-            background: white;
-            border-bottom: 1px solid #eee;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+/* ── Page header ──────────────────────────────────── */
+.st-header {
+  margin-bottom: 2rem;
+}
+.st-header h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+.st-header p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
 
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-        }
+/* ── Section card ─────────────────────────────────── */
+.st-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-xs);
+}
+.st-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border-xs);
+}
+.st-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.st-card-icon--blue   { background: #DBEAFE; color: #2563EB; }
+.st-card-icon--teal   { background: #CCFBF1; color: #0D9488; }
+.st-card-icon--violet { background: #EDE9FE; color: #7C3AED; }
+.st-card-icon--amber  { background: #FEF3C7; color: #D97706; }
+.st-card-icon--red    { background: #FEE2E2; color: #DC2626; }
+.st-card-icon svg     { width: 17px; height: 17px; stroke: currentColor; }
 
-        .navbar-menu {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
+.st-card-head-text h2 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.st-card-head-text p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.st-card-body { padding: 1.5rem; }
 
-        .navbar-menu a {
-            text-decoration: none;
-            color: #666;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+/* ── Info grid (read-only fields) ─────────────────── */
+.st-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.st-info-item {
+  background: var(--surface);
+  border: 1px solid var(--border-xs);
+  border-radius: var(--r-md);
+  padding: 0.75rem 1rem;
+}
+.st-info-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+.st-info-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
 
-        .navbar-menu a:hover {
-            color: #667eea;
-        }
+/* ── Form fields ──────────────────────────────────── */
+.st-form-group { margin-bottom: 1.1rem; }
+.st-form-group:last-of-type { margin-bottom: 0; }
+.st-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+.st-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text-primary);
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.st-input:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+.st-input:disabled {
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+.st-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+.st-form-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
 
-        .logout-btn {
-            background: #ff6b6b;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            border: none;
-            font-weight: 600;
-        }
+/* ── 2FA badge ────────────────────────────────────── */
+.st-2fa-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  border-radius: var(--r-md);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.st-2fa-banner svg { color: var(--info); flex-shrink: 0; }
+.st-2fa-banner span { font-size: 0.82rem; color: var(--info); font-weight: 500; }
 
-        .logout-btn:hover {
-            background: #ff5252;
-        }
+/* ── Verified / pending badge ─────────────────────── */
+.st-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.st-badge--ok  { background: var(--success-bg); color: var(--success); }
+.st-badge--warn { background: var(--warning-bg); color: var(--warning); }
 
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
+/* ── Plan card inside settings ────────────────────── */
+.st-plan-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.st-plan-info h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.st-plan-info p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
 
-        .page-header {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+/* ── Quota bar ────────────────────────────────────── */
+.st-quota {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-xs);
+}
+.st-quota-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.st-quota-header strong { color: var(--text-primary); }
+.st-quota-track {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.st-quota-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--blue-500), #7C3AED);
+  transition: width 0.4s ease;
+}
 
-        .page-header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
+/* ── Danger zone ──────────────────────────────────── */
+.st-danger-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--r-md);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.st-danger-banner svg { color: var(--error); flex-shrink: 0; }
+.st-danger-banner span { font-size: 0.82rem; color: var(--error); font-weight: 500; }
 
-        .page-header p {
-            color: #666;
-        }
+/* ── Wallet mono field ────────────────────────────── */
+.st-input-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
 
-        .settings-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+@media (max-width: 600px) {
+  .st-info-grid { grid-template-columns: 1fr; }
+  .st-plan-row  { flex-direction: column; align-items: flex-start; }
+}
+</style>
+{% endblock %}
 
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #667eea;
-        }
+{% block content %}
+<div class="st-wrap">
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+  <!-- Page header -->
+  <div class="st-header">
+    <h1>Paramètres</h1>
+    <p>Gérez votre profil, sécurité et abonnement.</p>
+  </div>
 
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
+  {% set _plan = (institution.plan or 'free') %}
+  {% set _plan_labels = {'free': 'Gratuit', 'starter': 'Starter', 'academique': 'Académique'} %}
+  {% set _plan_label  = _plan_labels.get(_plan, _plan.capitalize()) %}
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: border-color 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        input[type="text"]:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
-
-        .hint {
-            color: #999;
-            font-size: 0.85rem;
-            margin-top: 0.3rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-danger {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #ff5252;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .info-box {
-            background: #eff;
-            border: 1px solid #99dd99;
-            padding: 1rem;
-            border-radius: 8px;
-            color: #366;
-            margin-bottom: 1.5rem;
-        }
-
-        .warning-box {
-            background: #ffe8e8;
-            border: 1px solid #ffcccc;
-            padding: 1rem;
-            border-radius: 8px;
-            color: #c33;
-            margin-bottom: 1.5rem;
-        }
-
-        .verification-badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .verification-badge.verified {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .verification-badge.pending {
-            background: #fff3e0;
-            color: #e65100;
-        }
-
-        .copy-button {
-            display: inline-block;
-            margin-left: 0.5rem;
-            padding: 0.3rem 0.6rem;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-
-        .copy-button:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .settings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .settings-item {
-            background: #f9f9f9;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #f0f0f0;
-        }
-
-        .settings-item-label {
-            color: #999;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            margin-bottom: 0.3rem;
-        }
-
-        .settings-item-value {
-            color: #333;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .settings-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-brand">🔐 Certichain</div>
-        <div class="navbar-menu">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/create-cert">Émettre</a>
-            <a href="/certificates">Mes Certificats</a>
-            <form method="POST" action="/logout" style="margin: 0;">
-                <button type="submit" class="logout-btn">Déconnexion</button>
-            </form>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="page-header">
-            <h1>⚙️ Paramètres du Compte</h1>
-            <p>Gérez vos informations personnelles et vos préférences de sécurité</p>
-        </div>
-
-        <!-- Section Informations du Compte -->
-        <div class="settings-section">
-            <h2 class="section-title">👤 Informations du Compte</h2>
-            
-            <div class="settings-grid">
-                <div class="settings-item">
-                    <div class="settings-item-label">Nom de l'Institution</div>
-                    <div class="settings-item-value">{{ institution.name }}</div>
-                </div>
-                <div class="settings-item">
-                    <div class="settings-item-label">Adresse Email</div>
-                    <div class="settings-item-value">{{ institution.email }}</div>
-                </div>
-                <div class="settings-item">
-                    <div class="settings-item-label">Statut de Vérification</div>
-                    <div class="settings-item-value">
-                        {% if institution.is_verified %}
-                        <span class="verification-badge verified">✓ Vérifié</span>
-                        {% else %}
-                        <span class="verification-badge pending">En attente</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="settings-item">
-                    <div class="settings-item-label">Date d'Inscription</div>
-                    <div class="settings-item-value">{{ institution.created_at.strftime('%d/%m/%Y') }}</div>
-                </div>
-            </div>
-
-            <form method="POST" action="/update-profile" style="margin-top: 1.5rem;">
-                <div class="form-group">
-                    <label for="name">Nom de l'Institution</label>
-                    <input type="text" id="name" name="name" value="{{ institution.name }}" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Mettre à jour</button>
-            </form>
-        </div>
-
-        <!-- Section Sécurité -->
-        <div class="settings-section">
-            <h2 class="section-title">🔒 Sécurité</h2>
-            
-            <div class="info-box">
-                🔐 Votre compte est protégé par une authentification à deux facteurs (2FA) via OTP par email.
-            </div>
-
-            <form method="POST" action="/change-password">
-                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #333;">Modifier le Mot de Passe</h3>
-                
-                <div class="form-group">
-                    <label for="current_password">Mot de passe actuel</label>
-                    <input type="password" id="current_password" name="current_password" required placeholder="Entrez votre mot de passe actuel">
-                </div>
-
-                <div class="form-group">
-                    <label for="new_password">Nouveau mot de passe</label>
-                    <input type="password" id="new_password" name="new_password" required placeholder="Minimum 8 caractères">
-                    <div class="hint">Minimum 8 caractères, avec majuscules, minuscules et chiffres</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirm_password">Confirmer le mot de passe</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirmez le nouveau mot de passe">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Modifier le mot de passe</button>
-            </form>
-        </div>
-
-        <!-- Section Portefeuille -->
-        <div class="settings-section">
-            <h2 class="section-title">💼 Portefeuille Blockchain</h2>
-            
-            <div class="warning-box">
-                ⚠️ La configuration de votre portefeuille blockchain est utilisée pour signer vos certificats.
-            </div>
-
-            <form method="POST" action="/update-wallet">
-                <div class="form-group">
-                    <label for="wallet">Adresse du Portefeuille</label>
-                    <input type="text" id="wallet" name="wallet" value="{{ institution.wallet_address or '' }}" placeholder="0x...">
-                    <div class="hint">Votre adresse Ethereum (MetaMask, Ledger, etc.)</div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Mettre à jour</button>
-            </form>
-        </div>
-
-        <!-- Section Danger -->
-        <div class="settings-section">
-            <h2 class="section-title">🚨 Zone Dangereuse</h2>
-            
-            <div class="warning-box">
-                ⚠️ Ces actions sont irréversibles. Procédez avec prudence.
-            </div>
-
-            <form method="POST" action="/delete-account" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
-                <div class="form-group">
-                    <label for="password">Confirmer avec votre mot de passe</label>
-                    <input type="password" id="password" name="password" required placeholder="Entrez votre mot de passe">
-                </div>
-
-                <button type="submit" class="btn btn-danger">Supprimer mon compte</button>
-            </form>
-        </div>
+  <!-- ── 1. Profil ──────────────────────────────────── -->
+  <div class="st-card">
+    <div class="st-card-head">
+      <div class="st-card-icon st-card-icon--blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="st-card-head-text">
+        <h2>Profil de l'institution</h2>
+        <p>Informations du compte et identité</p>
+      </div>
     </div>
-</body>
-</html>
+    <div class="st-card-body">
+
+      <div class="st-info-grid">
+        <div class="st-info-item">
+          <div class="st-info-label">Email</div>
+          <div class="st-info-value">{{ institution.email }}</div>
+        </div>
+        <div class="st-info-item">
+          <div class="st-info-label">Membre depuis</div>
+          <div class="st-info-value">{{ institution.created_at.strftime('%d %b %Y') }}</div>
+        </div>
+        <div class="st-info-item" style="grid-column: span 2;">
+          <div class="st-info-label">Statut du compte</div>
+          <div class="st-info-value" style="margin-top:0.2rem;">
+            {% if institution.is_verified %}
+            <span class="st-badge st-badge--ok">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Compte vérifié
+            </span>
+            {% else %}
+            <span class="st-badge st-badge--warn">En attente de vérification</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <form method="POST" action="/update-profile">
+        <div class="st-form-group">
+          <label class="st-label" for="name">Nom de l'institution</label>
+          <input class="st-input" type="text" id="name" name="name" value="{{ institution.name }}" required>
+        </div>
+        <div class="st-form-row">
+          <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── 2. Sécurité ────────────────────────────────── -->
+  <div class="st-card">
+    <div class="st-card-head">
+      <div class="st-card-icon st-card-icon--teal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+      </div>
+      <div class="st-card-head-text">
+        <h2>Sécurité</h2>
+        <p>Mot de passe et authentification</p>
+      </div>
+    </div>
+    <div class="st-card-body">
+
+      <div class="st-2fa-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Votre compte est protégé par une authentification à deux facteurs (OTP par email) à chaque connexion.</span>
+      </div>
+
+      <form method="POST" action="/change-password">
+        <div class="st-form-group">
+          <label class="st-label" for="current_password">Mot de passe actuel</label>
+          <input class="st-input" type="password" id="current_password" name="current_password" required placeholder="••••••••">
+        </div>
+        <div class="st-form-group">
+          <label class="st-label" for="new_password">Nouveau mot de passe</label>
+          <input class="st-input" type="password" id="new_password" name="new_password" required placeholder="••••••••">
+          <div class="st-hint">Minimum 8 caractères, avec majuscules, minuscules et chiffres.</div>
+        </div>
+        <div class="st-form-group">
+          <label class="st-label" for="confirm_password">Confirmer le nouveau mot de passe</label>
+          <input class="st-input" type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+        </div>
+        <div class="st-form-row">
+          <button type="submit" class="btn btn-primary btn-sm">Modifier le mot de passe</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── 3. Abonnement ──────────────────────────────── -->
+  <div class="st-card">
+    <div class="st-card-head">
+      <div class="st-card-icon st-card-icon--violet">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div class="st-card-head-text">
+        <h2>Plan &amp; Abonnement</h2>
+        <p>Quota mensuel et gestion du plan</p>
+      </div>
+    </div>
+    <div class="st-card-body">
+
+      <div class="st-plan-row">
+        <div class="st-plan-info">
+          <h3>Plan {{ _plan_label }}</h3>
+          {% if institution.plan_expires_at %}
+          <p>Expire le {{ institution.plan_expires_at.strftime('%d %b %Y') }}</p>
+          {% else %}
+          <p>{{ 'Sans expiration' if _plan == 'free' else 'Abonnement actif' }}</p>
+          {% endif %}
+        </div>
+        <a href="/pricing" class="btn btn-primary btn-sm">Gérer l'abonnement</a>
+      </div>
+
+      {% set _quota = institution.cert_quota() %}
+      <div class="st-quota">
+        <div class="st-quota-header">
+          <span>Certificats émis ce mois</span>
+          <strong>{{ _quota.used }} / {{ _quota.limit if _quota.limit < 999999 else '∞' }}</strong>
+        </div>
+        {% if _quota.limit < 999999 %}
+        {% set _pct = (_quota.used / _quota.limit * 100) %}
+        {% set _pct = _pct if _pct < 100 else 100 %}
+        <div class="st-quota-track">
+          <div class="st-quota-fill" style="width:{{ _pct }}%"></div>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 4. Blockchain ──────────────────────────────── -->
+  <div class="st-card">
+    <div class="st-card-head">
+      <div class="st-card-icon st-card-icon--amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div class="st-card-head-text">
+        <h2>Portefeuille Blockchain</h2>
+        <p>Adresse Polygon utilisée pour signer les certificats</p>
+      </div>
+    </div>
+    <div class="st-card-body">
+
+      <form method="POST" action="/update-wallet">
+        <div class="st-form-group">
+          <label class="st-label" for="wallet">Adresse du portefeuille (Polygon / EVM)</label>
+          <input class="st-input st-input-mono" type="text" id="wallet" name="wallet"
+                 value="{{ institution.wallet_address or '' }}"
+                 placeholder="0x0000000000000000000000000000000000000000"
+                 pattern="^(0x[0-9a-fA-F]{40})?$">
+          <div class="st-hint">Adresse Ethereum compatible EVM — MetaMask, Ledger, etc. Laissez vide pour utiliser l'adresse de la plateforme.</div>
+        </div>
+        <div class="st-form-row">
+          <button type="submit" class="btn btn-primary btn-sm">Mettre à jour</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── 5. Zone dangereuse ──────────────────────────── -->
+  <div class="st-card">
+    <div class="st-card-head">
+      <div class="st-card-icon st-card-icon--red">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <div class="st-card-head-text">
+        <h2>Zone dangereuse</h2>
+        <p>Actions irréversibles — procédez avec prudence</p>
+      </div>
+    </div>
+    <div class="st-card-body">
+
+      <div class="st-danger-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>La suppression du compte est définitive et entraîne la perte de tous vos certificats émis.</span>
+      </div>
+
+      <form method="POST" action="/delete-account"
+            onsubmit="return confirm('Êtes-vous absolument sûr ? Cette action supprimera définitivement votre compte et tous vos certificats.')">
+        <div class="st-form-group">
+          <label class="st-label" for="password">Confirmez avec votre mot de passe</label>
+          <input class="st-input" type="password" id="password" name="password" required placeholder="••••••••">
+        </div>
+        <div class="st-form-row">
+          <button type="submit" class="btn btn-sm" style="background:#DC2626;color:#fff;border:none;">Supprimer mon compte</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

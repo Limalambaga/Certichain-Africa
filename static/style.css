@@ -267,18 +267,26 @@ h1, h2, h3, h4, h5, h6 {
 
 .c-sidebar__footer {
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--border-xs);
+  position: relative;
 }
 
+/* clickable user button */
 .c-sidebar__user {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0.75rem;
+  padding: 0.5rem 0.6rem;
   border-radius: var(--r-md);
-  background: var(--surface);
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
 }
+.c-sidebar__user:hover { background: var(--surface); }
 
 .c-sidebar__avatar {
   width: 30px;
@@ -293,14 +301,97 @@ h1, h2, h3, h4, h5, h6 {
 
 .c-sidebar__user-info { min-width: 0; flex: 1; }
 .c-sidebar__user-name {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.c-sidebar__user-role { font-size: 0.7rem; color: var(--text-muted); }
+.c-sidebar__user-plan { margin-top: 2px; }
+.c-sidebar__chevrons { color: var(--text-muted); flex-shrink: 0; }
+
+/* ── Plan chip ────────────────────────────────────────── */
+.plan-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.plan-chip--free      { background: #F1F5F9; color: #64748B; }
+.plan-chip--starter   { background: #DBEAFE; color: #1D4ED8; }
+.plan-chip--academique { background: #EDE9FE; color: #6D28D9; }
+
+/* ── Plan popover ─────────────────────────────────────── */
+.plan-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border-xs);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06);
+  padding: 1rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 200;
+}
+.plan-popover.is-open { display: flex; }
+
+.plan-popover__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.plan-popover__email {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.plan-popover__quota-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+.plan-popover__quota-label span { font-weight: 600; color: var(--text-primary); }
+.plan-popover__bar-track {
+  height: 5px;
+  background: #E2E8F0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.plan-popover__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563EB, #7C3AED);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.plan-popover__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  background: #EFF6FF;
+  transition: background 0.15s ease;
+}
+.plan-popover__cta:hover { background: #DBEAFE; }
 
 .app-main {
   flex: 1;

@@ -99,6 +99,14 @@ else:
 
 os.makedirs("certs/uploads", exist_ok=True)
 
+# ── Inject current institution into every template ────────────────────
+@app.context_processor
+def inject_current_institution():
+    inst = None
+    if session.get('institution_id'):
+        inst = Institution.query.get(session['institution_id'])
+    return {'current_institution': inst}
+
 # ==================== OTP Rate-Limiter (in-memory) ====================
 # Maps email -> list of Unix timestamps of OTP-send events
 _otp_rate_limit: dict = {}

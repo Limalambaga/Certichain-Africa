@@ -32,9 +32,17 @@ class Institution(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-    def cert_quota(self) -> int:
-        """Monthly certificate limit for this plan."""
-        return {'free': 5, 'starter': 50, 'academique': 300, 'enterprise': 999999}.get(self.plan or 'free', 5)
+    def cert_quota(self):
+        """Return {'used': N, 'limit': M} for the current calendar month."""
+        limits = {'free': 5, 'starter': 50, 'academique': 300, 'enterprise': 999999}
+        limit = limits.get(self.plan or 'free', 5)
+        now = datetime.utcnow()
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        used = Certificate.query.filter(
+            Certificate.institution_id == self.id,
+            Certificate.created_at >= month_start,
+        ).count()
+        return {'used': used, 'limit': limit}
 
     def to_dict(self):
         return {

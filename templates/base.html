@@ -115,7 +115,39 @@
 
       <!-- User footer -->
       <div class="c-sidebar__footer">
-        <div class="c-sidebar__user">
+
+        {% set _plan = (current_institution.plan or 'free') if current_institution else 'free' %}
+        {% set _plan_labels = {'free': 'Gratuit', 'starter': 'Starter', 'academique': 'Académique'} %}
+        {% set _plan_label  = _plan_labels.get(_plan, _plan.capitalize()) %}
+
+        <!-- Plan popover (appears above footer on click) -->
+        <div class="plan-popover" id="planPopover">
+          <div class="plan-popover__top">
+            <div class="plan-popover__email">{{ session.get('institution_email', 'Institution') }}</div>
+            <span class="plan-chip plan-chip--{{ _plan }}">{{ _plan_label }}</span>
+          </div>
+          {% if current_institution %}
+          {% set _quota = current_institution.cert_quota() %}
+          <div class="plan-popover__quota-label">
+            Certificats ce mois
+            <span>{{ _quota.used }} / {{ _quota.limit if _quota.limit > 0 else '∞' }}</span>
+          </div>
+          {% if _quota.limit > 0 %}
+          <div class="plan-popover__bar-track">
+            {% set _pct = (_quota.used / _quota.limit * 100) %}
+          {% set _pct = _pct if _pct < 100 else 100 %}
+          <div class="plan-popover__bar-fill" style="width:{{ _pct }}%"></div>
+          </div>
+          {% endif %}
+          {% endif %}
+          <a href="/pricing" class="plan-popover__cta">
+            Gérer l'abonnement
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <!-- Clickable user row -->
+        <button class="c-sidebar__user" id="planToggle" type="button" onclick="togglePlanPopover(event)">
           <div class="c-sidebar__avatar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
@@ -124,9 +156,16 @@
           </div>
           <div class="c-sidebar__user-info">
             <div class="c-sidebar__user-name">{{ session.get('institution_email', 'Institution') }}</div>
-            <div class="c-sidebar__user-role">Institution</div>
+            <div class="c-sidebar__user-plan">
+              <span class="plan-chip plan-chip--{{ _plan }}">{{ _plan_label }}</span>
+            </div>
           </div>
-        </div>
+          <!-- chevrons up/down icon -->
+          <svg class="c-sidebar__chevrons" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 9l4-4 4 4"/><path d="M8 15l4 4 4-4"/>
+          </svg>
+        </button>
+
       </div>
 
     </aside>
@@ -151,6 +190,20 @@
 
   <script src="{{ url_for('static', filename='main.js') }}"></script>
   {% block scripts %}{% endblock %}
+  <script>
+  function togglePlanPopover(e) {
+    e.stopPropagation();
+    const pop = document.getElementById('planPopover');
+    if (!pop) return;
+    pop.classList.toggle('is-open');
+  }
+  document.addEventListener('click', function(e) {
+    const pop = document.getElementById('planPopover');
+    if (pop && !pop.contains(e.target) && e.target.id !== 'planToggle') {
+      pop.classList.remove('is-open');
+    }
+  });
+  </script>
 
 </body>
 </html>

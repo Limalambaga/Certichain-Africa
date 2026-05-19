@@ -6,7 +6,7 @@ from reportlab.lib.pagesizes import landscape, A4, portrait
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
-from reportlab.lib.colors import HexColor, white, black
+from reportlab.lib.colors import HexColor, white, black, Color
 from io import BytesIO
 from datetime import datetime
 import qrcode
@@ -632,6 +632,194 @@ def create_badge_pdf(data=None):
     c.setFillColor(TEXT_LIGHT)
     c.drawString(1*cm, 0.8*cm, cert_number)
     c.drawString(1*cm, 0.55*cm, f"Hash: {blockchain_hash}")
+
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CYBER DIPLOMA  — style sécurité/tech sombre, hexagones néon magenta
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _hex_path(c, cx, cy, r, rotation_deg=30):
+    p = c.beginPath()
+    for i in range(6):
+        angle = math.radians(rotation_deg + 60 * i)
+        x = cx + r * math.cos(angle)
+        y = cy + r * math.sin(angle)
+        if i == 0:
+            p.moveTo(x, y)
+        else:
+            p.lineTo(x, y)
+    p.close()
+    return p
+
+
+def _cyber_hex(c, cx, cy, r, stroke_color, glow_color, lw=1.4, rotation=30):
+    c.saveState()
+    c.setFillColor(glow_color)
+    c.drawPath(_hex_path(c, cx, cy, r * 1.35, rotation), fill=1, stroke=0)
+    c.restoreState()
+    c.saveState()
+    c.setStrokeColor(stroke_color)
+    c.setLineWidth(lw)
+    c.drawPath(_hex_path(c, cx, cy, r, rotation), fill=0, stroke=1)
+    c.restoreState()
+
+
+def _cyber_hex_cluster(c, corner, W, H, stroke, glow):
+    specs = {
+        'tr': [
+            (W - 1.6*cm, H - 1.6*cm, 2.4*cm, 30),
+            (W - 4.2*cm, H - 0.8*cm, 1.7*cm, 15),
+            (W - 1.0*cm, H - 4.8*cm, 1.6*cm, 45),
+            (W - 5.5*cm, H - 2.8*cm, 1.1*cm, 0),
+            (W - 3.0*cm, H - 3.6*cm, 0.75*cm, 20),
+        ],
+        'bl': [
+            (1.6*cm, 1.6*cm, 2.4*cm, 30),
+            (4.2*cm, 0.8*cm, 1.7*cm, 15),
+            (1.0*cm, 4.8*cm, 1.6*cm, 45),
+            (5.5*cm, 2.8*cm, 1.1*cm, 0),
+            (3.0*cm, 3.6*cm, 0.75*cm, 20),
+        ],
+    }
+    for cx, cy, r, rot in specs.get(corner, []):
+        _cyber_hex(c, cx, cy, r, stroke, glow, rotation=rot)
+
+
+def create_cyber_diploma_pdf(data=None):
+    if data is None:
+        data = {}
+
+    recipient        = data.get('recipient_name',   "Prénom Nom")
+    domain           = data.get('domain',           "Cybersecurity & Ethical Hacking")
+    mention          = data.get('mention',           '')
+    grad_date        = data.get('graduation_date',   datetime.now().strftime('%d %B %Y'))
+    institution_name = data.get('institution_name',  "VOTRE INSTITUTION")
+    cert_num         = data.get('cert_number',       'CERT-2025-00001')
+    blockchain_hash  = data.get('blockchain_hash',   'N/A')
+    verify_url       = data.get('verify_url',        '')
+
+    BG          = HexColor('#0B0B1A')
+    BG_PANEL    = HexColor('#0F0F24')
+    MAGENTA     = HexColor('#E91E63')
+    MAG_GLOW    = Color(0.914, 0.118, 0.388, alpha=0.14)
+    MAG_LINE    = Color(0.914, 0.118, 0.388, alpha=0.45)
+    GREY        = HexColor('#B0BEC5')
+    GREY_MID    = HexColor('#78909C')
+    GREY_DARK   = HexColor('#37474F')
+
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=landscape(A4))
+    W, H = landscape(A4)
+
+    # Background
+    c.setFillColor(BG)
+    c.rect(0, 0, W, H, fill=1, stroke=0)
+    c.setFillColor(BG_PANEL)
+    c.rect(5.5*cm, 0.5*cm, W - 11*cm, H - 1*cm, fill=1, stroke=0)
+
+    # Hexagonal corner decorations
+    _cyber_hex_cluster(c, 'tr', W, H, MAGENTA, MAG_GLOW)
+    _cyber_hex_cluster(c, 'bl', W, H, MAGENTA, MAG_GLOW)
+
+    # Top & bottom neon accent lines
+    c.saveState()
+    c.setStrokeColor(MAG_LINE)
+    c.setLineWidth(0.6)
+    c.line(0, H - 0.45*cm, W, H - 0.45*cm)
+    c.line(0, 0.45*cm,     W, 0.45*cm)
+    c.restoreState()
+    c.setStrokeColor(MAGENTA)
+    c.setLineWidth(1.5)
+    c.line(0, H, W, H)
+    c.line(0, 0, W, 0)
+
+    # Institution name
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 19)
+    c.drawCentredString(W/2, H - 2.2*cm, institution_name.upper())
+    inst_w = min(c.stringWidth(institution_name.upper(), "Helvetica-Bold", 19) + 1.6*cm, W * 0.55)
+    c.setStrokeColor(MAGENTA)
+    c.setLineWidth(0.9)
+    c.line(W/2 - inst_w/2, H - 2.65*cm, W/2 + inst_w/2, H - 2.65*cm)
+
+    # "PROUDLY ACKNOWLEDGES"
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 17)
+    c._charSpace = 5
+    c.drawCentredString(W/2, H - 4.1*cm, "PROUDLY ACKNOWLEDGES")
+    c._charSpace = 0
+
+    # Recipient name
+    c.setFillColor(white)
+    c.setFont("Helvetica-Bold", 30)
+    c.drawCentredString(W/2, H - 5.8*cm, recipient)
+    name_w = min(c.stringWidth(recipient, "Helvetica-Bold", 30) + 1.2*cm, W * 0.65)
+    c.setStrokeColor(white)
+    c.setLineWidth(0.7)
+    c.line(W/2 - name_w/2, H - 6.35*cm, W/2 + name_w/2, H - 6.35*cm)
+
+    # "for successfully completing the"
+    c.setFillColor(GREY)
+    c.setFont("Helvetica", 9.5)
+    c.drawCentredString(W/2, H - 7.25*cm, "for successfully completing the")
+
+    # Course / domain (magenta, wraps if needed)
+    c.setFillColor(MAGENTA)
+    c.setFont("Helvetica-Bold", 15)
+    max_domain_w = W * 0.60
+    if c.stringWidth(domain, "Helvetica-Bold", 15) > max_domain_w:
+        words = domain.split()
+        mid = len(words) // 2
+        line1 = " ".join(words[:mid])
+        line2 = " ".join(words[mid:])
+        c.drawCentredString(W/2, H - 8.25*cm, line1)
+        c.drawCentredString(W/2, H - 8.85*cm, line2)
+        next_y = H - 9.75*cm
+    else:
+        c.drawCentredString(W/2, H - 8.3*cm, domain)
+        next_y = H - 9.2*cm
+
+    # "certification on"
+    c.setFillColor(GREY)
+    c.setFont("Helvetica", 9.5)
+    c.drawCentredString(W/2, next_y, "certification on")
+
+    # Date
+    c.setFillColor(MAGENTA)
+    c.setFont("Helvetica-Bold", 10)
+    c.drawCentredString(W/2, next_y - 0.85*cm, grad_date)
+
+    # Mention (optional)
+    if mention:
+        c.setFillColor(GREY_MID)
+        c.setFont("Helvetica", 8.5)
+        c.drawCentredString(W/2, next_y - 1.7*cm, f"Mention : {mention}")
+
+    # Certificate number (bottom centre)
+    c.setFillColor(GREY_MID)
+    c.setFont("Helvetica", 8.5)
+    c._charSpace = 1
+    c.drawCentredString(W/2, 1.5*cm, f"Certificate  #{cert_num}")
+    c._charSpace = 0
+
+    # Hash (bottom left)
+    c.setFont("Courier", 5.2)
+    c.setFillColor(GREY_DARK)
+    c.drawString(1.2*cm, 0.9*cm, f"Hash: {blockchain_hash}")
+
+    # QR code (bottom right)
+    if verify_url and verify_url != 'N/A':
+        qr_img = _make_qr(verify_url)
+        qr_size = 1.85*cm
+        c.drawImage(qr_img, W - qr_size - 0.9*cm, 0.7*cm,
+                    width=qr_size, height=qr_size, mask='auto')
+        c.setFont("Helvetica", 4.8)
+        c.setFillColor(GREY_DARK)
+        c.drawCentredString(W - qr_size/2 - 0.9*cm, 0.5*cm, "Scan to verify")
 
     c.save()
     buffer.seek(0)

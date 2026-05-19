@@ -743,13 +743,14 @@ def templates_library():
 @app.route('/templates/preview/<template_type>')
 def template_preview(template_type):
     """Aperçu du modèle PDF"""
-    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
+    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf, create_cyber_diploma_pdf
     from flask import send_file
     
     pdf_map = {
         'diplome': create_diploma_pdf,
         'certification': create_certification_pdf,
-        'badge': create_badge_pdf
+        'badge': create_badge_pdf,
+        'cyber': create_cyber_diploma_pdf
     }
     
     if template_type not in pdf_map:
@@ -770,13 +771,14 @@ def template_preview(template_type):
 @app.route('/templates/download/<template_type>')
 def template_download(template_type):
     """Télécharger le modèle PDF éditable"""
-    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
+    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf, create_cyber_diploma_pdf
     from flask import send_file
     
     pdf_map = {
         'diplome': create_diploma_pdf,
         'certification': create_certification_pdf,
-        'badge': create_badge_pdf
+        'badge': create_badge_pdf,
+        'cyber': create_cyber_diploma_pdf
     }
     
     if template_type not in pdf_map:
@@ -813,7 +815,7 @@ def my_certificates():
 def create_certificate():
     """API pour créer un certificat"""
     from models import Certificate, Institution
-    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
+    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf, create_cyber_diploma_pdf
 
     data = request.get_json(force=True, silent=True) or {}
     institution_id = session.get('institution_id')
@@ -850,7 +852,8 @@ def create_certificate():
         pdf_map = {
             'diplome': create_diploma_pdf,
             'certification': create_certification_pdf,
-            'badge': create_badge_pdf
+            'badge': create_badge_pdf,
+        'cyber': create_cyber_diploma_pdf
         }
 
         pdf_func = pdf_map.get(cert.certificate_type)
@@ -1057,7 +1060,7 @@ def download_certificate_file(cert_id):
         )
 
     # File missing (old cert) — regenerate, save, and update stored hash
-    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf
+    from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf, create_cyber_diploma_pdf
     institution = Institution.query.get(institution_id)
     data = cert.data or {}
     pdf_payload = dict(data)
@@ -1069,7 +1072,7 @@ def download_certificate_file(cert_id):
     pdf_payload['blockchain_hash']  = cert.blockchain_hash or 'N/A'
     pdf_payload['verify_url']       = request.host_url.rstrip('/') + f'/verify/{cert.id}'
 
-    pdf_map = {'diplome': create_diploma_pdf, 'certification': create_certification_pdf, 'badge': create_badge_pdf}
+    pdf_map = {'diplome': create_diploma_pdf, 'certification': create_certification_pdf, 'badge': create_badge_pdf, 'cyber': create_cyber_diploma_pdf}
     pdf_func = pdf_map.get(cert.certificate_type)
     if not pdf_func:
         return jsonify({'error': 'Type de certificat inconnu'}), 400

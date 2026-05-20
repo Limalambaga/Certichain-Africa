@@ -1,210 +1,659 @@
 {% extends "base.html" %}
 {% block title %}Mes certificats{% endblock %}
 
-{% block content %}
+{% block head %}
+<style>
+/* ── Page wrapper ─────────────────────────────────── */
+.mc-wrap { padding: 0 0 3rem; }
 
-<div class="page-header">
-  <div class="page-header__top">
+/* ── Page header ──────────────────────────────────── */
+.mc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+.mc-header h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+.mc-header p { font-size: 0.875rem; color: var(--text-muted); }
+
+/* ── Gradient stat cards ──────────────────────────── */
+.mc-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.mc-stat {
+  border-radius: var(--r-xl);
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.mc-stat::after {
+  content: '';
+  position: absolute;
+  right: -18px; top: -18px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+}
+.mc-stat--navy  { background: linear-gradient(135deg, #0A1E52 0%, #1A3A8A 100%); }
+.mc-stat--teal  { background: linear-gradient(135deg, #0D7A72 0%, #14B8A6 100%); }
+.mc-stat--blue  { background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 100%); }
+.mc-stat--amber { background: linear-gradient(135deg, #B45309 0%, #F59E0B 100%); }
+
+.mc-stat__icon {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 0.9rem;
+}
+.mc-stat__icon svg { width: 16px; height: 16px; stroke: #fff; }
+.mc-stat__value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.mc-stat__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.82;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Toolbar ──────────────────────────────────────── */
+.mc-toolbar {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 0.75rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Search */
+.mc-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 180px;
+}
+.mc-search svg { color: var(--text-muted); flex-shrink: 0; }
+.mc-search input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text-primary);
+  width: 100%;
+}
+.mc-search input::placeholder { color: var(--text-muted); }
+
+.mc-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+
+/* Filter chips */
+.mc-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.mc-chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.mc-chip:hover { border-color: var(--blue-400); color: var(--blue-500); }
+.mc-chip.is-active { background: var(--blue-500); border-color: var(--blue-500); color: #fff; }
+.mc-chip__count {
+  background: rgba(0,0,0,0.12);
+  border-radius: 99px;
+  padding: 0 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
+}
+.mc-chip.is-active .mc-chip__count { background: rgba(255,255,255,0.25); }
+
+/* View toggle */
+.mc-view-toggle {
+  display: flex;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 3px;
+  gap: 2px;
+}
+.mc-view-btn {
+  width: 30px; height: 28px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+.mc-view-btn.is-active { background: #fff; color: var(--text-primary); box-shadow: var(--shadow-xs); }
+.mc-view-btn svg { width: 14px; height: 14px; }
+
+/* ── Table view ───────────────────────────────────── */
+.mc-table-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+.mc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mc-table thead th {
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-xs);
+  text-align: left;
+  white-space: nowrap;
+}
+.mc-table tbody tr {
+  border-bottom: 1px solid var(--border-xs);
+  transition: background 0.12s ease;
+}
+.mc-table tbody tr:last-child { border-bottom: none; }
+.mc-table tbody tr:hover { background: var(--surface); }
+.mc-table td {
+  padding: 0.85rem 1rem;
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+/* Avatar + name cell */
+.mc-recipient {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.mc-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--navy-800);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+.mc-avatar--diplome      { background: linear-gradient(135deg,#0A1E52,#1A3A8A); }
+.mc-avatar--certification { background: linear-gradient(135deg,#1D4ED8,#3B82F6); }
+.mc-avatar--badge        { background: linear-gradient(135deg,#B45309,#F59E0B); }
+.mc-avatar--cyber_diplome { background: linear-gradient(135deg,#7C3AED,#E91E63); }
+
+.mc-name { font-weight: 700; color: var(--text-primary); }
+.mc-email { font-size: 0.74rem; color: var(--text-muted); margin-top: 1px; }
+
+/* Type badge */
+.mc-type {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.mc-type--diplome       { background: #EFF6FF; color: #1D4ED8; }
+.mc-type--certification { background: #F0FDFA; color: #0D7A72; }
+.mc-type--badge         { background: #FFFBEB; color: #B45309; }
+.mc-type--cyber_diplome { background: #F5F3FF; color: #7C3AED; }
+
+/* Chain status */
+.mc-chain {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.75rem; font-weight: 600;
+}
+.mc-chain--on  { color: var(--teal-500); }
+.mc-chain--off { color: var(--text-muted); }
+.mc-chain-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mc-chain-dot--on  { background: var(--teal-500); box-shadow: 0 0 0 2px var(--teal-100); }
+.mc-chain-dot--off { background: var(--text-muted); }
+
+/* Action buttons */
+.mc-actions { display: flex; align-items: center; gap: 0.35rem; }
+.mc-action-btn {
+  width: 30px; height: 30px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.mc-action-btn:hover { background: var(--surface); border-color: var(--border-md); color: var(--text-primary); }
+.mc-action-btn--danger:hover { background: var(--error-bg); border-color: var(--error-border); color: var(--error); }
+.mc-action-btn--primary { background: var(--blue-500); border-color: var(--blue-500); color: #fff; }
+.mc-action-btn--primary:hover { background: var(--blue-600); border-color: var(--blue-600); color: #fff; }
+.mc-action-btn svg { width: 13px; height: 13px; }
+
+/* ── Card grid view ───────────────────────────────── */
+.mc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.1rem;
+}
+.mc-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.mc-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.mc-card__top {
+  height: 5px;
+}
+.mc-card__top--diplome       { background: linear-gradient(90deg,#0A1E52,#1A3A8A); }
+.mc-card__top--certification { background: linear-gradient(90deg,#1D4ED8,#3B82F6); }
+.mc-card__top--badge         { background: linear-gradient(90deg,#B45309,#F59E0B); }
+.mc-card__top--cyber_diplome { background: linear-gradient(90deg,#7C3AED,#E91E63); }
+.mc-card__body { padding: 1.25rem; }
+.mc-card__meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.mc-card__recipient { margin-bottom: 1rem; }
+.mc-card__name { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.mc-card__domain { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.mc-card__fields { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.mc-card__field { display: flex; justify-content: space-between; font-size: 0.8rem; }
+.mc-card__field-label { color: var(--text-muted); }
+.mc-card__field-value { font-weight: 600; color: var(--text-primary); }
+.mc-card__footer {
+  display: flex; gap: 0.5rem; padding-top: 1rem;
+  border-top: 1px solid var(--border-xs);
+}
+
+/* ── Empty state ──────────────────────────────────── */
+.mc-empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-xs);
+}
+.mc-empty__icon {
+  width: 72px; height: 72px;
+  background: var(--surface-2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem;
+  color: var(--text-muted);
+}
+.mc-empty h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; }
+.mc-empty p  { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+/* ── Loading skeleton ─────────────────────────────── */
+.mc-skeleton { animation: mc-pulse 1.4s ease-in-out infinite; }
+@keyframes mc-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.mc-skel-row {
+  height: 52px;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .mc-stats { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 540px) {
+  .mc-stats { grid-template-columns: 1fr 1fr; }
+  .mc-table { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mc-wrap">
+
+  <!-- Header -->
+  <div class="mc-header">
     <div>
       <h1>Mes certificats</h1>
-      <p>Gérez l'ensemble des certificats émis par votre institution</p>
+      <p>Tous les certificats numériques émis par votre institution</p>
     </div>
     <a href="/create-certificate" class="btn btn-primary">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       Émettre un certificat
     </a>
   </div>
+
+  <!-- Stat cards -->
+  <div class="mc-stats" id="mcStats">
+    <div class="mc-stat mc-stat--navy">
+      <div class="mc-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="mc-stat__value" id="s-total">—</div>
+      <div class="mc-stat__label">Total</div>
+    </div>
+    <div class="mc-stat mc-stat--teal">
+      <div class="mc-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+      </div>
+      <div class="mc-stat__value" id="s-diplomes">—</div>
+      <div class="mc-stat__label">Diplômes</div>
+    </div>
+    <div class="mc-stat mc-stat--blue">
+      <div class="mc-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      </div>
+      <div class="mc-stat__value" id="s-certs">—</div>
+      <div class="mc-stat__label">Certifications</div>
+    </div>
+    <div class="mc-stat mc-stat--amber">
+      <div class="mc-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <div class="mc-stat__value" id="s-badges">—</div>
+      <div class="mc-stat__label">Badges</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="mc-toolbar">
+    <!-- Search -->
+    <div class="mc-search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Rechercher un bénéficiaire…">
+    </div>
+
+    <div class="mc-divider"></div>
+
+    <!-- Type filter chips -->
+    <div class="mc-chips" id="chipBar">
+      <button class="mc-chip is-active" data-type="" onclick="setChip(this,'')">
+        Tous <span class="mc-chip__count" id="chip-all">—</span>
+      </button>
+      <button class="mc-chip" data-type="diplome" onclick="setChip(this,'diplome')">
+        Diplômes <span class="mc-chip__count" id="chip-diplome">—</span>
+      </button>
+      <button class="mc-chip" data-type="certification" onclick="setChip(this,'certification')">
+        Certifications <span class="mc-chip__count" id="chip-certification">—</span>
+      </button>
+      <button class="mc-chip" data-type="badge" onclick="setChip(this,'badge')">
+        Badges <span class="mc-chip__count" id="chip-badge">—</span>
+      </button>
+      <button class="mc-chip" data-type="cyber_diplome" onclick="setChip(this,'cyber_diplome')">
+        Cyber <span class="mc-chip__count" id="chip-cyber_diplome">—</span>
+      </button>
+    </div>
+
+    <div class="mc-divider"></div>
+
+    <!-- View toggle -->
+    <div class="mc-view-toggle">
+      <button class="mc-view-btn is-active" id="btnTable" onclick="setView('table')" title="Vue tableau">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <button class="mc-view-btn" id="btnGrid" onclick="setView('grid')" title="Vue grille">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- List area -->
+  <div id="mcList"></div>
+
 </div>
-
-
-<!-- ─── Stats ────────────────────────────────────────── -->
-<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1.25rem; margin-bottom:2rem;" id="statsRow">
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--navy">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
-    </div>
-    <div class="stat-value" id="s-total">—</div>
-    <div class="stat-label">Total</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--navy">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
-    </div>
-    <div class="stat-value" id="s-diplomes">—</div>
-    <div class="stat-label">Diplômes</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--blue">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-    </div>
-    <div class="stat-value" id="s-certs">—</div>
-    <div class="stat-label">Certifications</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--success">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-    </div>
-    <div class="stat-value" id="s-badges">—</div>
-    <div class="stat-label">Badges</div>
-  </div>
-</div>
-
-
-<!-- ─── Filters ──────────────────────────────────────── -->
-<div class="card" style="margin-bottom:1.5rem;">
-  <div class="card-body-sm" style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-
-    <div style="display:flex; align-items:center; gap:0.5rem; flex:1; min-width:200px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="form-input" type="text" id="searchInput" placeholder="Rechercher un bénéficiaire…" style="border:none; background:none; padding:0; font-size:0.875rem; box-shadow:none;">
-    </div>
-
-    <div style="width:1px; height:24px; background:var(--border); flex-shrink:0;"></div>
-
-    <select class="form-select" id="filterType" style="width:auto; min-width:160px;">
-      <option value="">Tous les types</option>
-      <option value="diplome">Diplôme</option>
-      <option value="certification">Certification</option>
-      <option value="badge">Badge</option>
-    </select>
-
-    <select class="form-select" id="filterStatus" style="width:auto; min-width:160px;">
-      <option value="">Tous les statuts</option>
-      <option value="created">Créé</option>
-      <option value="issued">Émis sur blockchain</option>
-    </select>
-
-  </div>
-</div>
-
-
-<!-- ─── Certificates List ────────────────────────────── -->
-<div id="certsList"></div>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
-  let allCerts = [];
+let allCerts = [];
+let activeType = '';
+let activeView = 'table';
 
-  const typeColors  = { diplome:'badge-navy', certification:'badge-info', badge:'badge-warning' };
-  const typeLabels  = { diplome:'Diplôme', certification:'Certification', badge:'Badge' };
-  const statusColors = { created:'badge-info', issued:'badge-teal' };
-  const statusLabels = { created:'Créé', issued:'Blockchain' };
+const TYPE_LABEL = { diplome:'Diplôme', certification:'Certification', badge:'Badge', cyber_diplome:'Cyber Diplôme' };
+const TYPE_CLASS = { diplome:'mc-type--diplome', certification:'mc-type--certification', badge:'mc-type--badge', cyber_diplome:'mc-type--cyber_diplome' };
+const AVT_CLASS  = { diplome:'mc-avatar--diplome', certification:'mc-avatar--certification', badge:'mc-avatar--badge', cyber_diplome:'mc-avatar--cyber_diplome' };
 
-  async function load() {
-    try {
-      const res  = await fetch('/api/certificates');
-      const data = await res.json();
-      allCerts   = data.certificates || [];
-      updateStats();
-      render(allCerts);
-    } catch (e) {
-      document.getElementById('certsList').innerHTML = `<div class="alert alert-error">Impossible de charger les certificats.</div>`;
-    }
+function initials(name) {
+  return (name || '?').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
+function fmt(dateStr) {
+  return new Date(dateStr).toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+async function load() {
+  document.getElementById('mcList').innerHTML = `
+    <div class="mc-skeleton">
+      ${[1,2,3,4].map(()=>`<div class="mc-skel-row"></div>`).join('')}
+    </div>`;
+  try {
+    const res = await fetch('/api/certificates');
+    const data = await res.json();
+    allCerts = data.certificates || [];
+    updateStats();
+    render();
+  } catch(e) {
+    document.getElementById('mcList').innerHTML = `<div class="alert alert-error" style="margin-top:1rem;">Impossible de charger les certificats.</div>`;
   }
+}
 
-  function updateStats() {
-    document.getElementById('s-total').textContent   = allCerts.length;
-    document.getElementById('s-diplomes').textContent = allCerts.filter(c => c.certificate_type === 'diplome').length;
-    document.getElementById('s-certs').textContent    = allCerts.filter(c => c.certificate_type === 'certification').length;
-    document.getElementById('s-badges').textContent   = allCerts.filter(c => c.certificate_type === 'badge').length;
+function updateStats() {
+  const types = ['diplome','certification','badge','cyber_diplome'];
+  document.getElementById('s-total').textContent    = allCerts.length;
+  document.getElementById('s-diplomes').textContent = allCerts.filter(c=>c.certificate_type==='diplome').length;
+  document.getElementById('s-certs').textContent    = allCerts.filter(c=>c.certificate_type==='certification').length;
+  document.getElementById('s-badges').textContent   = allCerts.filter(c=>c.certificate_type==='badge').length;
+
+  document.getElementById('chip-all').textContent = allCerts.length;
+  types.forEach(t => {
+    const el = document.getElementById('chip-'+t);
+    if (el) el.textContent = allCerts.filter(c=>c.certificate_type===t).length;
+  });
+}
+
+function filtered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return allCerts.filter(c =>
+    (!activeType || c.certificate_type === activeType) &&
+    (!q || (c.recipient_name||'').toLowerCase().includes(q) || (c.domain||'').toLowerCase().includes(q))
+  );
+}
+
+function setChip(btn, type) {
+  document.querySelectorAll('.mc-chip').forEach(b => b.classList.remove('is-active'));
+  btn.classList.add('is-active');
+  activeType = type;
+  render();
+}
+
+function setView(v) {
+  activeView = v;
+  document.getElementById('btnTable').classList.toggle('is-active', v==='table');
+  document.getElementById('btnGrid').classList.toggle('is-active',  v==='grid');
+  render();
+}
+
+function chainBadge(c) {
+  if (c.blockchain_hash && c.blockchain_hash.startsWith('0x')) {
+    return `<span class="mc-chain mc-chain--on"><span class="mc-chain-dot mc-chain-dot--on"></span>Blockchain</span>`;
   }
+  if (c.blockchain_hash) {
+    return `<span class="mc-chain mc-chain--off"><span class="mc-chain-dot mc-chain-dot--off"></span>SHA-256</span>`;
+  }
+  return `<span class="mc-chain mc-chain--off"><span class="mc-chain-dot mc-chain-dot--off"></span>Local</span>`;
+}
 
-  function render(list) {
-    const el = document.getElementById('certsList');
-    if (list.length === 0) {
-      el.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state__icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-            </svg>
-          </div>
-          <h2>Aucun certificat trouvé</h2>
-          <p>Commencez par émettre votre premier certificat numérique.</p>
-          <a href="/create-certificate" class="btn btn-primary">Émettre un certificat</a>
-        </div>`;
-      return;
-    }
+function actionBtns(c) {
+  let btns = `
+    <a href="/certificate/${c.id}/download" class="mc-action-btn mc-action-btn--primary" title="Télécharger PDF">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </a>
+    <a href="/verify/${c.id}" target="_blank" class="mc-action-btn" title="Voir le certificat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </a>`;
+  if (c.ipfs_hash) {
+    btns += `<a href="https://gateway.pinata.cloud/ipfs/${c.ipfs_hash}" target="_blank" rel="noopener" class="mc-action-btn" title="Voir sur IPFS">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+    </a>`;
+  }
+  btns += `<button onclick="deleteCert(${c.id})" class="mc-action-btn mc-action-btn--danger" title="Supprimer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+  </button>`;
+  return btns;
+}
 
-    el.innerHTML = `<div class="certs-grid">${list.map(c => `
-      <div class="cert-card" style="border-left-color: ${c.certificate_type === 'diplome' ? 'var(--navy-800)' : c.certificate_type === 'certification' ? 'var(--blue-500)' : 'var(--warning)'};">
-        <div class="cert-card__header">
-          <span class="badge ${typeColors[c.certificate_type] || 'badge-navy'}">${typeLabels[c.certificate_type] || c.certificate_type}</span>
-          <span class="badge ${c.blockchain_hash ? 'badge-teal' : 'badge-info'}">
-            ${c.blockchain_hash
-              ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Blockchain'
-              : 'Local'}
-          </span>
+function renderTable(list) {
+  return `
+  <div class="mc-table-wrap">
+    <table class="mc-table">
+      <thead>
+        <tr>
+          <th>Bénéficiaire</th>
+          <th>Type</th>
+          <th>Domaine / Programme</th>
+          <th>Mention</th>
+          <th>Date</th>
+          <th>Statut</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${list.map(c => `
+        <tr>
+          <td>
+            <div class="mc-recipient">
+              <div class="mc-avatar ${AVT_CLASS[c.certificate_type]||''}">
+                ${initials(c.recipient_name)}
+              </div>
+              <div>
+                <div class="mc-name">${c.recipient_name}</div>
+                ${c.recipient_email ? `<div class="mc-email">${c.recipient_email}</div>` : ''}
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="mc-type ${TYPE_CLASS[c.certificate_type]||''}">
+              ${TYPE_LABEL[c.certificate_type]||c.certificate_type}
+            </span>
+          </td>
+          <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${c.domain || '<span style="color:var(--text-muted)">—</span>'}
+          </td>
+          <td style="color:var(--text-muted); font-size:0.8rem;">
+            ${c.mention || '—'}
+          </td>
+          <td style="white-space:nowrap; color:var(--text-secondary); font-size:0.8rem;">
+            ${fmt(c.created_at)}
+          </td>
+          <td>${chainBadge(c)}</td>
+          <td>
+            <div class="mc-actions">${actionBtns(c)}</div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderGrid(list) {
+  return `<div class="mc-grid">
+    ${list.map(c => `
+    <div class="mc-card">
+      <div class="mc-card__top mc-card__top--${c.certificate_type}"></div>
+      <div class="mc-card__body">
+        <div class="mc-card__meta">
+          <span class="mc-type ${TYPE_CLASS[c.certificate_type]||''}">${TYPE_LABEL[c.certificate_type]||c.certificate_type}</span>
+          ${chainBadge(c)}
         </div>
-        <div class="cert-card__body">
-          <div style="font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:0.875rem;">${c.recipient_name}</div>
-          <div class="cert-card__row">
-            <span class="cert-card__row-label">Domaine</span>
-            <span class="cert-card__row-value">${c.domain || '—'}</span>
+        <div class="mc-card__recipient">
+          <div class="mc-card__name">${c.recipient_name}</div>
+          <div class="mc-card__domain">${c.domain || ''}</div>
+        </div>
+        <div class="mc-card__fields">
+          ${c.mention ? `<div class="mc-card__field"><span class="mc-card__field-label">Mention</span><span class="mc-card__field-value">${c.mention}</span></div>` : ''}
+          <div class="mc-card__field">
+            <span class="mc-card__field-label">Émis le</span>
+            <span class="mc-card__field-value">${fmt(c.created_at)}</span>
           </div>
-          ${c.mention ? `<div class="cert-card__row"><span class="cert-card__row-label">Mention</span><span class="cert-card__row-value">${c.mention}</span></div>` : ''}
-          <div class="cert-card__row">
-            <span class="cert-card__row-label">Émis le</span>
-            <span class="cert-card__row-value">${new Date(c.created_at).toLocaleDateString('fr-FR')}</span>
-          </div>
-          ${c.blockchain_hash ? `
-          <div class="cert-card__row" style="border-bottom:none;">
-            <span class="cert-card__row-label">Hash TX</span>
-            <span style="font-family:monospace; font-size:0.72rem; color:var(--text-muted);">${c.blockchain_hash.substring(0,18)}…</span>
+          ${c.blockchain_hash ? `<div class="mc-card__field">
+            <span class="mc-card__field-label">Hash</span>
+            <span style="font-family:monospace; font-size:0.7rem; color:var(--text-muted);">${c.blockchain_hash.substring(0,16)}…</span>
           </div>` : ''}
         </div>
-        <div class="cert-card__actions">
-          <a href="/certificate/${c.id}/download" class="btn btn-outline btn-sm" style="flex:1;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            PDF
-          </a>
-          ${c.ipfs_hash ? `
-          <a href="https://gateway.pinata.cloud/ipfs/${c.ipfs_hash}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            IPFS
-          </a>` : ''}
-          <button onclick="deleteCert(${c.id})" class="btn btn-ghost btn-sm" style="color:var(--error);">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-          </button>
-        </div>
+        <div class="mc-card__footer">${actionBtns(c)}</div>
       </div>
-    `).join('')}</div>`;
+    </div>`).join('')}
+  </div>`;
+}
+
+function render() {
+  const list = filtered();
+  const el = document.getElementById('mcList');
+  if (list.length === 0) {
+    el.innerHTML = `
+      <div class="mc-empty">
+        <div class="mc-empty__icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <h2>${activeType || document.getElementById('searchInput').value ? 'Aucun résultat' : 'Aucun certificat émis'}</h2>
+        <p>${activeType || document.getElementById('searchInput').value ? 'Essayez d\'ajuster vos filtres.' : 'Commencez par émettre votre premier certificat numérique.'}</p>
+        ${!activeType && !document.getElementById('searchInput').value
+          ? `<a href="/create-certificate" class="btn btn-primary">Émettre un certificat</a>`
+          : ''}
+      </div>`;
+    return;
   }
+  el.innerHTML = activeView === 'table' ? renderTable(list) : renderGrid(list);
+}
 
-  function filter() {
-    const type   = document.getElementById('filterType').value;
-    const status = document.getElementById('filterStatus').value;
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    render(allCerts.filter(c =>
-      (!type   || c.certificate_type === type) &&
-      (!status || (status === 'issued' ? !!c.blockchain_hash : !c.blockchain_hash)) &&
-      (!search || c.recipient_name.toLowerCase().includes(search))
-    ));
-  }
+async function deleteCert(id) {
+  if (!confirm('Supprimer ce certificat ? Cette action est irréversible.')) return;
+  try {
+    const res = await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
+    if (res.ok) { await load(); }
+    else { alert('Erreur lors de la suppression.'); }
+  } catch(e) { alert('Erreur réseau.'); }
+}
 
-  async function deleteCert(id) {
-    if (!confirm('Supprimer ce certificat ? Cette action est irréversible.')) return;
-    try {
-      const res = await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
-      if (res.ok) { await load(); }
-    } catch (e) { alert('Erreur lors de la suppression.'); }
-  }
-
-  document.getElementById('filterType').addEventListener('change', filter);
-  document.getElementById('filterStatus').addEventListener('change', filter);
-  document.getElementById('searchInput').addEventListener('input', filter);
-
-  document.addEventListener('DOMContentLoaded', load);
+document.getElementById('searchInput').addEventListener('input', render);
+document.addEventListener('DOMContentLoaded', load);
 </script>
-
-<style>
-@media (max-width: 900px) {
-  #statsRow { grid-template-columns: repeat(2,1fr) !important; }
-}
-@media (max-width: 500px) {
-  #statsRow { grid-template-columns: 1fr !important; }
-}
-</style>
 {% endblock %}

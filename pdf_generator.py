@@ -112,165 +112,176 @@ def _qr_stamp(c, url, cert_num, x, y, size=1.9*cm):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# DIPLÔME  — style Leaston blanc/épuré
+# DIPLÔME  — mise en page CyberTech, couleurs institutionnelles (navy/gold/teal)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def create_diploma_pdf(data=None):
     if data is None:
         data = {}
 
-    recipient        = data.get('recipient_name',    "Jean-Baptiste Kouassi")
-    domain           = data.get('domain',            "Communication & Management")
-    mention          = data.get('mention',           '')
-    grad_date        = data.get('graduation_date',   datetime.now().strftime('%d %B %Y'))
-    institution_name = data.get('institution_name',  "VOTRE INSTITUTION")
-    cert_num         = data.get('cert_number',       'CERT-2025-00001')
-    duration         = data.get('duration',          '')
+    recipient        = data.get('recipient_name',   "Jean-Baptiste Kouassi")
+    domain           = data.get('domain',           "Communication & Management")
+    mention          = data.get('mention',          '')
+    grad_date        = data.get('graduation_date',  datetime.now().strftime('%d %B %Y'))
+    institution_name = data.get('institution_name', "VOTRE INSTITUTION")
+    cert_num         = data.get('cert_number',      'CERT-2025-00001')
     blockchain_hash  = data.get('blockchain_hash',  'N/A')
-    verify_url       = data.get('verify_url',        '')
-    description      = data.get('description',       '')
+    verify_url       = data.get('verify_url',       '')
+
+    TEAL_LINE  = Color(0.086, 0.565, 0.506, alpha=0.50)
+    GOLD_LINE  = Color(0.788, 0.659, 0.298, alpha=0.55)
 
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=landscape(A4))
     W, H = landscape(A4)
 
-    # ── Background ────────────────────────────────────────────────────────────
+    # ── Background blanc ──────────────────────────────────────────────────────
     c.setFillColor(white)
     c.rect(0, 0, W, H, fill=1, stroke=0)
 
-    # ── Decorative circles (corners) ──────────────────────────────────────────
-    # Top-left teal circle (partial, clipped by corner)
+    # Panneau central légèrement teinté (miroir du panel sombre cyber)
+    c.setFillColor(HexColor('#F4F8FF'))
+    c.rect(5.5*cm, 0.5*cm, W - 11*cm, H - 1*cm, fill=1, stroke=0)
+
+    # ── Décorations coins — cercles teal (haut-gauche) + navy (bas-droite) ────
     c.saveState()
     c.setFillColor(HexColor('#E0F7F4'))
-    c.circle(-1.5*cm, H + 1.5*cm, 4.5*cm, fill=1, stroke=0)
-    c.restoreState()
-
-    c.saveState()
+    c.circle(-1.8*cm, H + 1.8*cm, 5.2*cm, fill=1, stroke=0)
     c.setFillColor(TEAL)
-    c.circle(-1.8*cm, H + 1.8*cm, 3*cm, fill=1, stroke=0)
+    c.circle(-1.8*cm, H + 1.8*cm, 3.2*cm, fill=1, stroke=0)
     c.restoreState()
 
-    # Bottom-right navy circle
     c.saveState()
     c.setFillColor(HexColor('#EBF0FA'))
-    c.circle(W + 1.5*cm, -1.5*cm, 4.5*cm, fill=1, stroke=0)
-    c.restoreState()
-
-    c.saveState()
+    c.circle(W + 1.8*cm, -1.8*cm, 5.2*cm, fill=1, stroke=0)
     c.setFillColor(NAVY)
-    c.circle(W + 1.8*cm, -1.8*cm, 3*cm, fill=1, stroke=0)
+    c.circle(W + 1.8*cm, -1.8*cm, 3.2*cm, fill=1, stroke=0)
     c.restoreState()
 
-    # Top-right small accent
+    # Accent doré haut-droite
     c.saveState()
     c.setFillColor(HexColor('#FFF3CD'))
-    c.circle(W + 0.5*cm, H - 2*cm, 2.2*cm, fill=1, stroke=0)
+    c.circle(W + 0.6*cm, H - 1.8*cm, 2.6*cm, fill=1, stroke=0)
+    c.setFillColor(GOLD)
+    c.circle(W + 0.8*cm, H - 1.6*cm, 1.4*cm, fill=1, stroke=0)
     c.restoreState()
 
-    # ── Outer border ──────────────────────────────────────────────────────────
-    c.setStrokeColor(SILVER)
-    c.setLineWidth(1)
-    c.rect(0.8*cm, 0.8*cm, W - 1.6*cm, H - 1.6*cm, fill=0, stroke=1)
-
-    # ── Institution name ──────────────────────────────────────────────────────
-    c.setFillColor(NAVY)
-    c.setFont("Helvetica-Bold", 20)
-    inst_upper = institution_name.upper()
-    c.drawCentredString(W/2, H - 2.2*cm, inst_upper)
-
+    # ── Lignes d'accent haut et bas (miroir des lignes néon cyber) ────────────
+    c.setStrokeColor(TEAL_LINE)
+    c.setLineWidth(0.6)
+    c.line(0, H - 0.45*cm, W, H - 0.45*cm)
+    c.line(0, 0.45*cm,     W, 0.45*cm)
     c.setStrokeColor(TEAL)
-    c.setLineWidth(2.5)
-    inst_w = min(len(inst_upper) * 11, W * 0.5)
-    c.line(W/2 - inst_w/2, H - 2.6*cm, W/2 + inst_w/2, H - 2.6*cm)
-
-    c.setFillColor(TEXT_MID)
-    c.setFont("Helvetica", 9)
-    c.drawCentredString(W/2, H - 3.1*cm,
-        f"L'École Supérieure et le Département Executive Education décernent le présent certificat à :")
-
-    # ── Divider ───────────────────────────────────────────────────────────────
-    _gold_line(c, 3*cm, H - 3.55*cm, W - 6*cm, thick=0.7)
-
-    # ── Recipient ─────────────────────────────────────────────────────────────
-    c.setFillColor(NAVY)
-    c.setFont("Helvetica-Bold", 32)
-    c.drawCentredString(W/2, H - 5.0*cm, recipient)
-
-    # Underline recipient
+    c.setLineWidth(1.8)
+    c.line(0, H, W, H)
     c.setStrokeColor(NAVY)
+    c.setLineWidth(1.8)
+    c.line(0, 0, W, 0)
+
+    # ── Nom de l'institution ──────────────────────────────────────────────────
+    inst_upper = institution_name.upper()
+    c.setFillColor(NAVY)
+    c.setFont("Helvetica-Bold", 19)
+    c.drawCentredString(W/2, H - 2.2*cm, inst_upper)
+    inst_w = min(c.stringWidth(inst_upper, "Helvetica-Bold", 19) + 1.6*cm, W * 0.55)
+    c.setStrokeColor(TEAL)
     c.setLineWidth(1.2)
-    name_w = min(len(recipient) * 16, W * 0.55)
-    c.line(W/2 - name_w/2, H - 5.45*cm, W/2 + name_w/2, H - 5.45*cm)
+    c.line(W/2 - inst_w/2, H - 2.65*cm, W/2 + inst_w/2, H - 2.65*cm)
 
+    # ── "DÉCERNE FIÈREMENT" ───────────────────────────────────────────────────
+    c.setFillColor(NAVY)
+    c.setFont("Helvetica-Bold", 17)
+    c._charSpace = 5
+    c.drawCentredString(W/2, H - 4.1*cm, "DÉCERNE FIÈREMENT")
+    c._charSpace = 0
+
+    # ── Nom du récipiendaire ──────────────────────────────────────────────────
+    c.setFillColor(NAVY)
+    c.setFont("Helvetica-Bold", 30)
+    c.drawCentredString(W/2, H - 5.8*cm, recipient)
+    name_w = min(c.stringWidth(recipient, "Helvetica-Bold", 30) + 1.2*cm, W * 0.65)
+    c.setStrokeColor(NAVY)
+    c.setLineWidth(0.7)
+    c.line(W/2 - name_w/2, H - 6.35*cm, W/2 + name_w/2, H - 6.35*cm)
+
+    # ── "pour avoir réussi avec succès le programme" ──────────────────────────
     c.setFillColor(TEXT_MID)
-    c.setFont("Helvetica", 10)
-    c.drawCentredString(W/2, H - 6.05*cm, "pour sa participation au programme")
+    c.setFont("Helvetica", 9.5)
+    c.drawCentredString(W/2, H - 7.25*cm, "pour avoir réussi avec succès le programme")
 
-    # ── Domain / programme ────────────────────────────────────────────────────
+    # ── Domaine / programme (gold, avec retour à la ligne si trop long) ───────
     c.setFillColor(GOLD)
-    c.setFont("Helvetica-Bold", 16)
-    domain_text = f'"{domain}"'
-    c.drawCentredString(W/2, H - 7.0*cm, domain_text)
+    c.setFont("Helvetica-Bold", 15)
+    max_w = W * 0.60
+    if c.stringWidth(domain, "Helvetica-Bold", 15) > max_w:
+        words = domain.split()
+        mid   = len(words) // 2
+        c.drawCentredString(W/2, H - 8.25*cm, " ".join(words[:mid]))
+        c.drawCentredString(W/2, H - 8.85*cm, " ".join(words[mid:]))
+        next_y = H - 9.75*cm
+    else:
+        c.drawCentredString(W/2, H - 8.3*cm, domain)
+        next_y = H - 9.2*cm
 
-    # Duration / mention
-    if duration and duration != 'N/A':
-        c.setFillColor(TEXT_MID)
-        c.setFont("Helvetica", 10)
-        c.drawCentredString(W/2, H - 7.7*cm,
-            f"ayant validé avec succès une formation de {duration}.")
-    elif mention:
-        c.setFillColor(TEXT_MID)
-        c.setFont("Helvetica", 10)
-        c.drawCentredString(W/2, H - 7.7*cm,
-            f"avec la mention  {mention}")
+    # ── "sanctionné le" ───────────────────────────────────────────────────────
+    c.setFillColor(TEXT_MID)
+    c.setFont("Helvetica", 9.5)
+    c.drawCentredString(W/2, next_y, "sanctionné le")
 
-    if description:
-        c.setFillColor(TEXT_MID)
-        c.setFont("Helvetica", 9)
-        c.drawCentredString(W/2, H - 8.3*cm, description[:90])
-
-    # ── Date ──────────────────────────────────────────────────────────────────
-    c.setFillColor(TEXT_DARK)
+    # ── Date (gold) ───────────────────────────────────────────────────────────
+    c.setFillColor(GOLD)
     c.setFont("Helvetica-Bold", 10)
-    c.drawCentredString(W/2, H - 9.0*cm, f"Délivré le {grad_date}")
+    c.drawCentredString(W/2, next_y - 0.85*cm, grad_date)
 
-    # ── Signatures ────────────────────────────────────────────────────────────
-    sig_y = 3.6*cm
+    # ── Mention (optionnelle) ─────────────────────────────────────────────────
+    if mention:
+        c.setFillColor(TEXT_MID)
+        c.setFont("Helvetica", 8.5)
+        c.drawCentredString(W/2, next_y - 1.7*cm, f"Mention : {mention}")
+
+    # ── Blocs de signature ────────────────────────────────────────────────────
+    sig_y     = 3.2*cm
     sig_left  = 3.5*cm
     sig_right = W - 3.5*cm - 4*cm
 
-    # Left signature block
-    c.setStrokeColor(HexColor('#CBD5E0'))
-    c.setLineWidth(0.8)
-    c.line(sig_left, sig_y + 0.8*cm, sig_left + 4*cm, sig_y + 0.8*cm)
-    c.setFillColor(TEXT_DARK)
-    c.setFont("Helvetica-Bold", 8.5)
-    c.drawString(sig_left, sig_y + 0.35*cm, "Dr. Directeur Général")
-    c.setFont("Helvetica", 7.5)
-    c.setFillColor(TEXT_MID)
-    c.drawString(sig_left, sig_y + 0.05*cm, institution_name[:28])
+    for sx in [sig_left, sig_right]:
+        c.setStrokeColor(HexColor('#CBD5E0'))
+        c.setLineWidth(0.8)
+        c.line(sx, sig_y + 0.8*cm, sx + 4*cm, sig_y + 0.8*cm)
 
-    # Right signature block
-    c.setStrokeColor(HexColor('#CBD5E0'))
-    c.line(sig_right, sig_y + 0.8*cm, sig_right + 4*cm, sig_y + 0.8*cm)
     c.setFillColor(TEXT_DARK)
     c.setFont("Helvetica-Bold", 8.5)
+    c.drawString(sig_left,  sig_y + 0.35*cm, "Dr. Directeur Général")
     c.drawString(sig_right, sig_y + 0.35*cm, "Directeur Académique")
     c.setFont("Helvetica", 7.5)
     c.setFillColor(TEXT_MID)
+    c.drawString(sig_left,  sig_y + 0.05*cm, institution_name[:28])
     c.drawString(sig_right, sig_y + 0.05*cm, "Executive Education")
 
-    # ── Seal (center) ─────────────────────────────────────────────────────────
+    # ── Sceau (centre) ────────────────────────────────────────────────────────
     _draw_seal(c, W/2, sig_y + 0.9*cm, radius=1.3*cm)
 
-    # ── QR code (bottom right) ────────────────────────────────────────────────
-    _qr_stamp(c, verify_url, cert_num, W - 4.2*cm, 0.9*cm, size=2*cm)
-
-    # ── Cert number (bottom left) ─────────────────────────────────────────────
-    c.setFont("Courier", 6.5)
+    # ── Numéro de certificat (bas centre, style cyber) ────────────────────────
     c.setFillColor(TEXT_LIGHT)
-    c.drawString(1.2*cm, 0.9*cm, cert_num)
-    c.drawString(1.2*cm, 0.6*cm, f"Hash: {blockchain_hash}")
+    c.setFont("Helvetica", 8.5)
+    c._charSpace = 1
+    c.drawCentredString(W/2, 1.5*cm, f"Certificat  #{cert_num}")
+    c._charSpace = 0
+
+    # ── Hash (bas gauche) ─────────────────────────────────────────────────────
+    c.setFont("Courier", 5.2)
+    c.setFillColor(TEXT_LIGHT)
+    c.drawString(1.2*cm, 0.9*cm, f"Hash: {blockchain_hash}")
+
+    # ── QR code (bas droite) ──────────────────────────────────────────────────
+    if verify_url and verify_url != 'N/A':
+        qr_img  = _make_qr(verify_url)
+        qr_size = 1.85*cm
+        c.drawImage(qr_img, W - qr_size - 0.9*cm, 0.7*cm,
+                    width=qr_size, height=qr_size, mask='auto')
+        c.setFont("Helvetica", 4.8)
+        c.setFillColor(TEXT_LIGHT)
+        c.drawCentredString(W - qr_size/2 - 0.9*cm, 0.5*cm, "Scan to verify")
 
     c.save()
     buffer.seek(0)

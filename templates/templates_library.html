@@ -17,6 +17,7 @@
   .tpl-preview--diplome  { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
   .tpl-preview--cert     { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); }
   .tpl-preview--badge    { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+  .tpl-preview--cyber    { background: linear-gradient(135deg, #060D1A 0%, #0A1628 60%, #0D1F3C 100%); }
 
   .tpl-mini {
     transform: scale(0.78);
@@ -153,6 +154,64 @@
     font-size: 0.45rem; color: #F59E0B; font-family: monospace; text-align: center;
   }
 
+  /* Cyber Diplôme mini */
+  .tpl-mini--cyber {
+    width: 280px;
+    height: 175px;
+    background: #060D1A;
+    border-radius: 8px;
+    border: 1px solid rgba(0,255,180,0.3);
+    box-shadow: 0 0 20px rgba(0,255,180,0.12), inset 0 0 30px rgba(0,10,30,0.5);
+    position: relative;
+    overflow: hidden;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+  .tpl-mini--cyber::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00FFB4, transparent);
+  }
+  .tpl-mini--cyber::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #0A1E52, transparent);
+  }
+  .tpl-mini--cyber .m-c-label {
+    font-size: 0.38rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.12em; color: rgba(0,255,180,0.6);
+  }
+  .tpl-mini--cyber .m-c-institution {
+    font-size: 0.58rem; font-weight: 700; color: #0A1E52;
+    background: #00FFB4; padding: 1px 6px; border-radius: 2px;
+    align-self: flex-start;
+  }
+  .tpl-mini--cyber .m-c-title {
+    font-size: 0.48rem; font-weight: 700; color: rgba(0,255,180,0.5);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;
+  }
+  .tpl-mini--cyber .m-c-name {
+    font-size: 0.85rem; font-weight: 800; color: #FFFFFF;
+    border-bottom: 1px solid rgba(0,255,180,0.3); padding-bottom: 3px;
+  }
+  .tpl-mini--cyber .m-c-prog {
+    font-size: 0.42rem; color: rgba(255,255,255,0.5);
+  }
+  .tpl-mini--cyber .m-c-domain {
+    font-size: 0.55rem; font-weight: 700; color: #F0B429;
+  }
+  .tpl-mini--cyber .m-c-hash {
+    font-size: 0.38rem; color: rgba(0,255,180,0.35); font-family: monospace;
+    position: absolute; bottom: 6px; left: 10px;
+  }
+
   /* Template card */
   .tpl-card {
     background: var(--surface);
@@ -265,9 +324,11 @@
   @media (max-width: 900px) {
     .tpl-grid { grid-template-columns: 1fr !important; }
     .howto-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .tpl-mini--cyber { width: 240px; }
   }
   @media (max-width: 600px) {
     .howto-grid { grid-template-columns: 1fr !important; }
+    .tpl-mini--cyber { width: 200px; }
   }
 </style>
 {% endblock %}
@@ -285,7 +346,7 @@
 
 
 <!-- ─── Template Cards ────────────────────────────────── -->
-<div class="tpl-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1.5rem; margin-bottom:3rem;">
+<div class="tpl-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1.5rem; margin-bottom:3rem;">
 
   <!-- Diplôme -->
   <div class="tpl-card">
@@ -451,6 +512,53 @@
           Aperçu
         </a>
         <a href="/templates/download/badge" class="btn btn-primary" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cyber Diplôme -->
+  <div class="tpl-card">
+    <div class="tpl-preview tpl-preview--cyber">
+      <div class="tpl-mini tpl-mini--cyber">
+        <div class="m-c-label">Certichain Africa · Cyber/Tech</div>
+        <div class="m-c-institution">École Numérique</div>
+        <div class="m-c-title">décerne fièrement</div>
+        <div class="m-c-name">Prénom Nom Étudiant</div>
+        <div class="m-c-prog">pour avoir réussi avec succès le programme</div>
+        <div class="m-c-domain">Cybersécurité Avancée &amp; Cloud</div>
+        <div class="m-c-hash">0x3c7d9a… · Polygon · SHA-256</div>
+      </div>
+    </div>
+    <div class="tpl-card__body">
+      <h3 class="tpl-card__title">Diplôme Cyber/Tech</h3>
+      <p class="tpl-card__desc">Design sombre et futuriste pour les formations en cybersécurité, développement et nouvelles technologies.</p>
+      <ul class="tpl-card__features">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Thème nuit — neon teal &amp; gold
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Idéal formations tech &amp; cyber
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Hash blockchain en pied de page
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          QR code vérification intégré
+        </li>
+      </ul>
+      <div class="tpl-card__actions">
+        <a href="/templates/preview/cyber" target="_blank" class="btn btn-outline" style="flex:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Aperçu
+        </a>
+        <a href="/templates/download/cyber" class="btn btn-primary" style="flex:1;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Télécharger
         </a>

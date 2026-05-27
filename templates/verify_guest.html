@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vérifier un certificat — Certichain Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #F0F4FF;
+    min-height: 100vh;
+    color: #0D1B2A;
+  }
+
+  /* ── Navbar ── */
+  .vg-nav {
+    background: #0A1E52;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .vg-brand {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.05rem; font-weight: 800;
+    color: #fff; text-decoration: none; letter-spacing: -0.02em;
+  }
+  .vg-brand__icon {
+    width: 30px; height: 30px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .vg-nav__links { display: flex; align-items: center; gap: 0.75rem; }
+  .vg-nav__link {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.82rem; font-weight: 500;
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .vg-nav__link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  .vg-nav__link--primary {
+    background: #2DD4BF; color: #0A1E52 !important; font-weight: 700;
+  }
+  .vg-nav__link--primary:hover { background: #14B8A6; }
+
+  /* ── Hero ── */
+  .vg-hero {
+    background: linear-gradient(135deg, #0A1E52 0%, #1A3A8A 60%, #0D2045 100%);
+    padding: 3.5rem 1.5rem 2.5rem;
+    text-align: center;
+  }
+  .vg-hero__badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(45,212,191,0.15);
+    border: 1px solid rgba(45,212,191,0.3);
+    color: #2DD4BF; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.3rem 0.85rem; border-radius: 99px;
+    margin-bottom: 1.2rem;
+  }
+  .vg-hero h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800; color: #fff;
+    line-height: 1.2; margin-bottom: 0.75rem;
+    letter-spacing: -0.03em;
+  }
+  .vg-hero p { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+
+  /* ── Main card ── */
+  .vg-wrap {
+    max-width: 620px;
+    margin: -1.5rem auto 3rem;
+    padding: 0 1.25rem;
+  }
+  .vg-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(10,30,82,0.12), 0 2px 8px rgba(10,30,82,0.06);
+    overflow: hidden;
+  }
+  .vg-tabs {
+    display: flex;
+    border-bottom: 1px solid #F0F4FF;
+  }
+  .vg-tab {
+    flex: 1;
+    padding: 1rem 0.5rem;
+    border: none; background: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    color: #8896AB;
+    display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+    border-bottom: 2.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .vg-tab svg { width: 18px; height: 18px; stroke: currentColor; }
+  .vg-tab.is-active { color: #1D4ED8; border-bottom-color: #1D4ED8; }
+
+  .vg-panel { display: none; padding: 1.75rem; }
+  .vg-panel.is-active { display: block; }
+
+  .vg-label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: #4A5872; margin-bottom: 0.5rem;
+  }
+  .vg-input {
+    width: 100%; padding: 0.7rem 1rem;
+    border: 1.5px solid #E3EAF5; border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem; color: #0D1B2A;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    margin-bottom: 1rem;
+  }
+  .vg-input:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  .vg-input-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.8rem; }
+  .vg-hint { font-size: 0.75rem; color: #8896AB; margin-top: -0.65rem; margin-bottom: 1rem; }
+
+  .vg-btn {
+    width: 100%; padding: 0.75rem 1.5rem;
+    background: #1D4ED8; color: #fff;
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 700;
+    transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  }
+  .vg-btn:hover { background: #1E40AF; }
+  .vg-btn:active { transform: scale(0.98); }
+  .vg-btn svg { width: 16px; height: 16px; }
+
+  /* ── File drop zone ── */
+  .vg-dropzone {
+    border: 2px dashed #C8D5EC;
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .vg-dropzone:hover, .vg-dropzone.drag-over { border-color: #2563EB; background: #EFF6FF; }
+  .vg-dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .vg-dropzone__icon { color: #8896AB; margin-bottom: 0.6rem; }
+  .vg-dropzone__text { font-size: 0.875rem; font-weight: 600; color: #4A5872; }
+  .vg-dropzone__sub  { font-size: 0.75rem; color: #8896AB; margin-top: 0.25rem; }
+  .vg-file-name { font-size: 0.8rem; color: #1D4ED8; font-weight: 600; margin-top: 0.5rem; }
+
+  /* ── Result states ── */
+  .vg-result { margin-top: 1.25rem; display: none; }
+  .vg-result.is-shown { display: block; }
+
+  .vg-result__valid {
+    background: linear-gradient(135deg, #064E3B, #065F46);
+    border-radius: 14px; padding: 1.5rem;
+    color: #fff; text-align: center;
+  }
+  .vg-result__invalid {
+    background: #FEF2F2; border: 1px solid #FECACA;
+    border-radius: 14px; padding: 1.5rem; text-align: center;
+  }
+  .vg-result__icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .vg-result__icon--ok  { background: rgba(255,255,255,0.2); }
+  .vg-result__icon--err { background: #FEE2E2; }
+  .vg-result__title { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .vg-result__sub   { font-size: 0.82rem; opacity: 0.8; }
+  .vg-result__err-title { font-size: 1rem; font-weight: 700; color: #DC2626; margin-bottom: 0.3rem; }
+  .vg-result__err-sub   { font-size: 0.82rem; color: #EF4444; }
+
+  .vg-fields {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.6rem; margin-top: 1.25rem; text-align: left;
+  }
+  .vg-field {
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 0.6rem 0.85rem;
+  }
+  .vg-field--full { grid-column: span 2; }
+  .vg-field__label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-bottom: 0.2rem; }
+  .vg-field__value { font-size: 0.82rem; font-weight: 600; }
+
+  .vg-view-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 1rem; padding: 0.55rem 1.25rem;
+    background: #fff; color: #0A1E52; border-radius: 8px;
+    font-size: 0.82rem; font-weight: 700; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .vg-view-link:hover { background: #E0F7F4; }
+  .vg-view-link svg { width: 13px; height: 13px; }
+
+  /* ── Loading spinner ── */
+  .vg-spinner {
+    width: 22px; height: 22px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Trust strip ── */
+  .vg-trust {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1.5rem; flex-wrap: wrap;
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid #F0F4FF;
+    background: #FAFBFF;
+  }
+  .vg-trust__item {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.73rem; font-weight: 600; color: #8896AB;
+  }
+  .vg-trust__item svg { width: 14px; height: 14px; color: #2563EB; }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .vg-nav { padding: 0 1rem; }
+    .vg-hero { padding: 2.5rem 1rem 2rem; }
+    .vg-fields { grid-template-columns: 1fr; }
+    .vg-field--full { grid-column: span 1; }
+    .vg-nav__links .vg-nav__link:not(.vg-nav__link--primary) { display: none; }
+  }
+  </style>
+</head>
+<body>
+
+<nav class="vg-nav">
+  <a href="/" class="vg-brand">
+    <div class="vg-brand__icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="white"/>
+        <path d="M7.5 10.5V15C7.5 17.2 9.5 19 12 19C14.5 19 16.5 17.2 16.5 15V10.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="21" y1="8" x2="21" y2="14" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="21" cy="15.5" r="1.2" fill="white"/>
+      </svg>
+    </div>
+    Certichain
+  </a>
+  <div class="vg-nav__links">
+    <a href="/login"  class="vg-nav__link">Connexion</a>
+    <a href="/signup" class="vg-nav__link vg-nav__link--primary">Commencer</a>
+  </div>
+</nav>
+
+<div class="vg-hero">
+  <div class="vg-hero__badge">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    Vérification publique
+  </div>
+  <h1>Authentifiez un certificat<br>en quelques secondes</h1>
+  <p>Vérifiez l'authenticité d'un diplôme ou d'une certification Certichain — ancré sur la blockchain Polygon.</p>
+</div>
+
+<div class="vg-wrap">
+  <div class="vg-card">
+
+    <!-- Tabs -->
+    <div class="vg-tabs">
+      <button class="vg-tab is-active" onclick="switchTab('id', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Par ID
+      </button>
+      <button class="vg-tab" onclick="switchTab('hash', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+        Par Hash
+      </button>
+      <button class="vg-tab" onclick="switchTab('file', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Par Fichier PDF
+      </button>
+    </div>
+
+    <!-- Tab: ID -->
+    <div class="vg-panel is-active" id="panel-id">
+      <label class="vg-label">Numéro de certificat</label>
+      <input class="vg-input" type="text" id="certId" placeholder="ex: 42" inputmode="numeric">
+      <p class="vg-hint">Trouvez ce numéro en bas de votre certificat PDF.</p>
+      <button class="vg-btn" onclick="verifyById()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Vérifier
+      </button>
+      <div class="vg-result" id="result-id"></div>
+    </div>
+
+    <!-- Tab: Hash -->
+    <div class="vg-panel" id="panel-hash">
+      <label class="vg-label">Hash du certificat</label>
+      <input class="vg-input vg-input-mono" type="text" id="certHash" placeholder="sha256:... ou 0x...">
+      <p class="vg-hint">Le hash est affiché en bas de votre certificat PDF.</p>
+      <button class="vg-btn" onclick="verifyByHash()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Vérifier
+      </button>
+      <div class="vg-result" id="result-hash"></div>
+    </div>
+
+    <!-- Tab: File -->
+    <div class="vg-panel" id="panel-file">
+      <label class="vg-label">Fichier PDF du certificat</label>
+      <div class="vg-dropzone" id="dropzone">
+        <input type="file" accept=".pdf" id="fileInput" onchange="onFileSelect(this)">
+        <div class="vg-dropzone__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="vg-dropzone__text">Glissez votre PDF ici</div>
+        <div class="vg-dropzone__sub">ou cliquez pour sélectionner un fichier</div>
+        <div class="vg-file-name" id="fileName"></div>
+      </div>
+      <button class="vg-btn" onclick="verifyByFile()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Vérifier le PDF
+      </button>
+      <div class="vg-result" id="result-file"></div>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="vg-trust">
+      <div class="vg-trust__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Blockchain Polygon
+      </div>
+      <div class="vg-trust__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        SHA-256 fingerprint
+      </div>
+      <div class="vg-trust__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Vérification instantanée
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.vg-tab').forEach(t => t.classList.remove('is-active'));
+  document.querySelectorAll('.vg-panel').forEach(p => p.classList.remove('is-active'));
+  btn.classList.add('is-active');
+  document.getElementById('panel-' + name).classList.add('is-active');
+}
+
+function showLoading(btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="vg-spinner"></span>';
+}
+function resetBtn(btn, label) {
+  btn.disabled = false;
+  btn.innerHTML = label;
+}
+
+const TYPE_LABELS = {'diplome':'Diplôme','certification':'Certification','badge':'Badge','cyber_diplome':'Cyber Diplôme'};
+
+function showResult(el, cert) {
+  if (!cert) {
+    el.innerHTML = `<div class="vg-result__invalid">
+      <div class="vg-result__icon vg-result__icon--err">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <div class="vg-result__err-title">Certificat introuvable</div>
+      <div class="vg-result__err-sub">Aucun certificat ne correspond à ces informations.</div>
+    </div>`;
+    el.classList.add('is-shown');
+    return;
+  }
+  const typeLabel = TYPE_LABELS[cert.certificate_type] || cert.certificate_type;
+  const onChain = cert.blockchain_hash && cert.blockchain_hash.startsWith('0x');
+  el.innerHTML = `<div class="vg-result__valid">
+    <div class="vg-result__icon vg-result__icon--ok">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="vg-result__title">Certificat authentique</div>
+    <div class="vg-result__sub">${onChain ? 'Ancré sur la blockchain Polygon' : 'Signature SHA-256 vérifiée'}</div>
+    <div class="vg-fields">
+      <div class="vg-field vg-field--full"><div class="vg-field__label">Bénéficiaire</div><div class="vg-field__value">${cert.recipient}</div></div>
+      <div class="vg-field"><div class="vg-field__label">Type</div><div class="vg-field__value">${typeLabel}</div></div>
+      <div class="vg-field"><div class="vg-field__label">Date d'émission</div><div class="vg-field__value">${cert.created_at}</div></div>
+      ${cert.domain ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Programme</div><div class="vg-field__value">${cert.domain}</div></div>` : ''}
+      ${cert.institution ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Établissement</div><div class="vg-field__value">${cert.institution}</div></div>` : ''}
+    </div>
+    <a href="/verify/${cert.id}" class="vg-view-link" target="_blank">
+      Voir le certificat complet
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>`;
+  el.classList.add('is-shown');
+}
+
+async function verifyById() {
+  const id = document.getElementById('certId').value.trim();
+  if (!id) return;
+  const btn = event.currentTarget;
+  const origLabel = btn.innerHTML;
+  showLoading(btn);
+  const el = document.getElementById('result-id');
+  el.classList.remove('is-shown');
+  try {
+    const r = await fetch('/api/verify/id/' + encodeURIComponent(id));
+    const d = await r.json();
+    showResult(el, d.found ? d.cert : null);
+  } catch(e) { showResult(el, null); }
+  resetBtn(btn, origLabel);
+}
+
+async function verifyByHash() {
+  const hash = document.getElementById('certHash').value.trim();
+  if (!hash) return;
+  const btn = event.currentTarget;
+  const origLabel = btn.innerHTML;
+  showLoading(btn);
+  const el = document.getElementById('result-hash');
+  el.classList.remove('is-shown');
+  try {
+    const r = await fetch('/api/verify/hash/' + encodeURIComponent(hash));
+    const d = await r.json();
+    showResult(el, d.found ? d.cert : null);
+  } catch(e) { showResult(el, null); }
+  resetBtn(btn, origLabel);
+}
+
+function onFileSelect(input) {
+  const name = input.files[0] ? input.files[0].name : '';
+  document.getElementById('fileName').textContent = name;
+}
+
+async function verifyByFile() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) { alert('Sélectionnez un fichier PDF.'); return; }
+  const btn = event.currentTarget;
+  const origLabel = btn.innerHTML;
+  showLoading(btn);
+  const el = document.getElementById('result-file');
+  el.classList.remove('is-shown');
+  const form = new FormData();
+  form.append('file', file);
+  try {
+    const r = await fetch('/verify', { method: 'POST', body: form });
+    const d = await r.json();
+    if (d.verified && d.cert_id) {
+      const r2 = await fetch('/api/verify/id/' + d.cert_id);
+      const d2 = await r2.json();
+      showResult(el, d2.found ? d2.cert : null);
+    } else {
+      showResult(el, null);
+    }
+  } catch(e) { showResult(el, null); }
+  resetBtn(btn, origLabel);
+}
+
+// Drag-and-drop
+const dz = document.getElementById('dropzone');
+if (dz) {
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) { document.getElementById('fileInput').files = e.dataTransfer.files; onFileSelect(document.getElementById('fileInput')); }
+  });
+}
+</script>
+</body>
+</html>

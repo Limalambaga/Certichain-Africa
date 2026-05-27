@@ -18,7 +18,7 @@
   <header class="c-navbar">
     <div class="c-navbar__inner">
 
-      <a href="/" class="c-navbar__brand">
+      <a href="{{ '/dashboard' if session.get('institution_id') else '/' }}" class="c-navbar__brand">
         <div class="c-navbar__brand-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="white"/>
@@ -32,7 +32,7 @@
 
       <div class="c-navbar__actions">
         {% if session.get('institution_id') %}
-          <a href="/verify" class="btn btn-ghost btn-sm">Vérifier un certificat</a>
+          <a href="/verify" class="btn btn-ghost btn-sm" style="display:none;" id="navVerifyBtn">Vérifier</a>
           <form method="POST" action="/logout" style="margin:0;">
             <button type="submit" class="btn btn-outline btn-sm">Déconnexion</button>
           </form>
@@ -40,10 +40,18 @@
           <a href="/login"  class="btn btn-ghost btn-sm">Connexion</a>
           <a href="/signup" class="btn btn-primary btn-sm">Commencer</a>
         {% endif %}
+        {% if session.get('institution_id') %}
+        <button class="c-hamburger" id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+          <span></span><span></span><span></span>
+        </button>
+        {% endif %}
       </div>
 
     </div>
   </header>
+
+  <!-- Mobile sidebar overlay -->
+  <div class="c-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
   <!-- ─── App Shell ───────────────────────────────────── -->
   <div class="app-shell">
@@ -217,6 +225,31 @@
   <script src="{{ url_for('static', filename='main.js') }}"></script>
   {% block scripts %}{% endblock %}
   <script>
+  /* ── Sidebar mobile toggle ────────────────── */
+  function toggleSidebar() {
+    var sb = document.querySelector('.c-sidebar');
+    var ov = document.getElementById('sidebarOverlay');
+    var hb = document.getElementById('hamburger');
+    if (!sb) return;
+    sb.classList.toggle('is-open');
+    if (ov) ov.classList.toggle('is-open');
+    if (hb) hb.classList.toggle('is-open');
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.c-sidebar__link').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 1024) {
+          var sb = document.querySelector('.c-sidebar');
+          var ov = document.getElementById('sidebarOverlay');
+          var hb = document.getElementById('hamburger');
+          if (sb) sb.classList.remove('is-open');
+          if (ov) ov.classList.remove('is-open');
+          if (hb) hb.classList.remove('is-open');
+        }
+      });
+    });
+  });
+
   /* ── Plan popover ─────────────────────────── */
   function togglePlanPopover(e) {
     e.stopPropagation();

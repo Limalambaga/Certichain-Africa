@@ -685,6 +685,64 @@ def verify():
     except Exception as e:
         return jsonify({"verified": False, "error": str(e)})
 
+@app.route('/verify-certificate')
+def verify_certificate_public():
+    """Page publique de vérification — accessible sans connexion."""
+    return render_template('verify_guest.html')
+
+@app.route('/api/verify/id/<int:cert_id>')
+def api_verify_by_id(cert_id):
+    """Vérifier un certificat par son identifiant numérique (public)."""
+    from models import Certificate
+    cert = Certificate.query.get(cert_id)
+    if not cert:
+        return jsonify({'found': False, 'message': 'Certificat introuvable'}), 404
+    on_chain = bool(cert.blockchain_hash and cert.blockchain_hash.startswith('0x'))
+    institution = Institution.query.get(cert.institution_id)
+    return jsonify({
+        'found': True,
+        'cert': {
+            'id': cert.id,
+            'recipient': cert.recipient_name,
+            'certificate_type': cert.certificate_type,
+            'domain': cert.domain,
+            'mention': cert.mention,
+            'created_at': cert.created_at.strftime('%d %B %Y'),
+            'blockchain_hash': cert.blockchain_hash,
+            'ipfs_hash': cert.ipfs_hash,
+            'on_chain': on_chain,
+            'institution': institution.name if institution else None,
+        }
+    })
+
+@app.route('/api/verify/hash/<path:cert_hash>')
+def api_verify_by_hash(cert_hash):
+    """Vérifier un certificat par son hash blockchain (public)."""
+    from models import Certificate
+    cert = Certificate.query.filter_by(blockchain_hash=cert_hash).first()
+    if not cert:
+        # Try file_hash as well
+        cert = Certificate.query.filter_by(file_hash=cert_hash).first()
+    if not cert:
+        return jsonify({'found': False, 'message': 'Certificat introuvable pour ce hash'}), 404
+    on_chain = bool(cert.blockchain_hash and cert.blockchain_hash.startswith('0x'))
+    institution = Institution.query.get(cert.institution_id)
+    return jsonify({
+        'found': True,
+        'cert': {
+            'id': cert.id,
+            'recipient': cert.recipient_name,
+            'certificate_type': cert.certificate_type,
+            'domain': cert.domain,
+            'mention': cert.mention,
+            'created_at': cert.created_at.strftime('%d %B %Y'),
+            'blockchain_hash': cert.blockchain_hash,
+            'ipfs_hash': cert.ipfs_hash,
+            'on_chain': on_chain,
+            'institution': institution.name if institution else None,
+        }
+    })
+
 @app.route('/api/certificates/public/<int:cert_id>')
 def get_public_certificate(cert_id):
     """Récupérer les informations publiques d'un certificat par ID"""

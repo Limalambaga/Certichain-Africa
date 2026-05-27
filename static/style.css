@@ -1689,14 +1689,70 @@ h1, h2, h3, h4, h5, h6 {
 .badge-dot { animation: glow-ring 2.2s ease-in-out infinite; }
 
 /* =========================================================
+   HAMBURGER + SIDEBAR OVERLAY
+   ========================================================= */
+.c-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.c-hamburger:hover { background: var(--blue-50); }
+.c-hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-main);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s;
+  transform-origin: center;
+}
+.c-hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.c-hamburger.is-open span:nth-child(2) { opacity: 0; }
+.c-hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.c-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 149;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.c-sidebar-overlay.is-open { opacity: 1; }
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 @media (max-width: 1024px) {
-  .c-sidebar { display: none; }
-  .app-main  { margin-left: 0; }
-  .auth-panel { display: none; }
-  .auth-form-section { padding: 2.5rem 1.5rem; }
-  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Sidebar slides in from left on mobile */
+  .c-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 150;
+  }
+  .c-sidebar.is-open { transform: translateX(0); }
+  .c-sidebar-overlay  { display: block; }
+  .c-hamburger        { display: flex; }
+  .app-main           { margin-left: 0; }
+  .auth-panel         { display: none; }
+  .auth-form-section  { padding: 2.5rem 1.5rem; }
+  .feature-grid       { grid-template-columns: repeat(2, 1fr); }
+  /* Dashboard stats grid on tablet */
+  .stats-grid         { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -1716,6 +1772,22 @@ h1, h2, h3, h4, h5, h6 {
   .card-body-lg { padding: 1.5rem; }
   .cta-inner h2 { font-size: 1.6rem; }
   .c-navbar__nav { display: none; }
+  /* Dashboard mobile */
+  .stats-grid         { grid-template-columns: 1fr; }
+  .app-main           { padding: 1.25rem; }
+  .page-header        { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  /* My Certificates mobile */
+  .mc-stat            { padding: 1rem 1.25rem; }
+  .mc-toolbar         { flex-direction: column; gap: 0.6rem; }
+  .mc-toolbar input   { width: 100%; }
+  .mc-chips           { flex-wrap: wrap; }
+  .mc-table th:nth-child(3),
+  .mc-table td:nth-child(3) { display: none; }
+  /* Settings mobile */
+  .st-info-grid       { grid-template-columns: 1fr; }
+  /* Navbar mobile padding */
+  .c-navbar           { padding: 0 1rem; }
+  .c-navbar__brand    { font-size: 0.9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

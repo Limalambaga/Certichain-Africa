@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super Admin — Certichain Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background: var(--white);">
+
+<div class="auth-layout">
+
+  <!-- ─── Visual Panel ──────────────────────────────── -->
+  <div class="auth-panel" style="background:#05091a;">
+    <div class="auth-panel__bg"></div>
+    <div class="auth-panel__grid"></div>
+
+    <div style="position:relative; z-index:2; margin-bottom:auto; padding-bottom:3rem;">
+      <span style="display:inline-flex; align-items:center; gap:0.5rem; font-size:1.1rem; font-weight:800; color:white; letter-spacing:-0.02em;">
+        <div style="width:34px; height:34px; background:rgba(45,212,191,0.15); border-radius:6px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(45,212,191,0.3);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Certichain Africa
+      </span>
+    </div>
+
+    <div class="auth-panel__content">
+      <div class="auth-panel__quote">
+        <p class="auth-panel__quote-text">
+          Console d'administration réservée. Gestion des institutions, des plans
+          d'abonnement et des accès à la plateforme.
+        </p>
+      </div>
+      <div class="auth-panel__tagline">
+        <span class="auth-panel__tagline-dot" style="background:#2DD4BF;"></span>
+        Accès restreint · Journalisé · Super Admin
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Form Section ──────────────────────────────── -->
+  <div class="auth-form-section">
+    <div class="auth-form-card">
+
+      <span class="auth-logo" style="cursor:default;">
+        <div class="auth-logo__icon" style="background:#0A1E52;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        Super Admin
+      </span>
+
+      <h1 class="auth-heading">Console d'administration</h1>
+      <p class="auth-sub">Accès réservé à l'équipe Certichain</p>
+
+      {% if error %}
+      <div class="alert alert-error">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/admin/login">
+        <div class="form-group">
+          <label class="form-label" for="email">Email admin</label>
+          <input class="form-input" type="email" id="email" name="email" required autofocus/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <input class="form-input" type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg">Accéder à la console</button>
+      </form>
+
+      <p class="auth-sub" style="margin-top:1.5rem; text-align:center;">
+        <a href="/login" style="color:var(--text-muted); font-size:0.82rem;">← Retour à l'espace institution</a>
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

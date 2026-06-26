@@ -12,6 +12,7 @@ class Institution(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     is_verified = db.Column(db.Boolean, default=True)
+    is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     wallet_address = db.Column(db.String(255))
@@ -50,10 +51,12 @@ class Institution(db.Model):
             'name': self.name,
             'email': self.email,
             'is_verified': self.is_verified,
+            'is_active': self.is_active if self.is_active is not None else True,
             'created_at': self.created_at.isoformat(),
             'wallet_address': self.wallet_address,
             'plan': self.plan or 'free',
             'plan_expires_at': self.plan_expires_at.isoformat() if self.plan_expires_at else None,
+            'certificate_count': len(self.certificates) if self.certificates else 0,
         }
 
 
@@ -72,6 +75,7 @@ class Certificate(db.Model):
     ipfs_hash = db.Column(db.String(255))
     blockchain_hash = db.Column(db.String(255))
     status = db.Column(db.String(50), default='created')  # created, issued, verified
+    email_sent_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -87,6 +91,7 @@ class Certificate(db.Model):
             'domain': self.domain,
             'mention': self.mention,
             'status': self.status,
+            'email_sent_at': self.email_sent_at.isoformat() if self.email_sent_at else None,
             'created_at': self.created_at.isoformat(),
             'file_hash': self.file_hash,
             'ipfs_hash': self.ipfs_hash,
@@ -123,4 +128,20 @@ class Payment(db.Model):
             'status': self.status,
             'created_at': self.created_at.isoformat(),
         }
+
+
+class Admin(db.Model):
+    """Super-admin account — manages institutions, separate from Institution auth."""
+    __tablename__ = 'admins'
+
+    id            = db.Column(db.Integer, primary_key=True)
+    email         = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 

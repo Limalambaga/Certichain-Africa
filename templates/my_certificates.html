@@ -266,6 +266,8 @@
 .mc-action-btn--danger:hover { background: var(--error-bg); border-color: var(--error-border); color: var(--error); }
 .mc-action-btn--primary { background: var(--blue-500); border-color: var(--blue-500); color: #fff; }
 .mc-action-btn--primary:hover { background: var(--blue-600); border-color: var(--blue-600); color: #fff; }
+.mc-action-btn--sent { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
+.mc-action-btn--sent:hover { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
 .mc-action-btn svg { width: 13px; height: 13px; }
 
 /* ── Card grid view ───────────────────────────────── */
@@ -531,6 +533,12 @@ function actionBtns(c) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
     </a>`;
   }
+  if (c.recipient_email) {
+    const sentTitle = c.email_sent_at ? `Renvoyer (déjà envoyé le ${fmt(c.email_sent_at)})` : 'Envoyer par email au bénéficiaire';
+    btns += `<button onclick="sendCertEmail(${c.id}, this)" class="mc-action-btn ${c.email_sent_at ? 'mc-action-btn--sent' : ''}" title="${sentTitle}" data-sendmail="${c.id}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </button>`;
+  }
   btns += `<button onclick="deleteCert(${c.id})" class="mc-action-btn mc-action-btn--danger" title="Supprimer">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
   </button>`;
@@ -651,6 +659,28 @@ async function deleteCert(id) {
     if (res.ok) { await load(); }
     else { alert('Erreur lors de la suppression.'); }
   } catch(e) { alert('Erreur réseau.'); }
+}
+
+async function sendCertEmail(id, btn) {
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  try {
+    const res = await fetch(`/api/certificates/${id}/send-email`, { method: 'POST' });
+    const data = await res.json();
+    if (res.ok) {
+      btn.classList.add('mc-action-btn--sent');
+      btn.title = data.message;
+      await load();
+    } else {
+      alert(data.message || "Échec de l'envoi.");
+    }
+  } catch (e) {
+    alert('Erreur réseau.');
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '';
+  }
 }
 
 document.getElementById('searchInput').addEventListener('input', render);

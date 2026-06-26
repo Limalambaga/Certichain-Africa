@@ -12,7 +12,7 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from web3 import Web3
 
-from models import db, Institution, Payment
+from models import db, Institution, Payment, Admin
 
 import momo as momo_api
 
@@ -31,6 +31,8 @@ from config import (
     MAIL_PASSWORD,
     MAIL_DEFAULT_SENDER,
     MOMO_CONFIGURED,
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD,
 )
 
 app = Flask(__name__)
@@ -175,6 +177,16 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'admin_id' not in session:
+            if request.path.startswith('/api/'):
+                return jsonify({'message': 'Session admin expirée.'}), 401
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def generate_file_hash(file_path):
     sha256_hash = hashlib.sha256()
     with open(file_path, "rb") as f:
@@ -239,6 +251,69 @@ def send_otp_email(to_email, otp_code, institution_name=''):
     )
     mail.send(msg)
 
+def send_certificate_email(cert, institution, pdf_path, verify_url):
+    """Send the certificate PDF directly to the recipient's inbox."""
+    type_labels = {
+        'diplome': 'Diplôme', 'certification': 'Certification',
+        'badge': 'Badge', 'cyber_diplome': 'Cyber Diplôme', 'cyber': 'Cyber Diplôme',
+    }
+    type_label = type_labels.get(cert.certificate_type, 'Certificat')
+    inst_name  = institution.name if institution else 'Certichain Africa'
+
+    html_body = f"""<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
+<tr><td align="center">
+  <table width="540" cellpadding="0" cellspacing="0" style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(10,30,82,0.10);">
+    <tr><td style="background:#0A1E52;padding:28px 36px;text-align:center;">
+      <span style="font-size:1.3rem;font-weight:800;color:white;letter-spacing:-0.02em;">Certichain Africa</span>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:4px;">Blockchain · IPFS · Sécurité</div>
+    </td></tr>
+    <tr><td style="padding:36px 36px 28px;">
+      <h2 style="font-size:1.25rem;font-weight:700;color:#0A1E52;margin:0 0 8px;">Félicitations, {cert.recipient_name} !</h2>
+      <p style="font-size:0.9rem;color:#64748B;margin:0 0 24px;line-height:1.6;">
+        <strong>{inst_name}</strong> vient de vous délivrer un {type_label.lower()} numérique authentifié sur la blockchain.
+        Vous le trouverez en pièce jointe de cet email (PDF).
+      </p>
+      <div style="background:#F8FAFC;border:2px solid #E2E8F0;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
+        <div style="font-size:0.75rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Type</div>
+        <div style="font-size:0.95rem;color:#0A1E52;font-weight:700;margin-bottom:14px;">{type_label}</div>
+        {f'<div style="font-size:0.75rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Programme</div><div style="font-size:0.9rem;color:#0A1E52;margin-bottom:14px;">{cert.domain}</div>' if cert.domain else ''}
+        <div style="font-size:0.75rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Émis par</div>
+        <div style="font-size:0.9rem;color:#0A1E52;">{inst_name}</div>
+      </div>
+      <a href="{verify_url}" style="display:inline-block;background:#2DD4BF;color:#0A1E52;font-weight:700;font-size:0.85rem;padding:12px 24px;border-radius:10px;text-decoration:none;">
+        Vérifier ce certificat en ligne →
+      </a>
+      <p style="font-size:0.78rem;color:#94A3B8;margin:24px 0 0;line-height:1.6;">
+        Conservez le PDF original tel quel — toute modification (ouverture/réenregistrement dans un autre logiciel)
+        change son empreinte numérique et invalidera la vérification automatique.
+      </p>
+    </td></tr>
+    <tr><td style="padding:20px 36px;border-top:1px solid #E2E8F0;background:#F8FAFC;text-align:center;">
+      <span style="font-size:0.75rem;color:#94A3B8;">© 2025 Certichain Africa. Tous droits réservés.</span>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>"""
+
+    msg = Message(
+        subject=f'Votre {type_label} numérique — {inst_name}',
+        recipients=[cert.recipient_email],
+        html=html_body,
+    )
+    with open(pdf_path, 'rb') as f:
+        msg.attach(
+            filename=f'Certichain_{re.sub(r"[^\\w\\s-]", "", cert.recipient_name).strip().replace(" ", "_")}.pdf',
+            content_type='application/pdf',
+            data=f.read(),
+        )
+    mail.send(msg)
+
 # ==================== Routes ====================
 
 @app.route('/')
@@ -301,6 +376,9 @@ def login():
 
         if not institution or not institution.check_password(password):
             return render_template('login.html', error='Email ou mot de passe incorrect')
+
+        if institution.is_active is False:
+            return render_template('login.html', error='Ce compte a été suspendu. Contactez le support Certichain.')
 
         if MAIL_CONFIGURED:
             if not _otp_allowed(email):
@@ -515,6 +593,110 @@ def reset_password(token):
 
     return render_template('login.html',
                            info='Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.')
+
+
+# ==================== Super Admin ====================
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'GET':
+        return render_template('admin_login.html')
+
+    email    = request.form.get('email', '').strip().lower()
+    password = request.form.get('password', '')
+
+    admin = Admin.query.filter_by(email=email).first()
+    if not admin or not admin.check_password(password):
+        return render_template('admin_login.html', error='Email ou mot de passe incorrect')
+
+    session['admin_id']    = admin.id
+    session['admin_email'] = admin.email
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_id', None)
+    session.pop('admin_email', None)
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    from models import Certificate
+
+    institutions = Institution.query.order_by(Institution.created_at.desc()).all()
+
+    total_certs   = Certificate.query.count()
+    total_inst    = len(institutions)
+    active_inst   = sum(1 for i in institutions if i.is_active is not False)
+    plan_counts   = {}
+    for i in institutions:
+        plan_counts[i.plan or 'free'] = plan_counts.get(i.plan or 'free', 0) + 1
+
+    month_start = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    monthly_revenue = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(
+        Payment.status == 'successful',
+        Payment.created_at >= month_start,
+    ).scalar()
+
+    return render_template('admin_dashboard.html',
+                            institutions=institutions,
+                            total_certs=total_certs,
+                            total_inst=total_inst,
+                            active_inst=active_inst,
+                            plan_counts=plan_counts,
+                            monthly_revenue=monthly_revenue or 0)
+
+
+@app.route('/api/admin/institutions/<int:inst_id>/plan', methods=['POST'])
+@admin_required
+def admin_update_plan(inst_id):
+    institution = Institution.query.get(inst_id)
+    if not institution:
+        return jsonify({'message': 'Institution non trouvée'}), 404
+
+    data = request.get_json(force=True, silent=True) or {}
+    new_plan = data.get('plan')
+    if new_plan not in ('free', 'starter', 'academique', 'enterprise'):
+        return jsonify({'message': 'Plan invalide'}), 400
+
+    institution.plan = new_plan
+    institution.plan_expires_at = (
+        datetime.utcnow() + timedelta(days=365) if new_plan != 'free' else None
+    )
+    db.session.commit()
+    return jsonify({'message': f'Plan mis à jour vers {new_plan}', 'institution': institution.to_dict()}), 200
+
+
+@app.route('/api/admin/institutions/<int:inst_id>/toggle-active', methods=['POST'])
+@admin_required
+def admin_toggle_active(inst_id):
+    institution = Institution.query.get(inst_id)
+    if not institution:
+        return jsonify({'message': 'Institution non trouvée'}), 404
+
+    institution.is_active = not (institution.is_active is not False)
+    db.session.commit()
+    state = 'activé' if institution.is_active else 'suspendu'
+    return jsonify({'message': f'Compte {state}', 'is_active': institution.is_active}), 200
+
+
+@app.route('/api/admin/institutions/<int:inst_id>', methods=['DELETE'])
+@admin_required
+def admin_delete_institution(inst_id):
+    institution = Institution.query.get(inst_id)
+    if not institution:
+        return jsonify({'message': 'Institution non trouvée'}), 404
+
+    try:
+        db.session.delete(institution)  # cascades to certificates + payments
+        db.session.commit()
+        return jsonify({'message': 'Institution supprimée'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 400
 
 
 @app.route('/dashboard')
@@ -1153,6 +1335,68 @@ def download_certificate_file(cert_id):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/certificates/<int:cert_id>/send-email', methods=['POST'])
+@login_required
+def send_certificate_to_recipient(cert_id):
+    """Email the certificate PDF directly to the recipient's inbox."""
+    from models import Certificate, Institution
+
+    institution_id = session.get('institution_id')
+    cert = Certificate.query.filter_by(id=cert_id, institution_id=institution_id).first()
+    if not cert:
+        return jsonify({'message': 'Certificat non trouvé'}), 404
+
+    if not cert.recipient_email:
+        return jsonify({'message': "Aucune adresse email n'est enregistrée pour ce bénéficiaire."}), 400
+
+    if not MAIL_CONFIGURED:
+        return jsonify({'message': 'Service email non configuré sur le serveur.'}), 503
+
+    pdf_path = os.path.join('certs', 'uploads', f'cert_{cert.id}.pdf')
+
+    if not os.path.exists(pdf_path):
+        # Disk file missing (e.g. ephemeral filesystem after a redeploy) — regenerate it
+        try:
+            from pdf_generator import create_diploma_pdf, create_certification_pdf, create_badge_pdf, create_cyber_diploma_pdf
+            institution = Institution.query.get(institution_id)
+            data = cert.data or {}
+            pdf_payload = dict(data)
+            pdf_payload['institution_name'] = institution.name if institution else 'Institution'
+            pdf_payload['recipient_name']   = cert.recipient_name
+            pdf_payload['graduation_date']  = data.get('graduation_date', datetime.now().strftime('%d/%m/%Y'))
+            pdf_payload['cert_number']      = f'CERT-{datetime.now().year}-{cert.id:05d}'
+            pdf_payload['duration']         = data.get('duration', 'N/A')
+            pdf_payload['blockchain_hash']  = cert.blockchain_hash or 'N/A'
+            pdf_payload['verify_url']       = request.host_url.rstrip('/') + f'/verify/{cert.id}'
+            pdf_map = {'diplome': create_diploma_pdf, 'certification': create_certification_pdf, 'badge': create_badge_pdf, 'cyber': create_cyber_diploma_pdf}
+            pdf_func = pdf_map.get(cert.certificate_type)
+            if not pdf_func:
+                return jsonify({'message': 'Type de certificat inconnu, impossible de régénérer le PDF.'}), 400
+            os.makedirs(os.path.join('certs', 'uploads'), exist_ok=True)
+            buf = pdf_func(pdf_payload)
+            buf.seek(0)
+            with open(pdf_path, 'wb') as f:
+                f.write(buf.read())
+            cert.file_hash = generate_file_hash(pdf_path)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({'message': f'Impossible de régénérer le PDF : {str(e)}'}), 500
+
+    try:
+        institution = Institution.query.get(institution_id)
+        verify_url  = request.host_url.rstrip('/') + f'/verify/{cert.id}'
+        send_certificate_email(cert, institution, pdf_path, verify_url)
+        cert.email_sent_at = datetime.utcnow()
+        db.session.commit()
+        return jsonify({
+            'message': f'Certificat envoyé à {cert.recipient_email}',
+            'email_sent_at': cert.email_sent_at.isoformat(),
+        }), 200
+    except Exception as e:
+        print(f"[EMAIL] Echec envoi certificat {cert.id}: {e}")
+        return jsonify({'message': f"Échec de l'envoi : {str(e)}"}), 500
+
+
 # ── Plan pricing table (XAF) ─────────────────────────────────────────────────
 PLAN_PRICES = {
     'starter':    {'monthly': 19900,  'annual': 190800},   # 15900 * 12
@@ -1306,7 +1550,16 @@ def handle_exception(error):
 
 # ==================== Initialization ====================
 
+with app.app_context():
+    db.create_all()
+    # Auto-seed the first super admin from env vars (runs once — skipped if one already exists)
+    if ADMIN_EMAIL and ADMIN_PASSWORD and not Admin.query.filter_by(email=ADMIN_EMAIL.lower()).first():
+        first_admin = Admin(email=ADMIN_EMAIL.lower())
+        first_admin.set_password(ADMIN_PASSWORD)
+        db.session.add(first_admin)
+        db.session.commit()
+        print(f"[ADMIN] Super admin créé : {ADMIN_EMAIL}")
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, port=5000)
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))

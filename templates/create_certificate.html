@@ -3,6 +3,79 @@
 
 {% block content %}
 
+<style>
+/* ═══ Live issuance demo overlay ═══ */
+.dm-overlay {
+  position: fixed; inset: 0; background: rgba(4,9,20,0.78); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center; z-index: 2000; padding: 1rem;
+  opacity: 0; transition: opacity 0.25s;
+}
+.dm-overlay.is-open { display: flex; opacity: 1; }
+.dm-modal {
+  background: #fff; border-radius: 20px; width: 100%; max-width: 580px; max-height: 92vh;
+  overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.4); display: flex; flex-direction: column;
+  transform: translateY(16px) scale(0.98); transition: transform 0.3s ease;
+}
+.dm-overlay.is-open .dm-modal { transform: translateY(0) scale(1); }
+.dm-modal__head { padding: 1.5rem 1.75rem 0; }
+.dm-modal__title { font-size: 1.1rem; font-weight: 800; color: var(--navy-800); }
+.dm-modal__sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+.dm-stepper { display: flex; align-items: center; padding: 1.5rem 1.75rem 0.5rem; }
+.dm-step { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; flex-shrink: 0; width: 64px; }
+.dm-step__dot {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center; font-size: 0.74rem; font-weight: 700;
+  border: 2px solid var(--border); transition: all 0.3s;
+}
+.dm-step.is-active .dm-step__dot { background: var(--navy-800); color: #fff; border-color: var(--navy-800); box-shadow: 0 0 0 4px rgba(10,30,82,0.12); }
+.dm-step.is-done .dm-step__dot { background: var(--teal-500); border-color: var(--teal-500); color: #fff; }
+.dm-step__label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-align: center; }
+.dm-step.is-active .dm-step__label, .dm-step.is-done .dm-step__label { color: var(--text-primary); }
+.dm-step__line { flex: 1; height: 2px; background: var(--border); margin: 0 -4px 17px; position: relative; top: -8px; transition: background 0.4s; }
+.dm-step__line.is-filled { background: var(--teal-500); }
+
+.dm-stage { padding: 1rem 1.75rem 1.75rem; min-height: 270px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.dm-stage h3 { font-size: 1.02rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.35rem; }
+.dm-stage p { font-size: 0.83rem; color: var(--text-muted); margin: 0 0 1.1rem; max-width: 380px; }
+
+.dm-icon-pulse { width: 60px; height: 60px; border-radius: 50%; background: var(--navy-800); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; position: relative; }
+.dm-icon-pulse::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid var(--teal-400); opacity: 0.55; animation: dmPulseRing 1.6s ease-out infinite; }
+@keyframes dmPulseRing { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.35); opacity: 0; } }
+
+.dm-progressbar { width: 220px; height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.dm-progressbar__fill { height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--blue-500)); border-radius: 99px; width: 0%; animation: dmFill linear forwards; animation-duration: 1.05s; }
+@keyframes dmFill { from { width: 0%; } to { width: 100%; } }
+
+.dm-hash { font-family: Consolas, monospace; font-size: 0.92rem; font-weight: 700; color: var(--navy-800); background: var(--surface-2); padding: 0.55rem 1rem; border-radius: 10px; margin-bottom: 1rem; letter-spacing: 0.02em; }
+
+.dm-network { margin-bottom: 0.4rem; }
+.dm-net-line { stroke: var(--border); stroke-width: 2; }
+.dm-net-pulse { filter: drop-shadow(0 0 3px rgba(45,212,191,0.85)); }
+.dm-net-center { fill: var(--navy-800); }
+.dm-net-center-label { fill: #fff; font-size: 10px; font-weight: 700; text-anchor: middle; font-family: Inter, sans-serif; }
+.dm-node circle { fill: #fff; stroke: var(--border-md); stroke-width: 2; transition: all 0.35s; }
+.dm-node .dm-node-check { stroke: #fff; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
+.dm-node.is-confirmed circle { fill: var(--teal-500); stroke: var(--teal-500); }
+.dm-node.is-confirmed .dm-node-check { opacity: 1; }
+.dm-node.is-confirmed--warn circle { fill: var(--warning); stroke: var(--warning); }
+.dm-node.is-confirmed--warn .dm-node-check { opacity: 1; }
+
+.dm-result-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; animation: dmPopIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.dm-result-icon--ok { background: var(--success); }
+.dm-result-icon--warn { background: var(--warning); }
+.dm-result-icon--err { background: var(--error); }
+@keyframes dmPopIn { from { transform: scale(0); } to { transform: scale(1); } }
+.dm-result-title { font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 0.3rem; }
+.dm-result-sub { font-size: 0.84rem; color: var(--text-muted); margin: 0 0 1.1rem; max-width: 380px; text-align: center; }
+.dm-result-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 1.3rem; }
+.dm-result-row { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0; font-size: 0.8rem; gap: 1rem; }
+.dm-result-row:not(:last-child) { border-bottom: 1px solid var(--border-xs); }
+.dm-result-row span { color: var(--text-muted); flex-shrink: 0; }
+.dm-result-row code { font-family: monospace; color: var(--navy-800); background: var(--surface-2); padding: 0.15rem 0.45rem; border-radius: 6px; font-size: 0.74rem; overflow-wrap: anywhere; text-align: right; }
+.dm-result-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+</style>
+
 <div class="page-header">
   <div class="page-header__top">
     <div>
@@ -235,6 +308,42 @@
 
 </div>
 
+<!-- ═══ Live issuance demo overlay ═══ -->
+<div id="demoOverlay" class="dm-overlay">
+  <div class="dm-modal">
+
+    <div class="dm-modal__head">
+      <div class="dm-modal__title">Émission du certificat</div>
+      <div class="dm-modal__sub">Veuillez ne pas fermer cette fenêtre…</div>
+    </div>
+
+    <div class="dm-stepper" id="dmStepper">
+      <div class="dm-step" data-step="1">
+        <div class="dm-step__dot">1</div>
+        <div class="dm-step__label">Préparation</div>
+      </div>
+      <div class="dm-step__line"></div>
+      <div class="dm-step" data-step="2">
+        <div class="dm-step__dot">2</div>
+        <div class="dm-step__label">Empreinte</div>
+      </div>
+      <div class="dm-step__line"></div>
+      <div class="dm-step" data-step="3">
+        <div class="dm-step__dot">3</div>
+        <div class="dm-step__label">IPFS</div>
+      </div>
+      <div class="dm-step__line"></div>
+      <div class="dm-step" data-step="4">
+        <div class="dm-step__dot">4</div>
+        <div class="dm-step__label">Blockchain</div>
+      </div>
+    </div>
+
+    <div class="dm-stage" id="dmStage"></div>
+
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -326,42 +435,221 @@
       data.validity = val('validity');
     }
 
-    try {
-      var res = await fetch('/api/certificates/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      // Read body as text first — avoids crash if server returns HTML
-      var rawText = await res.text();
-      var result = null;
-      try { result = JSON.parse(rawText); } catch (_) {}
-
-      // HTML response = session expired or server error
-      if (!result) {
-        if (res.status === 401 || res.status === 302 || rawText.trim().startsWith('<')) {
-          showNotif('error', 'Session expirée — <a href="/login" style="color:var(--blue-500);font-weight:600;">Cliquez ici pour vous reconnecter</a>');
-        } else {
-          showNotif('error', 'Erreur serveur (' + res.status + '). Rechargez la page et réessayez.');
-        }
-        resetBtn();
-        return;
-      }
-
-      if (res.ok) {
-        showNotif('success', 'Certificat créé avec succès — ID #' + result.certificate_id + '. Redirection…');
-        form.reset();
-        resetForm();
-        setTimeout(function() { window.location.href = '/my-certificates'; }, 2000);
-      } else {
-        showNotif('error', result.message || "Une erreur s'est produite.");
-        resetBtn();
-      }
-    } catch (err) {
-      showNotif('error', 'Erreur réseau : ' + err.message);
-      resetBtn();
-    }
+    runIssuanceDemo(data);
   });
+
+  // ════════════════════════════════════════════════════════
+  // Live issuance demo — animated overlay synced to the real request
+  // ════════════════════════════════════════════════════════
+  const overlay = document.getElementById('demoOverlay');
+  const stage   = document.getElementById('dmStage');
+  const stepper = document.getElementById('dmStepper');
+
+  function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+  function setStep(n, state) {
+    var stepEls = stepper.querySelectorAll('.dm-step');
+    var lineEls = stepper.querySelectorAll('.dm-step__line');
+    stepEls.forEach(function(el) {
+      var idx = parseInt(el.dataset.step, 10);
+      el.classList.remove('is-active', 'is-done');
+      if (idx < n) el.classList.add('is-done');
+      else if (idx === n) el.classList.add(state === 'done' ? 'is-done' : 'is-active');
+    });
+    lineEls.forEach(function(el, i) {
+      el.classList.toggle('is-filled', i < n - 1 || (i === n - 1 && state === 'done'));
+    });
+  }
+
+  function runHashScramble(elId, durationMs) {
+    var el = document.getElementById(elId);
+    if (!el) return;
+    var chars = '0123456789abcdef';
+    var interval = setInterval(function() {
+      var out = '0x';
+      for (var i = 0; i < 24; i++) out += chars[Math.floor(Math.random() * 16)];
+      el.textContent = out + '…';
+    }, 60);
+    setTimeout(function() { clearInterval(interval); }, durationMs);
+  }
+
+  function networkSvg() {
+    return `
+      <svg class="dm-network" viewBox="0 0 300 280" width="250" height="232">
+        <line class="dm-net-line" x1="150" y1="140" x2="150" y2="45"/>
+        <line class="dm-net-line" x1="150" y1="140" x2="232" y2="93"/>
+        <line class="dm-net-line" x1="150" y1="140" x2="232" y2="188"/>
+        <line class="dm-net-line" x1="150" y1="140" x2="150" y2="235"/>
+        <line class="dm-net-line" x1="150" y1="140" x2="68" y2="188"/>
+        <line class="dm-net-line" x1="150" y1="140" x2="68" y2="93"/>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L150,45" begin="0s"/></circle>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L232,93" begin="0.15s"/></circle>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L232,188" begin="0.3s"/></circle>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L150,235" begin="0.45s"/></circle>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L68,188" begin="0.6s"/></circle>
+        <circle r="4" class="dm-net-pulse" fill="#2DD4BF"><animateMotion dur="1.1s" repeatCount="indefinite" path="M150,140 L68,93" begin="0.75s"/></circle>
+        <circle cx="150" cy="140" r="16" class="dm-net-center"/>
+        <text x="150" y="144" class="dm-net-center-label">TX</text>
+        <g class="dm-node" data-node="1"><circle cx="150" cy="45" r="11"/><path class="dm-node-check" d="M145,45 l3,3 l7,-7"/></g>
+        <g class="dm-node" data-node="2"><circle cx="232" cy="93" r="11"/><path class="dm-node-check" d="M227,93 l3,3 l7,-7"/></g>
+        <g class="dm-node" data-node="3"><circle cx="232" cy="188" r="11"/><path class="dm-node-check" d="M227,188 l3,3 l7,-7"/></g>
+        <g class="dm-node" data-node="4"><circle cx="150" cy="235" r="11"/><path class="dm-node-check" d="M145,235 l3,3 l7,-7"/></g>
+        <g class="dm-node" data-node="5"><circle cx="68" cy="188" r="11"/><path class="dm-node-check" d="M63,188 l3,3 l7,-7"/></g>
+        <g class="dm-node" data-node="6"><circle cx="68" cy="93" r="11"/><path class="dm-node-check" d="M63,93 l3,3 l7,-7"/></g>
+      </svg>`;
+  }
+
+  function confirmNetworkNodes(success) {
+    return new Promise(function(resolve) {
+      var nodes = stage.querySelectorAll('.dm-node');
+      var cls = success ? 'is-confirmed' : 'is-confirmed--warn';
+      nodes.forEach(function(n, i) {
+        setTimeout(function() { n.classList.add(cls); }, i * 130);
+      });
+      var statusEl = document.getElementById('dmNetworkStatus');
+      if (statusEl) {
+        statusEl.textContent = success
+          ? 'Bloc validé par le réseau ✓'
+          : 'Signature cryptographique appliquée (réseau indisponible)';
+      }
+      setTimeout(resolve, nodes.length * 130 + 500);
+    });
+  }
+
+  function showResultPanel(json) {
+    var onChain   = !!json.on_chain;
+    var cert      = json.certificate || {};
+    var hash      = json.blockchain_hash || '';
+    var shortHash = hash.length > 20 ? hash.slice(0, 10) + '…' + hash.slice(-8) : hash;
+    var ipfs      = cert.ipfs_hash || '';
+    var shortIpfs = (ipfs && !ipfs.startsWith('local:') && ipfs.length > 20) ? ipfs.slice(0, 10) + '…' + ipfs.slice(-6) : ipfs;
+    var certId    = json.certificate_id != null ? json.certificate_id : '';
+    var subText   = onChain
+      ? 'Ancré de façon permanente sur la blockchain Polygon.'
+      : 'Signature cryptographique SHA-256 appliquée avec succès.';
+
+    stage.innerHTML = `
+      <div class="dm-result-icon ${onChain ? 'dm-result-icon--ok' : 'dm-result-icon--warn'}">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3 class="dm-result-title">Certificat émis avec succès</h3>
+      <p class="dm-result-sub">${subText}</p>
+      <div class="dm-result-card">
+        <div class="dm-result-row"><span>ID certificat</span><strong>#${certId}</strong></div>
+        ${hash ? `<div class="dm-result-row"><span>${onChain ? 'Hash blockchain' : 'Empreinte locale'}</span><code>${shortHash}</code></div>` : ''}
+        ${shortIpfs ? `<div class="dm-result-row"><span>IPFS</span><code>${shortIpfs}</code></div>` : ''}
+      </div>
+      <div class="dm-result-actions">
+        <button type="button" class="btn btn-outline" id="dmAnotherBtn">Émettre un autre</button>
+        <a class="btn btn-primary" href="/my-certificates">Voir mes certificats</a>
+      </div>`;
+
+    document.getElementById('dmAnotherBtn').addEventListener('click', closeDemoOverlay);
+  }
+
+  function showErrorPanel(message) {
+    stage.innerHTML = `
+      <div class="dm-result-icon dm-result-icon--err">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <h3 class="dm-result-title">Échec de l'émission</h3>
+      <p class="dm-result-sub">${message}</p>
+      <div class="dm-result-actions">
+        <button type="button" class="btn btn-outline" id="dmCloseErrBtn">Fermer</button>
+      </div>`;
+
+    document.getElementById('dmCloseErrBtn').addEventListener('click', closeDemoOverlay);
+  }
+
+  function closeDemoOverlay() {
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+    form.reset();
+    resetForm();
+    resetBtn();
+  }
+
+  async function runIssuanceDemo(payload) {
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+
+    // Fire the real request immediately — it runs in parallel with the animation
+    var reqPromise = fetch('/api/certificates/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(async function(res) {
+      var text = await res.text();
+      var json = null;
+      try { json = JSON.parse(text); } catch (_) {}
+      return { ok: res.ok, status: res.status, json: json, text: text };
+    }).catch(function(err) {
+      return { ok: false, networkError: true, error: err };
+    });
+
+    // STEP 1 — Préparation du document
+    setStep(1, 'active');
+    stage.innerHTML = `
+      <div class="dm-icon-pulse">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3>Génération du document</h3>
+      <p>Mise en page du certificat, insertion du QR code de vérification…</p>
+      <div class="dm-progressbar"><div class="dm-progressbar__fill"></div></div>`;
+    await sleep(1100);
+    setStep(1, 'done');
+
+    // STEP 2 — Empreinte cryptographique
+    setStep(2, 'active');
+    stage.innerHTML = `
+      <div class="dm-icon-pulse">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.5-2.5 6-6 6M7 21c-1 0-3-1-3-4.5V8a8 8 0 0116 0"/><path d="M12 11a4 4 0 014-4M12 11a8 8 0 008-8M12 11v9"/></svg>
+      </div>
+      <h3>Calcul de l'empreinte SHA-256</h3>
+      <div class="dm-hash" id="dmHashText">0x000000000000000000000000…</div>
+      <p>Chaque octet du document génère une empreinte numérique unique et irréversible.</p>`;
+    runHashScramble('dmHashText', 1250);
+    await sleep(1300);
+    setStep(2, 'done');
+
+    // STEP 3 — Archivage IPFS
+    setStep(3, 'active');
+    stage.innerHTML = `
+      <div class="dm-icon-pulse">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+      </div>
+      <h3>Archivage décentralisé (IPFS)</h3>
+      <p>Distribution du fichier sur le réseau de stockage décentralisé…</p>
+      <div class="dm-progressbar"><div class="dm-progressbar__fill"></div></div>`;
+    await sleep(1100);
+    setStep(3, 'done');
+
+    // STEP 4 — Diffusion blockchain (attend la vraie réponse serveur)
+    setStep(4, 'active');
+    stage.innerHTML = `
+      ${networkSvg()}
+      <h3>Diffusion vers le réseau Polygon</h3>
+      <p id="dmNetworkStatus">Propagation de la transaction vers les nœuds validateurs…</p>`;
+
+    var minWait = sleep(1800);
+    var both = await Promise.all([reqPromise, minWait]);
+    var result = both[0];
+    setStep(4, 'done');
+
+    if (result.networkError || (!result.ok && !result.json)) {
+      await confirmNetworkNodes(false);
+      showErrorPanel('Erreur réseau. Vérifiez votre connexion et réessayez.');
+      return;
+    }
+    if (!result.ok) {
+      await confirmNetworkNodes(false);
+      showErrorPanel((result.json && result.json.message) || "Une erreur s'est produite.");
+      return;
+    }
+
+    var onChain = !!(result.json && result.json.on_chain);
+    await confirmNetworkNodes(onChain);
+    showResultPanel(result.json);
+  }
 </script>
 {% endblock %}

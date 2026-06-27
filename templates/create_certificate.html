@@ -74,6 +74,30 @@
 .dm-result-row span { color: var(--text-muted); flex-shrink: 0; }
 .dm-result-row code { font-family: monospace; color: var(--navy-800); background: var(--surface-2); padding: 0.15rem 0.45rem; border-radius: 6px; font-size: 0.74rem; overflow-wrap: anywhere; text-align: right; }
 .dm-result-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.dm-network { max-width: 100%; height: auto; }
+
+/* ── Mobile — phones (jury demo on smartphone) ─────────────────── */
+@media (max-width: 600px) {
+  .cc-form-actions { flex-direction: column-reverse; align-items: stretch !important; }
+  .cc-form-actions .btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 480px) {
+  .dm-overlay { padding: 0.5rem; }
+  .dm-modal { border-radius: 16px; max-height: 96vh; }
+  .dm-modal__head { padding: 1.1rem 1.1rem 0; }
+  .dm-modal__title { font-size: 1rem; }
+  .dm-stepper { padding: 1.1rem 0.4rem 0.4rem; }
+  .dm-step { width: 52px; }
+  .dm-step__dot { width: 24px; height: 24px; font-size: 0.68rem; }
+  .dm-step__label { font-size: 0.56rem; }
+  .dm-stage { padding: 0.75rem 1.1rem 1.4rem; min-height: 230px; }
+  .dm-stage p { font-size: 0.78rem; }
+  .dm-network { max-width: 210px; }
+  .dm-result-card { padding: 0.7rem 0.9rem; }
+  .dm-result-row { font-size: 0.76rem; }
+  .dm-result-actions { flex-direction: column; width: 100%; }
+  .dm-result-actions .btn { width: 100%; text-align: center; }
+}
 </style>
 
 <div class="page-header">
@@ -296,7 +320,7 @@
 
 
     <!-- ─── Actions ───────────────────────────────── -->
-    <div style="display:flex; align-items:center; gap:1rem; justify-content:flex-end;">
+    <div class="cc-form-actions" style="display:flex; align-items:center; gap:1rem; justify-content:flex-end;">
       <button type="reset" class="btn btn-outline" onclick="resetForm()">Réinitialiser</button>
       <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>

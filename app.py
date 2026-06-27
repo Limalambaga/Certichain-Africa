@@ -306,9 +306,10 @@ def send_certificate_email(cert, institution, pdf_path, verify_url):
         recipients=[cert.recipient_email],
         html=html_body,
     )
+    safe_name = re.sub(r'[^\w\s-]', '', cert.recipient_name).strip().replace(' ', '_')
     with open(pdf_path, 'rb') as f:
         msg.attach(
-            filename=f'Certichain_{re.sub(r"[^\\w\\s-]", "", cert.recipient_name).strip().replace(" ", "_")}.pdf',
+            filename=f'Certichain_{safe_name}.pdf',
             content_type='application/pdf',
             data=f.read(),
         )

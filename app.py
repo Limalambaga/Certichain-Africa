@@ -33,6 +33,8 @@ from config import (
     MOMO_CONFIGURED,
     ADMIN_EMAIL,
     ADMIN_PASSWORD,
+    BREVO_API_KEY,
+    BREVO_SENDER_NAME,
 )
 
 app = Flask(__name__)
@@ -59,8 +61,10 @@ app.config['MAIL_DEFAULT_SENDER'] = MAIL_DEFAULT_SENDER
 db.init_app(app)
 mail = Mail(app)
 
-# OTP is only enforced when SMTP credentials are configured
-MAIL_CONFIGURED = bool(MAIL_USERNAME and MAIL_PASSWORD)
+# OTP is only enforced when an email-sending method is configured — either
+# Brevo's HTTP API (works everywhere, including hosts that block SMTP ports)
+# or direct SMTP (works locally, blocked on most free cloud tiers).
+MAIL_CONFIGURED = bool(BREVO_API_KEY or (MAIL_USERNAME and MAIL_PASSWORD))
 
 # Web3 Setup — Polygon Amoy testnet (free gas via faucet.polygon.technology)
 POLYGON_RPC = os.getenv('POLYGON_RPC', 'https://polygon-rpc.com')
@@ -206,8 +210,46 @@ def upload_to_ipfs(file_path):
         return response.json()["IpfsHash"]
     raise Exception(f"IPFS Error: {response.text}")
 
+def send_email_html(to_email, subject, html_body, attachment_bytes=None, attachment_filename=None):
+    """
+    Send an HTML email.
+
+    Uses Brevo's HTTP API (port 443) when BREVO_API_KEY is set — this works on
+    every host, including free tiers that block outbound SMTP ports. Falls back
+    to direct SMTP via Flask-Mail otherwise (fine for local dev, but most cloud
+    hosts silently block ports 25/465/587, which hangs the request until the
+    worker is killed).
+    """
+    if BREVO_API_KEY:
+        payload = {
+            "sender": {"name": BREVO_SENDER_NAME, "email": MAIL_DEFAULT_SENDER},
+            "to": [{"email": to_email}],
+            "subject": subject,
+            "htmlContent": html_body,
+        }
+        if attachment_bytes:
+            import base64
+            payload["attachment"] = [{
+                "content": base64.b64encode(attachment_bytes).decode('ascii'),
+                "name": attachment_filename or "document.pdf",
+            }]
+        resp = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={"api-key": BREVO_API_KEY, "Content-Type": "application/json"},
+            json=payload,
+            timeout=15,
+        )
+        if resp.status_code >= 300:
+            raise Exception(f"Brevo API error {resp.status_code}: {resp.text}")
+        return
+
+    msg = Message(subject=subject, recipients=[to_email], html=html_body)
+    if attachment_bytes:
+        msg.attach(filename=attachment_filename or 'document.pdf', content_type='application/pdf', data=attachment_bytes)
+    mail.send(msg)
+
 def send_otp_email(to_email, otp_code, institution_name=''):
-    """Send a branded OTP email via Flask-Mail."""
+    """Send a branded OTP email."""
     html_body = f"""<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
@@ -244,12 +286,7 @@ def send_otp_email(to_email, otp_code, institution_name=''):
 </table>
 </body>
 </html>"""
-    msg = Message(
-        subject='Votre code de connexion Certichain — ' + otp_code,
-        recipients=[to_email],
-        html=html_body,
-    )
-    mail.send(msg)
+    send_email_html(to_email, 'Votre code de connexion Certichain — ' + otp_code, html_body)
 
 def send_certificate_email(cert, institution, pdf_path, verify_url):
     """Send the certificate PDF directly to the recipient's inbox."""
@@ -301,19 +338,16 @@ def send_certificate_email(cert, institution, pdf_path, verify_url):
 </body>
 </html>"""
 
-    msg = Message(
-        subject=f'Votre {type_label} numérique — {inst_name}',
-        recipients=[cert.recipient_email],
-        html=html_body,
-    )
     safe_name = re.sub(r'[^\w\s-]', '', cert.recipient_name).strip().replace(' ', '_')
     with open(pdf_path, 'rb') as f:
-        msg.attach(
-            filename=f'Certichain_{safe_name}.pdf',
-            content_type='application/pdf',
-            data=f.read(),
-        )
-    mail.send(msg)
+        pdf_bytes = f.read()
+    send_email_html(
+        cert.recipient_email,
+        f'Votre {type_label} numérique — {inst_name}',
+        html_body,
+        attachment_bytes=pdf_bytes,
+        attachment_filename=f'Certichain_{safe_name}.pdf',
+    )
 
 # ==================== Routes ====================
 
@@ -552,12 +586,7 @@ def forgot_password():
 </table>
 </body></html>"""
         try:
-            msg = Message(
-                subject='Réinitialisation de votre mot de passe Certichain',
-                recipients=[email],
-                html=html_body,
-            )
-            mail.send(msg)
+            send_email_html(email, 'Réinitialisation de votre mot de passe Certichain', html_body)
         except Exception as e:
             print(f"Reset password mail error: {e}")
 

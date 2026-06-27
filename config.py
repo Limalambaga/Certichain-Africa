@@ -11,13 +11,20 @@ INFURA_PROJECT_ID = os.getenv("INFURA_PROJECT_ID")
 ISSUER_ADDRESS = os.getenv("ISSUER_ADDRESS")
 ISSUER_PRIVATE_KEY = os.getenv("ISSUER_PRIVATE_KEY")
 
-# Mail configuration (Gmail / SMTP)
+# Mail configuration (Gmail / SMTP) — used only as a LOCAL DEV fallback.
+# Most cloud hosts (Render, Heroku, Railway free tiers) block outbound SMTP
+# ports (25/465/587), so production should use BREVO_API_KEY instead (HTTP API,
+# port 443, never blocked).
 MAIL_SERVER   = os.getenv("MAIL_SERVER",   "smtp.gmail.com")
 MAIL_PORT     = int(os.getenv("MAIL_PORT", "587"))
 MAIL_USE_TLS  = os.getenv("MAIL_USE_TLS",  "True").lower() == "true"
 MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER") or MAIL_USERNAME
+
+# ─── Brevo (transactional email over HTTPS — works on Render/Heroku free tiers) ──
+BREVO_API_KEY     = os.getenv("BREVO_API_KEY", "")
+BREVO_SENDER_NAME = os.getenv("BREVO_SENDER_NAME", "Certichain Africa")
 
 # Contract deployed on Polygon Amoy — set after deployment via Remix
 CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS", "")

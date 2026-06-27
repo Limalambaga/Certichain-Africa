@@ -166,8 +166,10 @@
   overflow: hidden;
   box-shadow: var(--shadow-xs);
 }
+.mc-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .mc-table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
 }
 .mc-table thead th {
@@ -341,7 +343,6 @@
 }
 @media (max-width: 540px) {
   .mc-stats { grid-template-columns: 1fr 1fr; }
-  .mc-table { display: none; }
 }
 </style>
 {% endblock %}
@@ -548,6 +549,7 @@ function actionBtns(c) {
 function renderTable(list) {
   return `
   <div class="mc-table-wrap">
+    <div class="mc-table-scroll">
     <table class="mc-table">
       <thead>
         <tr>
@@ -595,6 +597,7 @@ function renderTable(list) {
         </tr>`).join('')}
       </tbody>
     </table>
+    </div>
   </div>`;
 }
 

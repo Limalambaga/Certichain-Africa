@@ -1791,6 +1791,29 @@ h1, h2, h3, h4, h5, h6 {
   .c-navbar__brand    { font-size: 0.9rem; }
 }
 
+/* =========================================================
+   SMALL PHONES — iPhone SE/mini, budget Android (≤ 420px)
+   ========================================================= */
+@media (max-width: 420px) {
+  .c-sidebar          { width: min(232px, 84vw); }
+  .container, .container-sm, .container-lg { padding: 0 1rem; }
+  .hero               { padding: 2.75rem 1rem 2.5rem; }
+  .hero__title, h1    { word-break: break-word; }
+  .card-body-lg       { padding: 1.1rem; }
+  .app-main           { padding: 1rem; }
+  .auth-form-section  { padding: 1.75rem 1rem; }
+  .auth-form-card     { max-width: 100%; }
+  .page-header__top .btn,
+  .page-header__top a.btn { width: 100%; justify-content: center; }
+  .page-header__top  { width: 100%; }
+  .btn-lg             { padding: 0.7rem 1.1rem; font-size: 0.88rem; }
+  .mc-stats           { grid-template-columns: 1fr !important; }
+  .stats-grid .stat-card,
+  .mc-stat            { padding: 0.9rem 1rem; }
+  table.db-table th, table.db-table td,
+  .mc-table th, .mc-table td { padding: 0.6rem 0.75rem; font-size: 0.8rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -2341,6 +2364,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 1024px) {
   .mm-hero__inner { grid-template-columns: 1fr; gap: 3rem; }
   .mm-nav__links  { display: none; }
+  .mm-solutions-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 @media (max-width: 768px) {
   .mm-hero { padding: calc(68px + 2.5rem) 1.25rem 4rem; }
@@ -2351,4 +2375,5 @@ h1, h2, h3, h4, h5, h6 {
   .mm-hero__sub { font-size: 1rem; }
   .mm-float-badge { display: none; }
   .mm-footer__inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .mm-solutions-grid { grid-template-columns: 1fr !important; }
 }

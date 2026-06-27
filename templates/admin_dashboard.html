@@ -72,6 +72,24 @@
     .ad-btn:hover { background: var(--surface-2); }
     .ad-btn--danger { color: var(--error); border-color: var(--error-border); }
     .ad-btn--danger:hover { background: var(--error-bg); }
+
+    .ad-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .ad-table { min-width: 640px; }
+
+    /* ── Responsive — tablet & phones ──────────────────────── */
+    @media (max-width: 900px) {
+      .ad-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .ad-topbar { padding: 0.85rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+      .ad-topbar__brand { font-size: 0.92rem; }
+      .ad-wrap { padding: 1.25rem 1rem 3rem; }
+      .ad-title { font-size: 1.25rem; }
+      .ad-stats { grid-template-columns: 1fr; }
+      .ad-card__head { padding: 1rem 1.1rem; }
+      table.ad-table th, table.ad-table td { padding: 0.7rem 0.9rem; }
+      .ad-actions { flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
@@ -120,6 +138,7 @@
       <div class="ad-card__head">
         <h2>Institutions ({{ total_inst }})</h2>
       </div>
+      <div class="ad-table-scroll">
       <table class="ad-table">
         <thead>
           <tr>
@@ -166,6 +185,7 @@
           {% endfor %}
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 

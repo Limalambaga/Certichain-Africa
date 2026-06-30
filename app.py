@@ -383,10 +383,14 @@ def signup():
         if password != confirm_password:
             return render_template('signup.html', error='Les mots de passe ne correspondent pas')
         
-        existing = Institution.query.filter_by(email=email).first()
-        if existing:
+        existing_email = Institution.query.filter_by(email=email).first()
+        if existing_email:
             return render_template('signup.html', error='Cet email est déjà utilisé')
-        
+
+        existing_name = Institution.query.filter(db.func.lower(Institution.name) == name.lower()).first()
+        if existing_name:
+            return render_template('signup.html', error="Ce nom d'institution est déjà utilisé. Veuillez choisir un nom différent.")
+
         institution = Institution(name=name, email=email, is_verified=True)
         institution.set_password(password)
         db.session.add(institution)

@@ -349,6 +349,72 @@ def send_certificate_email(cert, institution, pdf_path, verify_url):
         attachment_filename=f'Certichain_{safe_name}.pdf',
     )
 
+def notify_admin_new_signup(institution):
+    """Alert the super admin that a new institution is awaiting approval."""
+    admin_url = (os.getenv('APP_BASE_URL', '').rstrip('/')) + '/admin'
+    html_body = f"""<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
+<tr><td align="center">
+  <table width="520" cellpadding="0" cellspacing="0" style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(10,30,82,0.10);">
+    <tr><td style="background:#0A1E52;padding:28px 36px;text-align:center;">
+      <span style="font-size:1.3rem;font-weight:800;color:white;letter-spacing:-0.02em;">Certichain Africa</span>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:4px;">Console Super Admin</div>
+    </td></tr>
+    <tr><td style="padding:36px 36px 28px;">
+      <h2 style="font-size:1.25rem;font-weight:700;color:#0A1E52;margin:0 0 8px;">Nouvelle institution en attente</h2>
+      <p style="font-size:0.9rem;color:#64748B;margin:0 0 20px;line-height:1.6;">
+        Une nouvelle institution vient de s'inscrire et attend votre validation.
+      </p>
+      <div style="background:#F8FAFC;border:2px solid #E2E8F0;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
+        <div style="font-size:0.75rem;color:#94A3B8;text-transform:uppercase;margin-bottom:4px;">Nom</div>
+        <div style="font-size:0.95rem;color:#0A1E52;font-weight:700;margin-bottom:14px;">{institution.name}</div>
+        <div style="font-size:0.75rem;color:#94A3B8;text-transform:uppercase;margin-bottom:4px;">Email</div>
+        <div style="font-size:0.9rem;color:#0A1E52;">{institution.email}</div>
+      </div>
+      <a href="{admin_url}" style="display:inline-block;background:#2DD4BF;color:#0A1E52;font-weight:700;font-size:0.85rem;padding:12px 24px;border-radius:10px;text-decoration:none;">
+        Examiner dans la console admin →
+      </a>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body></html>"""
+    send_email_html(ADMIN_EMAIL, f'Nouvelle institution en attente — {institution.name}', html_body)
+
+def notify_institution_approved(institution):
+    """Tell an institution their account has been approved and they can now log in."""
+    login_url = (os.getenv('APP_BASE_URL', '').rstrip('/')) + '/login'
+    html_body = f"""<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
+<tr><td align="center">
+  <table width="520" cellpadding="0" cellspacing="0" style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(10,30,82,0.10);">
+    <tr><td style="background:#0A1E52;padding:28px 36px;text-align:center;">
+      <span style="font-size:1.3rem;font-weight:800;color:white;letter-spacing:-0.02em;">Certichain Africa</span>
+    </td></tr>
+    <tr><td style="padding:36px 36px 28px;">
+      <h2 style="font-size:1.25rem;font-weight:700;color:#0A1E52;margin:0 0 8px;">Compte approuvé ✓</h2>
+      <p style="font-size:0.9rem;color:#64748B;margin:0 0 24px;line-height:1.6;">
+        Bonjour {institution.name},<br><br>
+        Votre compte institution a été validé par notre équipe. Vous pouvez désormais vous connecter
+        et commencer à émettre des certificats numériques sécurisés sur la blockchain.
+      </p>
+      <a href="{login_url}" style="display:inline-block;background:#0A1E52;color:white;font-weight:700;font-size:0.95rem;padding:14px 32px;border-radius:10px;text-decoration:none;">
+        Se connecter maintenant
+      </a>
+    </td></tr>
+    <tr><td style="padding:20px 36px;border-top:1px solid #E2E8F0;background:#F8FAFC;text-align:center;">
+      <span style="font-size:0.75rem;color:#94A3B8;">© 2025 Certichain Africa. Tous droits réservés.</span>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body></html>"""
+    send_email_html(institution.email, 'Votre compte Certichain Africa a été approuvé', html_body)
+
 # ==================== Routes ====================
 
 @app.route('/')
@@ -391,12 +457,18 @@ def signup():
         if existing_name:
             return render_template('signup.html', error="Ce nom d'institution est déjà utilisé. Veuillez choisir un nom différent.")
 
-        institution = Institution(name=name, email=email, is_verified=True)
+        institution = Institution(name=name, email=email, is_verified=True, is_approved=False)
         institution.set_password(password)
         db.session.add(institution)
         db.session.commit()
-        
-        return render_template('login.html', info='Inscription réussie ! Vous pouvez maintenant vous connecter.')
+
+        if MAIL_CONFIGURED and ADMIN_EMAIL:
+            try:
+                notify_admin_new_signup(institution)
+            except Exception as e:
+                print(f"[EMAIL] Echec notification admin nouvelle inscription: {e}")
+
+        return render_template('login.html', info="Inscription reçue ! Votre compte est en attente de validation par notre équipe. Vous recevrez un email dès l'approbation.")
         
     except Exception as e:
         print(f"Erreur signup: {e}")
@@ -418,6 +490,9 @@ def login():
 
         if institution.is_active is False:
             return render_template('login.html', error='Ce compte a été suspendu. Contactez le support Certichain.')
+
+        if not institution.is_approved:
+            return render_template('login.html', error="Votre compte est en attente de validation par notre équipe. Vous recevrez un email dès l'approbation.")
 
         if MAIL_CONFIGURED:
             if not _otp_allowed(email):
@@ -665,6 +740,7 @@ def admin_dashboard():
     total_certs   = Certificate.query.count()
     total_inst    = len(institutions)
     active_inst   = sum(1 for i in institutions if i.is_active is not False)
+    pending_inst  = sum(1 for i in institutions if not i.is_approved)
     plan_counts   = {}
     for i in institutions:
         plan_counts[i.plan or 'free'] = plan_counts.get(i.plan or 'free', 0) + 1
@@ -680,8 +756,28 @@ def admin_dashboard():
                             total_certs=total_certs,
                             total_inst=total_inst,
                             active_inst=active_inst,
+                            pending_inst=pending_inst,
                             plan_counts=plan_counts,
                             monthly_revenue=monthly_revenue or 0)
+
+
+@app.route('/api/admin/institutions/<int:inst_id>/approve', methods=['POST'])
+@admin_required
+def admin_approve_institution(inst_id):
+    institution = Institution.query.get(inst_id)
+    if not institution:
+        return jsonify({'message': 'Institution non trouvée'}), 404
+
+    institution.is_approved = True
+    db.session.commit()
+
+    if MAIL_CONFIGURED:
+        try:
+            notify_institution_approved(institution)
+        except Exception as e:
+            print(f"[EMAIL] Echec notification approbation: {e}")
+
+    return jsonify({'message': f'{institution.name} approuvée', 'is_approved': True}), 200
 
 
 @app.route('/api/admin/institutions/<int:inst_id>/plan', methods=['POST'])

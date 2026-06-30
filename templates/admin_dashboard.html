@@ -33,7 +33,7 @@
     .ad-title { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin: 0 0 0.3rem; }
     .ad-subtitle { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 1.75rem; }
 
-    .ad-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .ad-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 2rem; }
     .ad-stat {
       background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem 1.4rem;
     }
@@ -62,6 +62,11 @@
     }
     .ad-badge--active { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
     .ad-badge--suspended { background: var(--error-bg); color: var(--error); border: 1px solid var(--error-border); }
+    .ad-badge--pending { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
+    .ad-btn--approve { color: var(--success); border-color: var(--success-border); background: var(--success-bg); font-weight: 700; }
+    .ad-btn--approve:hover { background: var(--success-bg); opacity: 0.85; }
+    .ad-stat--pending { border-color: var(--warning-border); }
+    .ad-stat--pending .ad-stat__value { color: var(--warning); }
 
     .ad-plan-select {
       font-size: 0.8rem; padding: 0.35rem 0.55rem; border-radius: 8px; border: 1px solid var(--border-md);
@@ -117,6 +122,11 @@
         <div class="ad-stat__value">{{ total_inst }}</div>
         <div class="ad-stat__sub">{{ active_inst }} actives</div>
       </div>
+      <div class="ad-stat ad-stat--pending">
+        <div class="ad-stat__label">En attente</div>
+        <div class="ad-stat__value">{{ pending_inst }}</div>
+        <div class="ad-stat__sub">à valider</div>
+      </div>
       <div class="ad-stat">
         <div class="ad-stat__label">Certificats émis</div>
         <div class="ad-stat__value">{{ total_certs }}</div>
@@ -169,7 +179,9 @@
             </td>
             <td>{{ inst.certificates|length }}</td>
             <td>
-              {% if inst.is_active is not false %}
+              {% if not inst.is_approved %}
+              <span class="ad-badge ad-badge--pending">● En attente</span>
+              {% elif inst.is_active is not false %}
               <span class="ad-badge ad-badge--active">● Actif</span>
               {% else %}
               <span class="ad-badge ad-badge--suspended">● Suspendu</span>
@@ -178,9 +190,13 @@
             <td style="color:var(--text-muted); font-size:0.8rem;">{{ inst.created_at.strftime('%d/%m/%Y') }}</td>
             <td>
               <div class="ad-actions">
+                {% if not inst.is_approved %}
+                <button class="ad-btn ad-btn--approve" onclick="approveInst({{ inst.id }}, this)">Approuver</button>
+                {% else %}
                 <button class="ad-btn" onclick="toggleActive({{ inst.id }}, this)">
                   {% if inst.is_active is not false %}Suspendre{% else %}Activer{% endif %}
                 </button>
+                {% endif %}
                 <button class="ad-btn ad-btn--danger" onclick="deleteInst({{ inst.id }}, this)">Supprimer</button>
               </div>
             </td>
@@ -218,6 +234,19 @@
         badge.textContent = '● Suspendu';
         btn.textContent = 'Activer';
       }
+    }
+
+    async function approveInst(id, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Approbation…';
+      const res = await fetch(`/api/admin/institutions/${id}/approve`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { alert(data.message || 'Erreur'); btn.disabled = false; btn.textContent = 'Approuver'; return; }
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      const badge = row.querySelector('.ad-badge');
+      badge.className = 'ad-badge ad-badge--active';
+      badge.textContent = '● Actif';
+      btn.outerHTML = `<button class="ad-btn" onclick="toggleActive(${id}, this)">Suspendre</button>`;
     }
 
     async function deleteInst(id, btn) {

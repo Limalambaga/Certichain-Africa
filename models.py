@@ -13,6 +13,7 @@ class Institution(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     is_verified = db.Column(db.Boolean, default=True)
     is_active = db.Column(db.Boolean, default=True)
+    is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     wallet_address = db.Column(db.String(255))
@@ -52,6 +53,7 @@ class Institution(db.Model):
             'email': self.email,
             'is_verified': self.is_verified,
             'is_active': self.is_active if self.is_active is not None else True,
+            'is_approved': bool(self.is_approved),
             'created_at': self.created_at.isoformat(),
             'wallet_address': self.wallet_address,
             'plan': self.plan or 'free',

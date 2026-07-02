@@ -452,6 +452,11 @@ const TYPE_LABEL = { diplome:'Diplôme', certification:'Certification', badge:'B
 const TYPE_CLASS = { diplome:'mc-type--diplome', certification:'mc-type--certification', badge:'mc-type--badge', cyber_diplome:'mc-type--cyber_diplome' };
 const AVT_CLASS  = { diplome:'mc-avatar--diplome', certification:'mc-avatar--certification', badge:'mc-avatar--badge', cyber_diplome:'mc-avatar--cyber_diplome' };
 
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+  return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+}
 function initials(name) {
   return (name || '?').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
 }
@@ -571,8 +576,8 @@ function renderTable(list) {
                 ${initials(c.recipient_name)}
               </div>
               <div>
-                <div class="mc-name">${c.recipient_name}</div>
-                ${c.recipient_email ? `<div class="mc-email">${c.recipient_email}</div>` : ''}
+<div class="mc-name">${escapeHtml(c.recipient_name)}</div>
+                 ${c.recipient_email ? `<div class="mc-email">${escapeHtml(c.recipient_email)}</div>` : ''}
               </div>
             </div>
           </td>
@@ -582,10 +587,10 @@ function renderTable(list) {
             </span>
           </td>
           <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            ${c.domain || '<span style="color:var(--text-muted)">—</span>'}
+            ${escapeHtml(c.domain) || '<span style="color:var(--text-muted)">—</span>'}
           </td>
           <td style="color:var(--text-muted); font-size:0.8rem;">
-            ${c.mention || '—'}
+            ${escapeHtml(c.mention) || '—'}
           </td>
           <td style="white-space:nowrap; color:var(--text-secondary); font-size:0.8rem;">
             ${fmt(c.created_at)}
@@ -612,11 +617,11 @@ function renderGrid(list) {
           ${chainBadge(c)}
         </div>
         <div class="mc-card__recipient">
-          <div class="mc-card__name">${c.recipient_name}</div>
-          <div class="mc-card__domain">${c.domain || ''}</div>
+<div class="mc-card__name">${escapeHtml(c.recipient_name)}</div>
+           <div class="mc-card__domain">${escapeHtml(c.domain) || ''}</div>
         </div>
         <div class="mc-card__fields">
-          ${c.mention ? `<div class="mc-card__field"><span class="mc-card__field-label">Mention</span><span class="mc-card__field-value">${c.mention}</span></div>` : ''}
+          ${c.mention ? `<div class="mc-card__field"><span class="mc-card__field-label">Mention</span><span class="mc-card__field-value">${escapeHtml(c.mention)}</span></div>` : ''}
           <div class="mc-card__field">
             <span class="mc-card__field-label">Émis le</span>
             <span class="mc-card__field-value">${fmt(c.created_at)}</span>

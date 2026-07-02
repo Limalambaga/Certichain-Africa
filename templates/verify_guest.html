@@ -354,6 +354,12 @@
 </div>
 
 <script>
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+  return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+}
+
 function switchTab(name, btn) {
   document.querySelectorAll('.vg-tab').forEach(t => t.classList.remove('is-active'));
   document.querySelectorAll('.vg-panel').forEach(p => p.classList.remove('is-active'));
@@ -392,13 +398,13 @@ function showResult(el, cert) {
     </div>
     <div class="vg-result__title">Certificat authentique</div>
     <div class="vg-result__sub">${onChain ? 'Ancré sur la blockchain Polygon' : 'Signature SHA-256 vérifiée'}</div>
-    <div class="vg-fields">
-      <div class="vg-field vg-field--full"><div class="vg-field__label">Bénéficiaire</div><div class="vg-field__value">${cert.recipient}</div></div>
-      <div class="vg-field"><div class="vg-field__label">Type</div><div class="vg-field__value">${typeLabel}</div></div>
-      <div class="vg-field"><div class="vg-field__label">Date d'émission</div><div class="vg-field__value">${cert.created_at}</div></div>
-      ${cert.domain ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Programme</div><div class="vg-field__value">${cert.domain}</div></div>` : ''}
-      ${cert.institution ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Établissement</div><div class="vg-field__value">${cert.institution}</div></div>` : ''}
-    </div>
+<div class="vg-fields">
+       <div class="vg-field vg-field--full"><div class="vg-field__label">Bénéficiaire</div><div class="vg-field__value">${escapeHtml(cert.recipient)}</div></div>
+       <div class="vg-field"><div class="vg-field__label">Type</div><div class="vg-field__value">${escapeHtml(typeLabel)}</div></div>
+       <div class="vg-field"><div class="vg-field__label">Date d'émission</div><div class="vg-field__value">${escapeHtml(cert.created_at)}</div></div>
+       ${cert.domain ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Programme</div><div class="vg-field__value">${escapeHtml(cert.domain)}</div></div>` : ''}
+       ${cert.institution ? `<div class="vg-field vg-field--full"><div class="vg-field__label">Établissement</div><div class="vg-field__value">${escapeHtml(cert.institution)}</div></div>` : ''}
+     </div>
     <a href="/verify/${cert.id}" class="vg-view-link" target="_blank">
       Voir le certificat complet
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

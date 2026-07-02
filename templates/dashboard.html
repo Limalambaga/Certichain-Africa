@@ -478,6 +478,12 @@ const AVATAR_COLORS = [
   ['#EEF2FF','#4338CA'], ['#F0FDFA','#0D7A72'],
   ['#FFF7ED','#C2410C'], ['#FDF4FF','#7E22CE'],
 ];
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+  return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+}
+
 function avatarColor(str) {
   let h = 0;
   for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
@@ -536,30 +542,30 @@ async function loadDashboard() {
         ? `<span class="db-chip db-chip--chain"><span class="db-chain-dot"></span>Polygon</span>`
         : `<span class="db-chip db-chip--local">SHA-256</span>`;
 
-      return `<tr>
-        <td>
-          <div class="db-recipient">
-            <div class="db-avatar" style="background:${bg};color:${fg};">${initials}</div>
-            <div>
-              <div class="db-recipient__name">${c.recipient_name}</div>
-              ${c.recipient_email ? `<div class="db-recipient__email">${c.recipient_email}</div>` : ''}
-            </div>
-          </div>
-        </td>
-        <td>${typeChip[c.certificate_type] || c.certificate_type}</td>
-        <td style="color:#6B7280;font-size:.82rem;">${c.domain || '—'}</td>
-        <td style="color:#6B7280;font-size:.82rem;">${c.mention || '—'}</td>
-        <td>${chainCell}</td>
-        <td style="color:#9CA3AF;font-size:.8rem;white-space:nowrap;">${new Date(c.created_at).toLocaleDateString('fr-FR')}</td>
-        <td>
-          <a href="/certificate/${c.id}/download"
-            style="display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600;color:#4338CA;text-decoration:none;padding:.3rem .7rem;border-radius:6px;background:#EEF2FF;transition:background .15s;"
-            onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            PDF
-          </a>
-        </td>
-      </tr>`;
+return `<tr>
+         <td>
+           <div class="db-recipient">
+             <div class="db-avatar" style="background:${bg};color:${fg};">${initials}</div>
+             <div>
+               <div class="db-recipient__name">${escapeHtml(c.recipient_name)}</div>
+               ${c.recipient_email ? `<div class="db-recipient__email">${escapeHtml(c.recipient_email)}</div>` : ''}
+             </div>
+           </div>
+         </td>
+         <td>${typeChip[c.certificate_type] || c.certificate_type}</td>
+         <td style="color:#6B7280;font-size:.82rem;">${escapeHtml(c.domain) || '—'}</td>
+         <td style="color:#6B7280;font-size:.82rem;">${escapeHtml(c.mention) || '—'}</td>
+         <td>${chainCell}</td>
+         <td style="color:#9CA3AF;font-size:.8rem;white-space:nowrap;">${new Date(c.created_at).toLocaleDateString('fr-FR')}</td>
+         <td>
+           <a href="/certificate/${c.id}/download"
+             style="display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600;color:#4338CA;text-decoration:none;padding:.3rem .7rem;border-radius:6px;background:#EEF2FF;transition:background .15s;"
+             onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+             PDF
+           </a>
+         </td>
+       </tr>`;
     }).join('');
 
   } catch (e) {

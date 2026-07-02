@@ -133,7 +133,13 @@
 
 {% block scripts %}
 <script>
-  function switchTab(tabId, el) {
+   function escapeHtml(text) {
+     if (!text) return '';
+     const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+     return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+   }
+
+   function switchTab(tabId, el) {
     document.querySelectorAll('.verify-tab').forEach(t  => t.classList.remove('is-active'));
     document.querySelectorAll('.verify-panel').forEach(p => p.classList.remove('is-active'));
     el.classList.add('is-active');
@@ -160,12 +166,12 @@
         </div>
         <h2>Certificat authentique</h2>
         <p style="color:var(--success); font-size:0.9rem; margin-bottom:1.5rem;">${data.message || 'Ce certificat est valide et non modifié.'}</p>
-        <div class="verify-data">
-          <div class="verify-data-item"><label>Bénéficiaire</label><span>${data.recipient || '—'}</span></div>
-          <div class="verify-data-item"><label>Type</label><span>${data.certificate_type || '—'}</span></div>
-          <div class="verify-data-item"><label>Domaine</label><span>${data.domain || '—'}</span></div>
-          <div class="verify-data-item"><label>Date d'émission</label><span>${date}</span></div>
-        </div>
+<div class="verify-data">
+           <div class="verify-data-item"><label>Bénéficiaire</label><span>${escapeHtml(data.recipient) || '—'}</span></div>
+           <div class="verify-data-item"><label>Type</label><span>${escapeHtml(data.certificate_type) || '—'}</span></div>
+           <div class="verify-data-item"><label>Domaine</label><span>${escapeHtml(data.domain) || '—'}</span></div>
+           <div class="verify-data-item"><label>Date d'émission</label><span>${date}</span></div>
+         </div>
         ${data.ipfs ? `
         <div style="margin-top:1rem;">
           <a href="https://gateway.pinata.cloud/ipfs/${data.ipfs}" target="_blank" rel="noopener" class="btn btn-teal">

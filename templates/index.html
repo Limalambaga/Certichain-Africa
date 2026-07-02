@@ -28,30 +28,36 @@
 </div>
 
 <script>
-  document.getElementById("issueForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = '<div class="alert alert-info">⌛ Processing... connecting to Sepolia blockchain.</div>';
-    
-    const formData = new FormData(this);
-    fetch("/issue", { method: "POST", body: formData })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          resultDiv.innerHTML = `
-            <div class="alert alert-success">
-              🎉 Success! Certificate Issued.<br>
-              <strong>ID:</strong> ${data.certificate_id}<br>
-              <a href="https://sepolia.etherscan.io/tx/${data.tx}" target="_blank" class="btn btn-sm btn-outline-success mt-2">View on Etherscan</a>
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error}</div>`;
-        }
-      })
-      .catch(err => {
-        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Request Failed: ${err}</div>`;
-      });
-  });
+   function escapeHtml(text) {
+     if (!text) return '';
+     const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+     return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+   }
+
+   document.getElementById("issueForm").addEventListener("submit", function(e) {
+     e.preventDefault();
+     const resultDiv = document.getElementById("result");
+     resultDiv.innerHTML = '<div class="alert alert-info">⌛ Processing... connecting to Sepolia blockchain.</div>';
+     
+     const formData = new FormData(this);
+     fetch("/issue", { method: "POST", body: formData })
+       .then(res => res.json())
+       .then(data => {
+         if (data.success) {
+           resultDiv.innerHTML = `
+             <div class="alert alert-success">
+               🎉 Success! Certificate Issued.<br>
+               <strong>ID:</strong> ${escapeHtml(data.certificate_id)}<br>
+               <a href="https://sepolia.etherscan.io/tx/${escapeHtml(data.tx)}" target="_blank" class="btn btn-sm btn-outline-success mt-2">View on Etherscan</a>
+             </div>
+           `;
+         } else {
+           resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${escapeHtml(data.error)}</div>`;
+         }
+       })
+       .catch(err => {
+         resultDiv.innerHTML = `<div class="alert alert-danger">❌ Request Failed: ${escapeHtml(err)}</div>`;
+       });
+   });
 </script>
 {% endblock %}

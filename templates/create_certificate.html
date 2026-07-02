@@ -379,7 +379,13 @@
     }
   }).catch(function() {});
 
-  const typeRadios = document.querySelectorAll('input[name="certificate_type"]');
+  function escapeHtml(text) {
+     if (!text) return '';
+     const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+     return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+   }
+
+   const typeRadios = document.querySelectorAll('input[name="certificate_type"]');
   const allFields  = document.querySelectorAll('.dynamic-fields');
   const form       = document.getElementById('certForm');
   const btn        = document.getElementById('submitBtn');
@@ -391,15 +397,15 @@
     if (target) target.classList.remove('hidden');
   }));
 
-  function showNotif(type, msg) {
-    notif.innerHTML = `<div class="alert alert-${type}" style="margin-bottom:1.5rem;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        ${type === 'success'
-          ? '<polyline points="20 6 9 17 4 12"/>'
-          : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
-      </svg>
-      ${msg}
-    </div>`;
+function showNotif(type, msg) {
+     notif.innerHTML = `<div class="alert alert-${type}" style="margin-bottom:1.5rem;">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+         ${type === 'success'
+           ? '<polyline points="20 6 9 17 4 12"/>'
+           : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
+       </svg>
+       ${escapeHtml(msg)}
+     </div>`;
     notif.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
@@ -540,17 +546,17 @@
     });
   }
 
-  function showResultPanel(json) {
-    var onChain   = !!json.on_chain;
-    var cert      = json.certificate || {};
-    var hash      = json.blockchain_hash || '';
-    var shortHash = hash.length > 20 ? hash.slice(0, 10) + '…' + hash.slice(-8) : hash;
-    var ipfs      = cert.ipfs_hash || '';
-    var shortIpfs = (ipfs && !ipfs.startsWith('local:') && ipfs.length > 20) ? ipfs.slice(0, 10) + '…' + ipfs.slice(-6) : ipfs;
-    var certId    = json.certificate_id != null ? json.certificate_id : '';
-    var subText   = onChain
-      ? 'Ancré de façon permanente sur la blockchain Polygon.'
-      : 'Signature cryptographique SHA-256 appliquée avec succès.';
+function showResultPanel(json) {
+     var onChain   = !!json.on_chain;
+     var cert      = json.certificate || {};
+     var hash      = json.blockchain_hash || '';
+     var shortHash = hash.length > 20 ? escapeHtml(hash.slice(0, 10) + '…' + hash.slice(-8)) : escapeHtml(hash);
+     var ipfs      = cert.ipfs_hash || '';
+     var shortIpfs = (ipfs && !ipfs.startsWith('local:') && ipfs.length > 20) ? escapeHtml(ipfs.slice(0, 10) + '…' + ipfs.slice(-6)) : (ipfs ? escapeHtml(ipfs) : '');
+     var certId    = json.certificate_id != null ? json.certificate_id : '';
+     var subText   = onChain
+       ? 'Ancré de façon permanente sur la blockchain Polygon.'
+       : 'Signature cryptographique SHA-256 appliquée avec succès.';
 
     stage.innerHTML = `
       <div class="dm-result-icon ${onChain ? 'dm-result-icon--ok' : 'dm-result-icon--warn'}">
@@ -571,13 +577,13 @@
     document.getElementById('dmAnotherBtn').addEventListener('click', closeDemoOverlay);
   }
 
-  function showErrorPanel(message) {
+function showErrorPanel(message) {
     stage.innerHTML = `
       <div class="dm-result-icon dm-result-icon--err">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
       <h3 class="dm-result-title">Échec de l'émission</h3>
-      <p class="dm-result-sub">${message}</p>
+      <p class="dm-result-sub">${escapeHtml(message)}</p>
       <div class="dm-result-actions">
         <button type="button" class="btn btn-outline" id="dmCloseErrBtn">Fermer</button>
       </div>`;

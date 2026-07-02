@@ -414,25 +414,31 @@
     </div>
 
     <script>
-        let allCertificates = [];
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+  return text.toString().replace(/[&<>"']/g,function(m){return map[m];});
+}
 
-        // Charger les certificats
-        async function loadCertificates() {
-            try {
-                const response = await fetch('/api/certificates');
-                const data = await response.json();
-                
-                if (response.ok) {
-                    allCertificates = data.certificates || [];
-                    updateStats();
-                    renderCertificates(allCertificates);
-                } else {
-                    console.error('API error:', data);
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
+let allCertificates = [];
+
+// Charger les certificats
+async function loadCertificates() {
+    try {
+        const response = await fetch('/api/certificates');
+        const data = await response.json();
+        
+        if (response.ok) {
+            allCertificates = data.certificates || [];
+            updateStats();
+            renderCertificates(allCertificates);
+        } else {
+            console.error('API error:', data);
         }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
 
         // Mettre à jour les statistiques
         function updateStats() {
@@ -488,23 +494,23 @@
                             </div>
                             <div class="cert-info">
                                 <div class="cert-info-row">
-                                    <span class="cert-info-label">Bénéficiaire:</span>
-                                    <span class="cert-info-value">${cert.recipient_name}</span>
-                                </div>
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Email:</span>
-                                    <span class="cert-info-value">${cert.recipient_email || '-'}</span>
-                                </div>
-                                <div class="cert-info-row">
-                                    <span class="cert-info-label">Domaine:</span>
-                                    <span class="cert-info-value">${cert.domain}</span>
-                                </div>
-                                ${cert.mention ? `
-                                    <div class="cert-info-row">
-                                        <span class="cert-info-label">Mention:</span>
-                                        <span class="cert-info-value">${cert.mention}</span>
-                                    </div>
-                                ` : ''}
+<span class="cert-info-label">Bénéficiaire:</span>
+                                     <span class="cert-info-value">${escapeHtml(cert.recipient_name)}</span>
+                                 </div>
+                                 <div class="cert-info-row">
+                                     <span class="cert-info-label">Email:</span>
+                                     <span class="cert-info-value">${escapeHtml(cert.recipient_email || '-')}</span>
+                                 </div>
+                                 <div class="cert-info-row">
+                                     <span class="cert-info-label">Domaine:</span>
+                                     <span class="cert-info-value">${escapeHtml(cert.domain)}</span>
+                                 </div>
+                                 ${cert.mention ? `
+                                     <div class="cert-info-row">
+                                         <span class="cert-info-label">Mention:</span>
+                                         <span class="cert-info-value">${escapeHtml(cert.mention)}</span>
+                                     </div>
+                                 ` : ''}
                                 <div class="cert-info-row">
                                     <span class="cert-info-label">Créé:</span>
                                     <span class="cert-info-value">${new Date(cert.created_at).toLocaleDateString('fr-FR')}</span>
